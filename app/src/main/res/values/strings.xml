@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">SchoolNetwork</string>
+    <string name="register_link">Ещё не зарегистрированы?</string>
+    <string name="login_link">Войти</string>
+    <string name="login_hint_name">Имя пользователя</string>
+    <string name="login_hint_password">Пароль</string>
+    <string name="login_text_enter">Войти</string>
+</resources>
