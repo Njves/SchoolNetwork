@@ -31,12 +31,12 @@ class AuthFragment : Fragment() {
         val tvRegister = v.findViewById<TextView>(R.id.tvRegister)
         btnLogin.setOnClickListener(View.OnClickListener {
             val fragment = LoginFragment()
-            activity?.supportFragmentManager?.beginTransaction()?.add(R.id.authContainer, fragment)?.addToBackStack(null)?.commit()
+            activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.authContainer, fragment)?.addToBackStack(null)?.commit()
         })
 
         tvRegister.setOnClickListener(View.OnClickListener {
             val fragment = RegisterFragment()
-            activity?.supportFragmentManager?.beginTransaction()?.add(R.id.authContainer, fragment)?.addToBackStack(null)?.commit()
+            activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.authContainer, fragment)?.addToBackStack(null)?.commit()
         })
 
         return v
