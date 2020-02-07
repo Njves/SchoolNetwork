@@ -5,6 +5,6 @@ import retrofit2.Call
 import retrofit2.http.GET
 
 interface SchoolsListService {
-    @GET("DB/school.php")
+    @GET("API/DB/school.php")
     fun callSchoolList() : Call<List<School>>
 }

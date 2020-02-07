@@ -1,5 +1,5 @@
 package com.njves.schoolnetwork.callback
 
-interface OnSuccessAuthListener {
+interface OnAuthPassedListener {
     fun onSuccess(uid : String?)
 }

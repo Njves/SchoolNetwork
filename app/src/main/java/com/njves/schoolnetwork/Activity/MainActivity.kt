@@ -3,34 +3,42 @@ package com.njves.schoolnetwork.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
-import com.njves.schoolnetwork.Fragments.AuthFragment
+
 import com.njves.schoolnetwork.R
 import com.njves.schoolnetwork.Storage.AuthStorage
+import com.njves.schoolnetwork.callback.OnActionBarUpdateListener
 
-import com.njves.schoolnetwork.callback.OnSuccessAuthListener
+import com.njves.schoolnetwork.callback.OnAuthPassedListener
+import com.njves.schoolnetwork.Fragments.AuthFragment
 
-class MainActivity : AppCompatActivity(),OnSuccessAuthListener {
 
+class MainActivity : AppCompatActivity(),OnAuthPassedListener, OnActionBarUpdateListener {
+    var currentFragment : Fragment? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayShowHomeEnabled(true)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setHomeButtonEnabled(false);
+
+
         // TODO: Добавить дополнительную проверку на сервере
         // Проверяем если пользователь уже авторизован на телефоне
-        if(!checkUser()) {
-            //enterInSystem()
+
+        if(checkUser()) {
+            startMenuActivity()
         }
         else {
-            // Показываем фрагмент авторизации
-            val authFragment = AuthFragment.newInstance()
-            supportFragmentManager.beginTransaction().replace(R.id.authContainer, authFragment)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit()
+            if(currentFragment==null)
+            {
+                // Показываем фрагмент авторизации
+                currentFragment = AuthFragment.newInstance()
+                supportFragmentManager.beginTransaction().replace(R.id.authContainer, currentFragment as AuthFragment)
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit()
+            }
         }
     }
 
@@ -41,20 +49,22 @@ class MainActivity : AppCompatActivity(),OnSuccessAuthListener {
 
     override fun onSuccess(uid : String?) {
         val storage = AuthStorage(this)
+        storage.setLogged(true)
         storage.setUserDetails(uid)
-        enterInSystem()
+        startMenuActivity()
     }
     private fun checkUser() : Boolean
     {
         val storage = AuthStorage(this)
-        if(storage.getUserDetails()!=null&&storage.getUserDetails()!="")
+        Log.d("MainActivity", storage.getUserDetails()?:"")
+        if(storage.isLogged()==true && storage.getUserDetails()!=null)
         {
             return true
         }
         return false
     }
     // TODO: Придумать нормальное название метода
-    private fun enterInSystem(){
+    private fun startMenuActivity(){
         val intent = Intent(this,MenuActivity::class.java)
         startActivity(intent)
         finish()
@@ -62,9 +72,31 @@ class MainActivity : AppCompatActivity(),OnSuccessAuthListener {
 
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
+        if(supportFragmentManager.backStackEntryCount<=1)
+        {
+
+            supportActionBar?.setDisplayShowHomeEnabled(false)
+            supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        }
+
         return true
     }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+        if(supportFragmentManager.backStackEntryCount<=1)
+        {
+            supportActionBar?.setTitle(R.string.app_name)
+            supportActionBar?.setDisplayShowHomeEnabled(false)
+            supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        }
+    }
+
+    override fun updateActionBar(title: String) {
+        supportActionBar?.setTitle(title)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    }
 
 
 }

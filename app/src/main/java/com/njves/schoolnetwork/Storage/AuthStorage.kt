@@ -16,6 +16,7 @@ class AuthStorage(context : Context?) {
         const val AUTH_STORAGE_NAME = "authStorage"
         const val USER_UID = "uid"
         const val IS_LOGGED = "logged"
+        const val USER_NAME = "name"
     }
     private var preferences : SharedPreferences? = null
     private var editor : SharedPreferences.Editor? = null
@@ -30,7 +31,6 @@ class AuthStorage(context : Context?) {
     }
     public fun getUserDetails() : String?
     {
-
         return preferences?.getString(USER_UID, null)
     }
     public fun isLogged() : Boolean?
@@ -42,5 +42,16 @@ class AuthStorage(context : Context?) {
         editor?.putBoolean(IS_LOGGED, isLogged)
         editor?.apply()
     }
-
+    public fun clearUserDetails()
+    {
+        preferences?.edit()?.remove(USER_UID)?.apply()
+    }
+    public fun getUserName() : String?
+    {
+        return preferences?.getString(USER_NAME, "")
+    }
+    public fun setUserName(name : String)
+    {
+        editor?.putString(USER_NAME, name)?.apply()
+    }
 }

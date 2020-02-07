@@ -9,6 +9,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 class NetworkService {
     companion object{
         val instance = NetworkService()
+        const val TYPE_POST = "POST"
+        const val TYPE_GET = "GET"
     }
     private constructor(){
 
@@ -24,4 +26,4 @@ class NetworkService {
 
 
 }
-const val SERVER_URL = "http://host1799945.hostland.pro/SPlanner/"
+const val SERVER_URL = "http://host1807525.hostland.pro/SNServer/"
