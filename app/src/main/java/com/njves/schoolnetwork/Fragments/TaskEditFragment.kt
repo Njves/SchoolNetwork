@@ -51,7 +51,7 @@ class TaskEditFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val v = layoutInflater.inflate(R.layout.fragment_task_edit, container, false)
         rvReceivers = v.findViewById(R.id.rvReceivers)
-        val adapter = ReceiversAdapter(context, listOf<User>(User("test", "test", "test", "test", "test", 1)))
+        val adapter = ReceiversAdapter(context, listOf(User("test", "test", "test", "test", "test", 1)))
         rvReceivers.layoutManager = LinearLayoutManager(context)
         rvReceivers.adapter = adapter
 
@@ -69,6 +69,7 @@ class TaskEditFragment : Fragment() {
             }
 
         })
+
         etTitle = v.findViewById(R.id.edTitle)
         etDescription = v.findViewById(R.id.edDescription)
         btnDatePicker = v.findViewById(R.id.btnDatePicker)
@@ -93,9 +94,7 @@ class TaskEditFragment : Fragment() {
 
                     }
 
-                    override fun onResponse(
-                        call: Call<NetworkResponse<Task>>,
-                        response: Response<NetworkResponse<Task>>) {
+                    override fun onResponse(call: Call<NetworkResponse<Task>>, response: Response<NetworkResponse<Task>>) {
                         val code = response.body()?.code
                         val message = response.body()?.message
                         if (code == 0) {

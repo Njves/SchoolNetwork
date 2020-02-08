@@ -6,12 +6,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
 import com.njves.schoolnetwork.Models.NetworkService
 import com.njves.schoolnetwork.Models.network.models.NetworkResponse
 import com.njves.schoolnetwork.Models.network.models.task.Task
@@ -24,11 +26,12 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class TaskFragment : Fragment() {
-    lateinit var rvTask : RecyclerView
-    lateinit var adapter : TaskAdapter
-    lateinit var tvErrorMsg : TextView
-    lateinit var fabAddTask : FloatingActionButton
-    lateinit var interaction : OnFragmentInteraction
+    private lateinit var rvTask : RecyclerView
+    private lateinit var adapter : TaskAdapter
+    private lateinit var tvErrorMsg : TextView
+    private lateinit var fabAddTask : FloatingActionButton
+    private lateinit var interaction : OnFragmentInteraction
+    private lateinit var pbLoading : ProgressBar
     companion object{
         fun newInstance() : TaskFragment
         {
@@ -50,6 +53,8 @@ class TaskFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val v = layoutInflater.inflate(R.layout.fragment_task, container, false)
+        pbLoading = v.findViewById(R.id.pbLoading)
+        pbLoading.visibility = View.VISIBLE
 
         fabAddTask = v.findViewById(R.id.fabAdd)
         val taskService = NetworkService.instance.getRetrofit().create(TaskService::class.java);
@@ -57,11 +62,14 @@ class TaskFragment : Fragment() {
         val call = taskService.getTaskList("GET",storage.getUserDetails()?:"");
         call.enqueue(object: Callback<NetworkResponse<List<Task>>>{
             override fun onFailure(call: Call<NetworkResponse<List<Task>>>, t: Throwable) {
-                Toast.makeText(context, t.toString(), Toast.LENGTH_LONG).show()
+                Snackbar.make(v, "Произашла ошибка получения данных", Snackbar.LENGTH_LONG)
+
                 Log.d("TaskFragment", t.toString())
+                pbLoading.visibility = View.GONE
             }
 
             override fun onResponse(call: Call<NetworkResponse<List<Task>>>, response: Response<NetworkResponse<List<Task>>>) {
+                pbLoading.visibility = View.GONE
                 if(response.body()?.code==0)
                 {
                     adapter = TaskAdapter(context,response.body()?.data?:listOf())

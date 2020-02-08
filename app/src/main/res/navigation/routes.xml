@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/routes"
+            app:startDestination="@id/nav_task">
+
+    <fragment
+            android:id="@+id/nav_profile"
+            android:name="com.njves.schoolnetwork.Fragments.ProfileFragment"
+            android:label="@string/menu_profile"
+            tools:layout="@layout/fragment_profile"/>
+
+    <fragment
+            android:id="@+id/nav_task"
+            android:name="com.njves.schoolnetwork.Fragments.TaskFragment"
+            android:label="@string/menu_task"
+            tools:layout="@layout/fragment_task">
+        <action
+                android:id="@+id/action_nav_task_to_nav_task_edit"
+                app:destination="@id/nav_task_edit"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_settings"
+        android:name="com.njves.schoolnetwork.Fragments.SettingsFragment"
+        android:label="@string/nav_settings"
+        tools:layout="@layout/fragment_settings"
+        />
+
+    <fragment
+            android:id="@+id/nav_task_edit"
+            android:name="com.njves.schoolnetwork.Fragments.TaskEditFragment"
+            android:label="TaskEdit"
+            tools:layout="@layout/fragment_task_edit"
+            >
+        <action
+                android:id="@+id/action_nav_task_edit_to_nav_task_edit_receivers_pick"
+                app:destination="@id/nav_task_edit_receivers_pick"/>
+    </fragment>
+    <fragment
+            android:id="@+id/nav_task_edit_receivers_pick"
+            android:name="com.njves.schoolnetwork.Fragments.ReceiversListFragment"
+            android:label="ReceiverPick"
+            tools:layout="@layout/fragment_receivers_list"
+
+            />
+
+</navigation>
