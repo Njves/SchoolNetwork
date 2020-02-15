@@ -10,11 +10,13 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.njves.schoolnetwork.Models.network.models.auth.Profile
 import com.njves.schoolnetwork.Models.network.models.auth.User
+import com.njves.schoolnetwork.Models.network.models.profile.UserProfile
 import com.njves.schoolnetwork.R
 
 
-class ReceiversAdapter(val context : Context?, private val listUsers : List<User>) :
+class ReceiversAdapter(val context : Context?, private val listUsers : List<Profile>) :
     RecyclerView.Adapter<ReceiversAdapter.ReceiverHolder>() {
     private var selectedItems = ArrayList<Boolean>()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReceiverHolder {
@@ -31,10 +33,11 @@ class ReceiversAdapter(val context : Context?, private val listUsers : List<User
         selectedItems.add(position, false)
 
     }
-    public fun getUser() : User?
+    public fun getUser() : Profile?
     {
 
         val index = selectedItems.indexOf(true)
+        Log.d("ReceiversAdapter", "$index")
         if(index==-1)
         {
             return null
@@ -52,12 +55,13 @@ class ReceiversAdapter(val context : Context?, private val listUsers : List<User
         fun bind(i : Int)
         {
 
-            tvName.setText(listUsers.get(i).name)
+            tvName.setText(listUsers.get(i).firstName)
             itemView.setOnClickListener{
                 Log.d("ReceiversAdapter", selectedItems.toString())
+                Log.d("ReceiversAdapter", listUsers.toString())
                 if(selectedItems[adapterPosition] == false) {
                     itemView.setBackgroundColor(Color.GRAY)
-                    Toast.makeText(context, "OnClickFocus", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "OnClickFocus, element " + adapterPosition, Toast.LENGTH_SHORT).show()
                     selectedItems[adapterPosition] = true
                 }else{
                     itemView.setBackgroundColor(Color.WHITE)

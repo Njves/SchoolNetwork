@@ -15,10 +15,11 @@
         android:gravity="bottom">
 
     <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
             android:paddingTop="@dimen/nav_header_vertical_spacing"
             app:srcCompat="@drawable/ic_avatar_placeholder_black_24dp"
+            android:scaleType="centerCrop"
             android:contentDescription="@string/nav_header_desc"
             android:id="@+id/ivAva"
             tools:ignore="VectorDrawableCompat"/>

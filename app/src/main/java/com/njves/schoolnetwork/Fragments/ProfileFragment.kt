@@ -1,6 +1,7 @@
 package com.njves.schoolnetwork.Fragments
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -13,6 +14,7 @@ import android.widget.*
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import com.google.android.material.textfield.TextInputEditText
+import com.google.gson.Gson
 import com.njves.schoolnetwork.Models.NetworkService
 import com.njves.schoolnetwork.Models.NetworkService.Companion.TYPE_GET
 import com.njves.schoolnetwork.Models.NetworkService.Companion.TYPE_POST
@@ -21,18 +23,23 @@ import com.njves.schoolnetwork.Models.network.models.auth.RequestProfileModel
 import com.njves.schoolnetwork.Models.network.models.RequestProfilePosition
 import com.njves.schoolnetwork.Models.network.models.auth.Position
 import com.njves.schoolnetwork.Models.network.models.auth.Profile
+import com.njves.schoolnetwork.Models.network.models.auth.User
+import com.njves.schoolnetwork.Models.network.models.profile.UserProfile
 import com.njves.schoolnetwork.Models.network.request.PositionListService
 import com.njves.schoolnetwork.Models.network.request.ProfileService
 
 
 import com.njves.schoolnetwork.R
 import com.njves.schoolnetwork.Storage.AuthStorage
+import com.njves.schoolnetwork.callback.OnAuthPassedListener
+import com.njves.schoolnetwork.callback.UpdateToolbarTitleListener
 import com.njves.schoolnetwork.dialog.ClassChoiceDialog
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.lang.RuntimeException
 
-class ProfileFragment : Fragment(){
+class ProfileFragment : Fragment() {
     lateinit var edFN : TextInputEditText
     lateinit var edLN : TextInputEditText
     lateinit var edMN : TextInputEditText
@@ -40,10 +47,27 @@ class ProfileFragment : Fragment(){
     lateinit var spinnerPosition : Spinner
     lateinit var btnClassChoice : Button
     lateinit var tvProfileStatus : TextView
+    lateinit var onAuthPassedListener : OnAuthPassedListener
     var schoolClass : String? = null
     companion object{
         const val TAG = "ProfileFragment"
         const val REQUEST_CODE_DIALOG_CLASS_CHOICE = 1
+        fun newInstance(user : String) : Fragment
+        {
+            val fragment = ProfileFragment()
+            val bundle = Bundle()
+            bundle.putString("user", user)
+            fragment.arguments = bundle
+
+            return fragment
+        }
+    }
+
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        if(context is OnAuthPassedListener)
+        onAuthPassedListener = context
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -62,7 +86,7 @@ class ProfileFragment : Fragment(){
         val call = NetworkService.instance.getRetrofit().create(ProfileService::class.java)
         val postCall = call.getProfile(TYPE_GET,storage.getUserDetails()?:"")
         var profile : Profile? = null
-
+        Log.d("ProfileFragment", arguments?.getString("user").toString())
         postCall.enqueue(object:Callback<NetworkResponse<Profile>>{
             override fun onFailure(call: Call<NetworkResponse<Profile>>, t: Throwable) {
                 Toast.makeText(context, t.toString(), Toast.LENGTH_LONG).show()
@@ -75,16 +99,7 @@ class ProfileFragment : Fragment(){
                         edFN.setText(it.firstName)
                         edLN.setText(it.lastName)
                         edMN.setText(it.middleName)
-                    }
-                }
-                else {
-                    Toast.makeText(context,response.body()?.message, Toast.LENGTH_LONG).show()
-                    tvProfileStatus.apply{
-                        tvProfileStatus.visibility = View.VISIBLE
-                        tvProfileStatus.text = "Ваш профиль не заполнен"
-                        tvProfileStatus.setBackgroundColor(Color.RED)
-                        tvProfileStatus.setTextColor(Color.WHITE)
-                        tvProfileStatus.gravity = Gravity.CENTER
+
                     }
                 }
             }
@@ -124,22 +139,24 @@ class ProfileFragment : Fragment(){
             val profileService = NetworkService.instance.getRetrofit().create(ProfileService::class.java)
             // TODO: Заменить position
             val item  = spinnerPosition.selectedItem as Position
+            val gson = Gson();
+            val user = gson.fromJson<User>(arguments?.getString("user"), User::class.java)
             val storage = AuthStorage(context)
             val callProfile = profileService.postProfile(
                 RequestProfileModel(
                     TYPE_POST,
-                    Profile(
+                    UserProfile(user,Profile(
                         storage.getUserDetails(),
                         edFN.text.toString(),
                         edLN.text.toString(),
                         edMN.text.toString(),
                         item.index,
                         schoolClass ?: "0"
-                    )
+                    ))
                 )
             )
-            callProfile.enqueue(object : Callback<NetworkResponse<Profile>>{
-                override fun onFailure(call: Call<NetworkResponse<Profile>>, t: Throwable) {
+            callProfile.enqueue(object : Callback<NetworkResponse<UserProfile>>{
+                override fun onFailure(call: Call<NetworkResponse<UserProfile>>, t: Throwable) {
                     Log.d(TAG, "Failure request post profile: $t")
                     context?.let {
                         Toast.makeText(context, t.message, Toast.LENGTH_LONG).show()
@@ -147,12 +164,12 @@ class ProfileFragment : Fragment(){
 
                 }
 
-                override fun onResponse(call: Call<NetworkResponse<Profile>>, response: Response<NetworkResponse<Profile>>) {
+                override fun onResponse(call: Call<NetworkResponse<UserProfile>>, response: Response<NetworkResponse<UserProfile>>) {
                     if(response.body()?.code==0)
                     {
                         Toast.makeText(context, "You success create profile!", Toast.LENGTH_LONG).show()
-                        if(tvProfileStatus.visibility==View.VISIBLE)
-                            tvProfileStatus.visibility = View.GONE
+
+                        onAuthPassedListener.onSuccess(response.body()?.data?.user?.uid)
                     }
                 }
             })
@@ -176,4 +193,6 @@ class ProfileFragment : Fragment(){
             }
         }
     }
+
+
 }

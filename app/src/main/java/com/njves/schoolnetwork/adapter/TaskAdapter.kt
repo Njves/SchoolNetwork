@@ -8,10 +8,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import com.njves.schoolnetwork.Models.network.models.task.Task
+import com.njves.schoolnetwork.Models.network.models.task.TaskPostModel
+import com.njves.schoolnetwork.Models.network.models.task.TaskViewModel
 import com.njves.schoolnetwork.R
 
-class TaskAdapter(val context: Context?, var listTask: List<Task>) : RecyclerView.Adapter<TaskAdapter.TaskHolder>() {
+class TaskAdapter(val context: Context?, var listTask: List<TaskViewModel>) : RecyclerView.Adapter<TaskAdapter.TaskHolder>() {
     companion object {
         const val TAG = "TaskAdapter"
     }
@@ -37,10 +38,13 @@ class TaskAdapter(val context: Context?, var listTask: List<Task>) : RecyclerVie
         private val txFrom: TextView = itemView.findViewById(R.id.from)
         private val txDate: TextView = itemView.findViewById(R.id.date)
 
-        fun bindItem(item: Task) {
+        fun bindItem(item: TaskViewModel) {
+
             txTitle.text = item.title
             txDescription.text = item.description
-            txFrom.text = item.sender.name
+            item.sender?.let{
+                txFrom.text = item.sender.firstName
+            }
             txDate.text = item.date
             Log.d(TAG, txTitle.text.toString())
             itemView.setOnClickListener{

@@ -1,5 +1,5 @@
 package com.njves.schoolnetwork.callback
 
-interface OnActionBarUpdateListener {
+interface UpdateToolbarTitleListener {
     fun updateActionBar(title : String)
 }

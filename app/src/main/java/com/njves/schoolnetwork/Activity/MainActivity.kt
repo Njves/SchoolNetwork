@@ -10,20 +10,33 @@ import androidx.fragment.app.FragmentTransaction
 
 import com.njves.schoolnetwork.R
 import com.njves.schoolnetwork.Storage.AuthStorage
-import com.njves.schoolnetwork.callback.OnActionBarUpdateListener
+import com.njves.schoolnetwork.callback.UpdateToolbarTitleListener
 
 import com.njves.schoolnetwork.callback.OnAuthPassedListener
 import com.njves.schoolnetwork.Fragments.AuthFragment
 
 
-class MainActivity : AppCompatActivity(),OnAuthPassedListener, OnActionBarUpdateListener {
+class MainActivity : AppCompatActivity(),OnAuthPassedListener, UpdateToolbarTitleListener {
     var currentFragment : Fragment? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
+        supportFragmentManager.addOnBackStackChangedListener {
+            val isBack = supportFragmentManager.backStackEntryCount>0
+            if(supportFragmentManager.backStackEntryCount>0)
+            {
+                Log.d("MainActivityBackStack", supportFragmentManager.backStackEntryCount.toString()+", $isBack")
+                supportActionBar?.setDisplayShowHomeEnabled(true)
+                supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            }
+            else{
+                supportActionBar?.setDisplayShowHomeEnabled(false)
+                supportActionBar?.setDisplayHomeAsUpEnabled(false)
+            }
 
+        }
 
         // TODO: Добавить дополнительную проверку на сервере
         // Проверяем если пользователь уже авторизован на телефоне
@@ -72,30 +85,14 @@ class MainActivity : AppCompatActivity(),OnAuthPassedListener, OnActionBarUpdate
 
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
-        if(supportFragmentManager.backStackEntryCount<=1)
-        {
-
-            supportActionBar?.setDisplayShowHomeEnabled(false)
-            supportActionBar?.setDisplayHomeAsUpEnabled(false)
-        }
-
         return true
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-        if(supportFragmentManager.backStackEntryCount<=1)
-        {
-            supportActionBar?.setTitle(R.string.app_name)
-            supportActionBar?.setDisplayShowHomeEnabled(false)
-            supportActionBar?.setDisplayHomeAsUpEnabled(false)
-        }
-    }
+
 
     override fun updateActionBar(title: String) {
         supportActionBar?.setTitle(title)
-        supportActionBar?.setDisplayShowHomeEnabled(true)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
     }
 
 

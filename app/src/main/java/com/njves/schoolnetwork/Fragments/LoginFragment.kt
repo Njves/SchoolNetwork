@@ -15,7 +15,7 @@ import com.njves.schoolnetwork.Models.network.models.auth.User
 import com.njves.schoolnetwork.Models.network.request.LoginService
 import com.njves.schoolnetwork.R
 import com.njves.schoolnetwork.Storage.AuthStorage
-import com.njves.schoolnetwork.callback.OnActionBarUpdateListener
+import com.njves.schoolnetwork.callback.UpdateToolbarTitleListener
 import com.njves.schoolnetwork.callback.OnAuthPassedListener
 import com.njves.schoolnetwork.dialog.AuthErrorDialog
 import retrofit2.Call
@@ -25,7 +25,7 @@ import retrofit2.Response
 class LoginFragment : Fragment() {
     val TAG = "LoginFragment"
     lateinit var onAuthPassedListener : OnAuthPassedListener
-    lateinit var onActionBarUpdateListener : OnActionBarUpdateListener
+    lateinit var updateToolbarTitleListener : UpdateToolbarTitleListener
     override fun onAttach(context: Context?) {
         super.onAttach(context)
         if (context is OnAuthPassedListener) {
@@ -33,18 +33,18 @@ class LoginFragment : Fragment() {
         } else {
             throw RuntimeException(context.toString() + " must implement OnAuthPassedListener")
         }
-        if(context is OnActionBarUpdateListener)
+        if(context is UpdateToolbarTitleListener)
         {
-            onActionBarUpdateListener = context
+            updateToolbarTitleListener = context
         }
         else{
-            throw RuntimeException(context.toString() + " must implement OnActionBarUpdateListener")
+            throw RuntimeException(context.toString() + " must implement UpdateToolbarTitleListener")
         }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val v = layoutInflater.inflate(R.layout.fragment_login, container, false)
-        onActionBarUpdateListener.updateActionBar(context?.resources?.getString(R.string.auth_login)?:"Login")
+        updateToolbarTitleListener.updateActionBar(context?.resources?.getString(R.string.auth_login)?:"Login")
         // init views
         val edName = v.findViewById<TextInputEditText>(R.id.edName)
         val edPass = v.findViewById<TextInputEditText>(R.id.edPass)
@@ -75,7 +75,7 @@ class LoginFragment : Fragment() {
 
                 override fun onResponse(call: Call<NetworkResponse<User>>, response: Response<NetworkResponse<User>>) {
                     // CODE 0 - Успех CODE 1 - Ошибка
-                    val code = response.body()?.code ?: 1
+                    val code = response.body()?.code
                     val storage = AuthStorage(context)
                     val message = response.body()?.message ?: "Неизвестная ошибка"
                     val dataObjects = response.body()?.data

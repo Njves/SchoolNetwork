@@ -8,7 +8,7 @@ import retrofit2.http.Query
 
 interface UserService {
     // {"type":"GET", "position":1}
-    @GET("Task/users?type=GET&school=12&position=1")
+    @GET("TaskPostModel/users?type=GET&school=12&position=1")
     fun getUsersByPosition(@Query("type") type : String,
                            @Query("position") position : Int,
                            @Query("schoolNumber") schoolNumber : Int) : Call<List<User>>

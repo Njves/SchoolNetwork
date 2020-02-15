@@ -8,18 +8,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
-import android.widget.NumberPicker
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import com.njves.schoolnetwork.Models.NetworkService
 import com.njves.schoolnetwork.Models.network.models.NetworkResponse
+import com.njves.schoolnetwork.Models.network.models.auth.Profile
 import com.njves.schoolnetwork.Models.network.models.auth.User
 import com.njves.schoolnetwork.Models.network.models.task.RequestTaskModel
-import com.njves.schoolnetwork.Models.network.models.task.Task
+import com.njves.schoolnetwork.Models.network.models.task.TaskPostModel
 import com.njves.schoolnetwork.Models.network.request.TaskService
+import com.njves.schoolnetwork.Models.network.request.TeachersService
 import com.njves.schoolnetwork.Models.network.request.UserService
 import com.njves.schoolnetwork.R
 import com.njves.schoolnetwork.Storage.AuthStorage
@@ -37,6 +38,7 @@ class TaskEditFragment : Fragment() {
     lateinit var rvReceivers : RecyclerView
     lateinit var btnSend : Button
     lateinit var onCloseListener: OnFragmentInteraction
+    lateinit var adapter : ReceiversAdapter
     var currentUser : User?= null
     override fun onAttach(context: Context?) {
         super.onAttach(context)
@@ -51,9 +53,9 @@ class TaskEditFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val v = layoutInflater.inflate(R.layout.fragment_task_edit, container, false)
         rvReceivers = v.findViewById(R.id.rvReceivers)
-        val adapter = ReceiversAdapter(context, listOf(User("test", "test", "test", "test", "test", 1)))
+
         rvReceivers.layoutManager = LinearLayoutManager(context)
-        rvReceivers.adapter = adapter
+
 
         Log.d("TaskEditFragment", "OnCreate TaskEditFragment")
         val userService = NetworkService.instance.getRetrofit().create(UserService::class.java)
@@ -69,7 +71,24 @@ class TaskEditFragment : Fragment() {
             }
 
         })
+        val teachersService = NetworkService.instance.getRetrofit().create(TeachersService::class.java)
+        val call = teachersService.getTeacherList(1,1)
+        call.enqueue(object : Callback<NetworkResponse<List<Profile>>>{
+            override fun onFailure(call: Call<NetworkResponse<List<Profile>>>, t: Throwable) {
+                Log.d("TaskEdit", t.toString())
+                Toast.makeText(context, "Не удалось получить список учителей", Toast.LENGTH_LONG).show()
+            }
 
+            override fun onResponse(
+                call: Call<NetworkResponse<List<Profile>>>,
+                response: Response<NetworkResponse<List<Profile>>>) {
+                adapter = ReceiversAdapter(context, response.body()?.data?:listOf())
+                rvReceivers.adapter = adapter
+                Log.d("TaskEdit", response.body()?.data.toString())
+            }
+
+
+        })
         etTitle = v.findViewById(R.id.edTitle)
         etDescription = v.findViewById(R.id.edDescription)
         btnDatePicker = v.findViewById(R.id.btnDatePicker)
@@ -79,26 +98,28 @@ class TaskEditFragment : Fragment() {
             val title = etTitle.text.toString()
             val desc = etDescription.text.toString()
             val date = Date()
-            val receiver : User? = adapter.getUser()
+            val receiver = adapter.getUser()?.uid
             val taskService = NetworkService.instance.getRetrofit().create(TaskService::class.java)
             Log.d("TaskEditFragment", adapter.getUser().toString())
-
+            val storage = AuthStorage(context)
+            val sender = storage.getUserDetails()!!
+            Log.d("TaskEditFragment", "DEBUG INFO: $receiver,$sender")
                 val postCall = taskService.postCallTask(
                     RequestTaskModel(
                         "POST",
-                        Task(0, title, desc, date.toString(), currentUser!!, receiver!!)
+                        TaskPostModel(0, title, desc, date.toString(), storage.getUserDetails()!!, receiver!!)
                     )
                 )
-                postCall.enqueue(object : Callback<NetworkResponse<Task>> {
-                    override fun onFailure(call: Call<NetworkResponse<Task>>, t: Throwable) {
-
+                postCall.enqueue(object : Callback<NetworkResponse<TaskPostModel>> {
+                    override fun onFailure(call: Call<NetworkResponse<TaskPostModel>>, t: Throwable) {
+                        Toast.makeText(context, "Не удалось отправить задачу", Toast.LENGTH_LONG).show()
                     }
 
-                    override fun onResponse(call: Call<NetworkResponse<Task>>, response: Response<NetworkResponse<Task>>) {
+                    override fun onResponse(call: Call<NetworkResponse<TaskPostModel>>, response: Response<NetworkResponse<TaskPostModel>>) {
                         val code = response.body()?.code
                         val message = response.body()?.message
                         if (code == 0) {
-                            Toast.makeText(context, "Успех", Toast.LENGTH_SHORT).show()
+                            Snackbar.make(v, "Задача была успешно отправлена",Snackbar.LENGTH_SHORT).show()
                             onCloseListener.onClose()
                         } else {
                             val errorDialog = AuthErrorDialog.newInstance(message)
