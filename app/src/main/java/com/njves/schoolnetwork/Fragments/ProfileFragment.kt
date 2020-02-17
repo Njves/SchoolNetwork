@@ -13,17 +13,15 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.gson.Gson
 import com.njves.schoolnetwork.Models.NetworkService
 import com.njves.schoolnetwork.Models.NetworkService.Companion.TYPE_GET
 import com.njves.schoolnetwork.Models.NetworkService.Companion.TYPE_POST
 import com.njves.schoolnetwork.Models.network.models.NetworkResponse
-import com.njves.schoolnetwork.Models.network.models.auth.RequestProfileModel
 import com.njves.schoolnetwork.Models.network.models.RequestProfilePosition
-import com.njves.schoolnetwork.Models.network.models.auth.Position
-import com.njves.schoolnetwork.Models.network.models.auth.Profile
-import com.njves.schoolnetwork.Models.network.models.auth.User
+import com.njves.schoolnetwork.Models.network.models.auth.*
 import com.njves.schoolnetwork.Models.network.models.profile.UserProfile
 import com.njves.schoolnetwork.Models.network.request.PositionListService
 import com.njves.schoolnetwork.Models.network.request.ProfileService
@@ -40,6 +38,7 @@ import retrofit2.Response
 import java.lang.RuntimeException
 
 class ProfileFragment : Fragment() {
+    // TODO: При нажатие на подтвердить приложение вылетает с ошибкой о null user
     lateinit var edFN : TextInputEditText
     lateinit var edLN : TextInputEditText
     lateinit var edMN : TextInputEditText
@@ -138,42 +137,81 @@ class ProfileFragment : Fragment() {
             // Проверка на успешность запроса
             val profileService = NetworkService.instance.getRetrofit().create(ProfileService::class.java)
             // TODO: Заменить position
-            val item  = spinnerPosition.selectedItem as Position
+            val item = spinnerPosition.selectedItem as Position
             val gson = Gson();
             val user = gson.fromJson<User>(arguments?.getString("user"), User::class.java)
-            val storage = AuthStorage(context)
-            val callProfile = profileService.postProfile(
-                RequestProfileModel(
-                    TYPE_POST,
-                    UserProfile(user,Profile(
-                        storage.getUserDetails(),
-                        edFN.text.toString(),
-                        edLN.text.toString(),
-                        edMN.text.toString(),
-                        item.index,
-                        schoolClass ?: "0"
-                    ))
+            if (user == null) {
+                val updateProfile = profileService.updateProfile(
+                    RequestModel(
+                        "UPDATE", Profile(
+                            storage.getUserDetails(),
+                            edFN.text.toString(),
+                            edLN.text.toString(),
+                            edMN.text.toString(),
+                            item.index,
+                            schoolClass ?: "0"
+                        )
+                    )
                 )
-            )
-            callProfile.enqueue(object : Callback<NetworkResponse<UserProfile>>{
-                override fun onFailure(call: Call<NetworkResponse<UserProfile>>, t: Throwable) {
-                    Log.d(TAG, "Failure request post profile: $t")
-                    context?.let {
-                        Toast.makeText(context, t.message, Toast.LENGTH_LONG).show()
+                updateProfile.enqueue(object : Callback<NetworkResponse<Profile>> {
+                    override fun onFailure(call: Call<NetworkResponse<Profile>>, t: Throwable) {
+                        Log.d("ProfileFragment", "Failure request: $t")
+                        Toast.makeText(context, "Произашла ошибка запроса", Toast.LENGTH_SHORT).show()
                     }
 
-                }
-
-                override fun onResponse(call: Call<NetworkResponse<UserProfile>>, response: Response<NetworkResponse<UserProfile>>) {
-                    if(response.body()?.code==0)
-                    {
-                        Toast.makeText(context, "You success create profile!", Toast.LENGTH_LONG).show()
-
-                        onAuthPassedListener.onSuccess(response.body()?.data?.user?.uid)
+                    override fun onResponse(
+                        call: Call<NetworkResponse<Profile>>,
+                        response: Response<NetworkResponse<Profile>>
+                    ) {
+                        val code = response.body()?.code
+                        val message = response.body()?.message
+                        Log.d("ProfileFragment", response.body().toString())
+                        if(code==0)
+                        Snackbar.make(v, "Профиль успешно обновлен", Snackbar.LENGTH_SHORT).show()
+                        else{
+                            Snackbar.make(v, "Ошибка: $message", Snackbar.LENGTH_SHORT).show()
+                        }
                     }
-                }
-            })
 
+                })
+
+            } else {
+                val callProfile = profileService.postProfile(
+                    RequestProfileModel(
+                        TYPE_POST,
+                        UserProfile(
+                            user, Profile(
+                                storage.getUserDetails(),
+                                edFN.text.toString(),
+                                edLN.text.toString(),
+                                edMN.text.toString(),
+                                item.index,
+                                schoolClass ?: "0"
+                            )
+                        )
+                    )
+                )
+                callProfile.enqueue(object : Callback<NetworkResponse<UserProfile>> {
+                    override fun onFailure(call: Call<NetworkResponse<UserProfile>>, t: Throwable) {
+                        Log.d(TAG, "Failure request post profile: $t")
+                        context?.let {
+                            Toast.makeText(context, t.message, Toast.LENGTH_LONG).show()
+                        }
+
+                    }
+
+                    override fun onResponse(
+                        call: Call<NetworkResponse<UserProfile>>,
+                        response: Response<NetworkResponse<UserProfile>>
+                    ) {
+                        if (response.body()?.code == 0) {
+                            Toast.makeText(context, "You success create profile!", Toast.LENGTH_LONG).show()
+
+                            onAuthPassedListener.onSuccess(response.body()?.data?.user?.uid)
+                        }
+                    }
+                })
+            }
 
         })
         return v

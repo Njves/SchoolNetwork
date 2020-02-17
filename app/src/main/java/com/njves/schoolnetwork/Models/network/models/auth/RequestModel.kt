@@ -1,4 +1,3 @@
 package com.njves.schoolnetwork.Models.network.models.auth
 
-class RequestModel {
-}
+data class RequestModel(val type : String, val profile : Profile)

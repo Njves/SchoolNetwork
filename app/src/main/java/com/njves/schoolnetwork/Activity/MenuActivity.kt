@@ -74,6 +74,7 @@ class MenuActivity : AppCompatActivity(), OnLogoutListener, TaskFragment.OnFragm
                 val message = response.body()?.message
                 if(code==0) {
                     val data = response.body()?.data
+                    Log.d("MenuActivity", data.toString())
                     inflateHeaderView(header, data)
                 }else{
                     // TODO: Временное решение

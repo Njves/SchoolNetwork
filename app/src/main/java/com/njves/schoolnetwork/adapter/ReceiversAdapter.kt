@@ -51,11 +51,13 @@ class ReceiversAdapter(val context : Context?, private val listUsers : List<Prof
     {
         private val tvAvatar = itemView.findViewById<ImageView>(R.id.ivAva)
         private val tvName = itemView.findViewById<TextView>(R.id.tvName)
+        private val tvPos = itemView.findViewById<TextView>(R.id.tvPos)
 
         fun bind(i : Int)
         {
-
-            tvName.setText(listUsers.get(i).firstName)
+            
+            tvName.setText(listUsers[i].firstName +" "+ listUsers[i].lastName)
+            tvPos.text = listUsers[i].position.toString()
             itemView.setOnClickListener{
                 Log.d("ReceiversAdapter", selectedItems.toString())
                 Log.d("ReceiversAdapter", listUsers.toString())
