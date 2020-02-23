@@ -1,4 +1,4 @@
-package com.njves.schoolnetwork.Fragments
+package com.njves.schoolnetwork.fragments
 
 import android.content.Context
 import android.os.Bundle
@@ -37,15 +37,15 @@ class AuthFragment : Fragment() {
         val ivLogo = v.findViewById<ImageView>(R.id.ivLogo)
         val btnLogin = v.findViewById<Button>(R.id.btnLogin)
         val tvRegister = v.findViewById<TextView>(R.id.tvRegister)
-        btnLogin.setOnClickListener(View.OnClickListener {
+        btnLogin.setOnClickListener {
             val fragment = LoginFragment()
             activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.authContainer, fragment)?.addToBackStack(null)?.commit()
-        })
+        }
 
-        tvRegister.setOnClickListener(View.OnClickListener {
+        tvRegister.setOnClickListener {
             val fragment = RegisterFragment()
             activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.authContainer, fragment)?.addToBackStack(null)?.commit()
-        })
+        }
 
         return v
     }

@@ -1,4 +1,4 @@
-package com.njves.schoolnetwork.Fragments
+package com.njves.schoolnetwork.fragments
 
 import android.content.Context
 import android.os.Bundle

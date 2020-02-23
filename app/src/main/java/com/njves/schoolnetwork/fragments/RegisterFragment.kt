@@ -1,4 +1,4 @@
-package com.njves.schoolnetwork.Fragments
+package com.njves.schoolnetwork.fragments
 
 import android.content.Context
 import android.os.Bundle
@@ -21,7 +21,6 @@ import com.njves.schoolnetwork.R
 import com.njves.schoolnetwork.callback.UpdateToolbarTitleListener
 import com.njves.schoolnetwork.callback.OnAuthPassedListener
 import com.njves.schoolnetwork.dialog.AuthErrorDialog
-import kotlinx.android.synthetic.main.fragment_register.progressBar
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -39,7 +38,7 @@ class RegisterFragment : Fragment() {
     companion object {
         const val TAG = "RegisterFragment"
         const val number = "schoolNumber"
-        const val name = "name";
+        const val name = "name"
         const val email = "email"
 
     }

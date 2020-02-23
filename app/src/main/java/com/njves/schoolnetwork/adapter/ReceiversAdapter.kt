@@ -33,17 +33,15 @@ class ReceiversAdapter(val context : Context?, private val listUsers : List<Prof
         selectedItems.add(position, false)
 
     }
-    public fun getUser() : Profile?
+    fun getUser() : Profile?
     {
 
         val index = selectedItems.indexOf(true)
         Log.d("ReceiversAdapter", "$index")
-        if(index==-1)
-        {
-            return null
-        }
-        else{
-            return listUsers[index]
+        return if(index==-1) {
+            null
+        } else{
+            listUsers[index]
         }
 
     }
@@ -55,9 +53,15 @@ class ReceiversAdapter(val context : Context?, private val listUsers : List<Prof
 
         fun bind(i : Int)
         {
-            
-            tvName.setText(listUsers[i].firstName +" "+ listUsers[i].lastName)
-            tvPos.text = listUsers[i].position.toString()
+            val positions = listUsers[i].position
+            var pos = ""
+            when(positions){
+                1->pos="Учитель"
+                2->pos="Завуч"
+            }
+            val namePlaceholder = String.format(context?.resources?.getString(R.string.receivers_name_placeholder)!!,listUsers[i].firstName,listUsers[i].lastName)
+            tvName.text = namePlaceholder
+            tvPos.text = pos
             itemView.setOnClickListener{
                 Log.d("ReceiversAdapter", selectedItems.toString())
                 Log.d("ReceiversAdapter", listUsers.toString())

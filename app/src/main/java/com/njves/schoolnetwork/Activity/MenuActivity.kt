@@ -17,16 +17,13 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import com.google.gson.Gson
-import com.njves.schoolnetwork.Fragments.TaskEditFragment
-import com.njves.schoolnetwork.Fragments.TaskFragment
+import com.njves.schoolnetwork.fragments.ProfileFragment
+import com.njves.schoolnetwork.fragments.TaskEditFragment
+import com.njves.schoolnetwork.fragments.TaskFragment
 import com.njves.schoolnetwork.Models.NetworkService
 import com.njves.schoolnetwork.Models.network.models.NetworkResponse
 import com.njves.schoolnetwork.Models.network.models.auth.Profile
-import com.njves.schoolnetwork.Models.network.models.profile.UserProfile
 import com.njves.schoolnetwork.Models.network.request.ProfileService
-import com.njves.schoolnetwork.Models.network.request.UserProfileService
-import com.njves.schoolnetwork.Models.network.request.UserService
 import com.njves.schoolnetwork.R
 import com.njves.schoolnetwork.Storage.AuthStorage
 import com.njves.schoolnetwork.callback.OnLogoutListener
@@ -35,10 +32,10 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class MenuActivity : AppCompatActivity(), OnLogoutListener, TaskFragment.OnFragmentInteraction, TaskEditFragment.OnFragmentInteraction {
+class MenuActivity : AppCompatActivity(), OnLogoutListener, TaskFragment.OnFragmentInteraction, TaskEditFragment.OnFragmentInteraction, ProfileFragment.OnProfileUpdateListener, Callback<NetworkResponse<Profile>> {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
-
+    private lateinit var navView : NavigationView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_menu)
@@ -47,7 +44,7 @@ class MenuActivity : AppCompatActivity(), OnLogoutListener, TaskFragment.OnFragm
 
 
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
-        val navView: NavigationView = findViewById(R.id.nav_view)
+        navView = findViewById(R.id.nav_view)
         val navController = findNavController(R.id.nav_host_fragment)
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
@@ -57,32 +54,12 @@ class MenuActivity : AppCompatActivity(), OnLogoutListener, TaskFragment.OnFragm
         val storage = AuthStorage(this)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-        val header = navView.getHeaderView(0)
+
+        
         val profileService = NetworkService.instance.getRetrofit().create(ProfileService::class.java)
         val getProfile = profileService.getProfile("GET", storage.getUserDetails()?:"0")
-        getProfile.enqueue(object : Callback<NetworkResponse<Profile>>{
-            override fun onFailure(call: Call<NetworkResponse<Profile>>, t: Throwable) {
-                Log.d("MenuActivity", "Failure request: $t")
-                Toast.makeText(this@MenuActivity, "Произашла ошибка запроса к серверу", Toast.LENGTH_SHORT).show()
-            }
+        getProfile.enqueue(this)
 
-            override fun onResponse(
-                call: Call<NetworkResponse<Profile>>,
-                response: Response<NetworkResponse<Profile>>
-            ) {
-                val code = response.body()?.code
-                val message = response.body()?.message
-                if(code==0) {
-                    val data = response.body()?.data
-                    Log.d("MenuActivity", data.toString())
-                    inflateHeaderView(header, data)
-                }else{
-                    // TODO: Временное решение
-                    Toast.makeText(this@MenuActivity, message, Toast.LENGTH_SHORT).show()
-                }
-            }
-
-        })
 
 
     }
@@ -123,12 +100,13 @@ class MenuActivity : AppCompatActivity(), OnLogoutListener, TaskFragment.OnFragm
         val avatar = header.findViewById<ImageView>(R.id.ivAva)
         val tvName = header.findViewById<TextView>(R.id.tvName)
         val tvPos = header.findViewById<TextView>(R.id.tvPos)
-        tvName.text = "${data?.firstName}" + ", ${data?.lastName}"
+        val namePlaceholder = resources.getString(R.string.header_name_placeholder, data?.firstName, data?.lastName)
+        tvName.text = namePlaceholder
         val schoolClass = data?.`class`
         // TODO: Временное решение
         when(data?.position) {
             1-> tvPos.text = "Учитель, $schoolClass"
-            2->tvPos.text = "Зауч"
+            2->tvPos.text = "Завуч"
         }
 
         Picasso.get().load(R.drawable.ic_avatar_placeholder_black_24dp).placeholder(R.drawable.ic_avatar_placeholder_black_24dp).into(avatar)
@@ -136,5 +114,33 @@ class MenuActivity : AppCompatActivity(), OnLogoutListener, TaskFragment.OnFragm
 
 
 
+
+    override fun onUpdateProfile() {
+        val storage = AuthStorage(this)
+        val profileService = NetworkService.instance.getRetrofit().create(ProfileService::class.java)
+        val getProfile = profileService.getProfile("GET", storage.getUserDetails()?:"0")
+        getProfile.enqueue(this)
+
+    }
+
+    override fun onFailure(call: Call<NetworkResponse<Profile>>, t: Throwable) {
+        Log.d("MenuActivity", "Failure request: $t")
+        Toast.makeText(this@MenuActivity, "Произашла ошибка запроса к серверу", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onResponse(call: Call<NetworkResponse<Profile>>, response: Response<NetworkResponse<Profile>>) {
+        val header = navView.getHeaderView(0)
+        val code = response.body()?.code
+        val message = response.body()?.message
+        if(code==0) {
+            val data = response.body()?.data
+            Log.d("MenuActivity", data.toString())
+            inflateHeaderView(header, data)
+        }else{
+            // TODO: Временное решение
+            Toast.makeText(this@MenuActivity, message, Toast.LENGTH_SHORT).show()
+        }
+    }
 }
+
 

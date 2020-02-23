@@ -1,4 +1,4 @@
-package com.njves.schoolnetwork.Fragments
+package com.njves.schoolnetwork.fragments
 
 import android.content.Context
 import android.net.Uri
@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import android.widget.Button
 
 import com.njves.schoolnetwork.R
-import com.njves.schoolnetwork.Storage.AuthStorage
 import com.njves.schoolnetwork.callback.OnLogoutListener
 
 // TODO: Rename parameter arguments, choose names that match

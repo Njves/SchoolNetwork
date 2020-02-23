@@ -1,4 +1,4 @@
-package com.njves.schoolnetwork.Fragments
+package com.njves.schoolnetwork.fragments
 
 import android.content.Context
 import android.os.Bundle
@@ -44,7 +44,7 @@ class LoginFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val v = layoutInflater.inflate(R.layout.fragment_login, container, false)
-        updateToolbarTitleListener.updateActionBar(context?.resources?.getString(R.string.auth_login)?:"Login")
+        updateToolbarTitleListener.updateActionBar(context?.resources?.getString(R.string.auth_login)?:"Логин")
         // init views
         val edName = v.findViewById<TextInputEditText>(R.id.edName)
         val edPass = v.findViewById<TextInputEditText>(R.id.edPass)
@@ -59,7 +59,7 @@ class LoginFragment : Fragment() {
         })
         val storage = AuthStorage(context)
         edName.setText(storage.getUserName()?:"")
-        btnSubmit.setOnClickListener(View.OnClickListener {
+        btnSubmit.setOnClickListener {
             progressBar.visibility = View.VISIBLE
             val loginService = NetworkService.instance.getRetrofit().create(LoginService::class.java)
             val call = loginService.callLogin(edName.text.toString(),
@@ -76,24 +76,19 @@ class LoginFragment : Fragment() {
                 override fun onResponse(call: Call<NetworkResponse<User>>, response: Response<NetworkResponse<User>>) {
                     // CODE 0 - Успех CODE 1 - Ошибка
                     val code = response.body()?.code
-                    val storage = AuthStorage(context)
                     val message = response.body()?.message ?: "Неизвестная ошибка"
                     val dataObjects = response.body()?.data
                     progressBar.visibility = View.INVISIBLE
-                    if(response.body()?.code==0)
-                    {
-                        if(checkboxRemMe.isChecked)
-                        {
+                    if(code==0) {
+                        if(checkboxRemMe.isChecked) {
                             storage.setUserName(dataObjects?.name?:"")
                         }
 
                         onAuthPassedListener.onSuccess(dataObjects?.uid)
                     }
                     // Если данные неправильные
-                    else
-                    {
-                        if(activity?.supportFragmentManager!=null)
-                        {
+                    else {
+                        if(activity?.supportFragmentManager!=null) {
                             AuthErrorDialog.newInstance(message).show(activity?.supportFragmentManager, null)
                         }
 
@@ -103,7 +98,7 @@ class LoginFragment : Fragment() {
             })
 
 
-        })
+        }
         return v
     }
 

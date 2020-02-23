@@ -1,12 +1,10 @@
-package com.njves.schoolnetwork.Fragments
+package com.njves.schoolnetwork.fragments
 
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,7 +18,6 @@ import com.njves.schoolnetwork.Models.NetworkService
 import com.njves.schoolnetwork.Models.NetworkService.Companion.TYPE_GET
 import com.njves.schoolnetwork.Models.NetworkService.Companion.TYPE_POST
 import com.njves.schoolnetwork.Models.network.models.NetworkResponse
-import com.njves.schoolnetwork.Models.network.models.RequestProfilePosition
 import com.njves.schoolnetwork.Models.network.models.auth.*
 import com.njves.schoolnetwork.Models.network.models.profile.UserProfile
 import com.njves.schoolnetwork.Models.network.request.PositionListService
@@ -30,23 +27,24 @@ import com.njves.schoolnetwork.Models.network.request.ProfileService
 import com.njves.schoolnetwork.R
 import com.njves.schoolnetwork.Storage.AuthStorage
 import com.njves.schoolnetwork.callback.OnAuthPassedListener
-import com.njves.schoolnetwork.callback.UpdateToolbarTitleListener
 import com.njves.schoolnetwork.dialog.ClassChoiceDialog
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.lang.RuntimeException
 
 class ProfileFragment : Fragment() {
     // TODO: При нажатие на подтвердить приложение вылетает с ошибкой о null user
     lateinit var edFN : TextInputEditText
     lateinit var edLN : TextInputEditText
     lateinit var edMN : TextInputEditText
+    lateinit var ivAvatar : ImageView
     lateinit var btnSubmit : Button
     lateinit var spinnerPosition : Spinner
     lateinit var btnClassChoice : Button
     lateinit var tvProfileStatus : TextView
+
     lateinit var onAuthPassedListener : OnAuthPassedListener
+    lateinit var onProfileUpdateListener: OnProfileUpdateListener
     var schoolClass : String? = null
     companion object{
         const val TAG = "ProfileFragment"
@@ -65,8 +63,9 @@ class ProfileFragment : Fragment() {
     override fun onAttach(context: Context?) {
         super.onAttach(context)
         if(context is OnAuthPassedListener)
-        onAuthPassedListener = context
-
+            onAuthPassedListener = context
+        if(context is OnProfileUpdateListener)
+            onProfileUpdateListener = context
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -76,19 +75,33 @@ class ProfileFragment : Fragment() {
         edFN = v.findViewById<TextInputEditText>(R.id.edFN)
         edLN = v.findViewById<TextInputEditText>(R.id.edLN)
         edMN = v.findViewById<TextInputEditText>(R.id.edMN)
+        ivAvatar = v.findViewById(R.id.ivAvatar)
         spinnerPosition = v.findViewById<Spinner>(R.id.spinnerPosition)
         btnClassChoice = v.findViewById(R.id.btnClassChoice)
         btnSubmit = v.findViewById<Button>(R.id.btnSubmit)
 
+        spinnerPosition.onItemSelectedListener= object : AdapterView.OnItemSelectedListener{
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
 
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                when(position){
+                    0-> btnClassChoice.visibility = View.VISIBLE
+                    1-> btnClassChoice.visibility = View.GONE
+                }
+            }
+
+        }
         val storage = AuthStorage(context)
         val call = NetworkService.instance.getRetrofit().create(ProfileService::class.java)
         val postCall = call.getProfile(TYPE_GET,storage.getUserDetails()?:"")
-        var profile : Profile? = null
+        var profile : Profile?
         Log.d("ProfileFragment", arguments?.getString("user").toString())
         postCall.enqueue(object:Callback<NetworkResponse<Profile>>{
             override fun onFailure(call: Call<NetworkResponse<Profile>>, t: Throwable) {
                 Toast.makeText(context, t.toString(), Toast.LENGTH_LONG).show()
+
             }
 
             override fun onResponse(call: Call<NetworkResponse<Profile>>, response: Response<NetworkResponse<Profile>>) {
@@ -133,7 +146,7 @@ class ProfileFragment : Fragment() {
             }
         })
 
-        btnSubmit.setOnClickListener(View.OnClickListener {
+        btnSubmit.setOnClickListener {
             // Проверка на успешность запроса
             val profileService = NetworkService.instance.getRetrofit().create(ProfileService::class.java)
             // TODO: Заменить position
@@ -166,9 +179,10 @@ class ProfileFragment : Fragment() {
                         val code = response.body()?.code
                         val message = response.body()?.message
                         Log.d("ProfileFragment", response.body().toString())
-                        if(code==0)
-                        Snackbar.make(v, "Профиль успешно обновлен", Snackbar.LENGTH_SHORT).show()
-                        else{
+                        if(code==0) {
+                            Snackbar.make(v, "Профиль успешно обновлен", Snackbar.LENGTH_SHORT).show()
+                            onProfileUpdateListener.onUpdateProfile()
+                        } else{
                             Snackbar.make(v, "Ошибка: $message", Snackbar.LENGTH_SHORT).show()
                         }
                     }
@@ -213,7 +227,7 @@ class ProfileFragment : Fragment() {
                 })
             }
 
-        })
+        }
         return v
     }
 
@@ -231,6 +245,8 @@ class ProfileFragment : Fragment() {
             }
         }
     }
-
+    public interface OnProfileUpdateListener{
+        fun onUpdateProfile()
+    }
 
 }

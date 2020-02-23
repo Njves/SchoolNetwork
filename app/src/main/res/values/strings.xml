@@ -20,9 +20,10 @@
     <string name="dialog_error_title">Ошибка</string>
     <string name="dialog_submit">Ок</string>
     <string name="title_activity_menu">MenuActivity</string>
-    <string name="nav_task">Tasks</string>
-    <string name="nav_logout">Logout</string>
-    <string name="nav_settings">Settings</string>
+    <string name="nav_task">Задачи</string>
+    <string name="nav_logout">Выйти из аккаунта</string>
+    <string name="nav_settings">Настройки</string>
+    <string name="nav_profile">Профиль</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Имя Фамилия</string>
@@ -34,14 +35,16 @@
     <string name="task_edit_btn_receiver_picker">Выберите получателей</string>
     <string name="task_edit_btn_send">Отправить</string>
     <string name="action_settings">Settings</string>
-    <string name="auth_register">Registration</string>
-    <string name="auth_login">Login</string>
+    <string name="auth_register">Регистрация</string>
+    <string name="auth_login">Логин</string>
     <string name="auth">Authorization</string>
-    <string name="menu_profile">Profile</string>
-    <string name="menu_task">Tasks</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
+    <string name="menu_profile">Профиль</string>
+    <string name="menu_task">Задачи</string>
+    <string name="avatar_description">Фото профиля</string>
+    <string name="settings_logout">Выйти из аккаунта</string>
+    <string name="profile_class_choice">Выбрать класс</string>
+    <string name="receivers_name_placeholder">%1$s %2$s</string>
+    <string name="header_name_placeholder">%1$s %2$s</string>
+    <string name="task_detail_files_list">Прикрепленные файлы:</string>
 
 </resources>

@@ -13,7 +13,7 @@ import com.njves.schoolnetwork.Storage.AuthStorage
 import com.njves.schoolnetwork.callback.UpdateToolbarTitleListener
 
 import com.njves.schoolnetwork.callback.OnAuthPassedListener
-import com.njves.schoolnetwork.Fragments.AuthFragment
+import com.njves.schoolnetwork.fragments.AuthFragment
 
 
 class MainActivity : AppCompatActivity(),OnAuthPassedListener, UpdateToolbarTitleListener {
@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity(),OnAuthPassedListener, UpdateToolbarTitl
         }
         return false
     }
-    // TODO: Придумать нормальное название метода
+
     private fun startMenuActivity(){
         val intent = Intent(this,MenuActivity::class.java)
         startActivity(intent)

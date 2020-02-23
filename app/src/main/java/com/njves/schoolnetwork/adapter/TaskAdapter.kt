@@ -7,12 +7,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.RecyclerView
 import com.njves.schoolnetwork.Models.network.models.task.TaskPostModel
 import com.njves.schoolnetwork.Models.network.models.task.TaskViewModel
 import com.njves.schoolnetwork.R
+import com.njves.schoolnetwork.callback.OnRecyclerViewTaskOnItemClickListener
 
-class TaskAdapter(val context: Context?, var listTask: List<TaskViewModel>) : RecyclerView.Adapter<TaskAdapter.TaskHolder>() {
+class TaskAdapter(val context: Context?, var listTask: List<TaskViewModel>, val onItemClickListener : OnRecyclerViewTaskOnItemClickListener) : RecyclerView.Adapter<TaskAdapter.TaskHolder>() {
+
     companion object {
         const val TAG = "TaskAdapter"
     }
@@ -42,15 +45,16 @@ class TaskAdapter(val context: Context?, var listTask: List<TaskViewModel>) : Re
 
             txTitle.text = item.title
             txDescription.text = item.description
-            item.sender?.let{
+            item.sender.let{
                 txFrom.text = item.sender.firstName
             }
             txDate.text = item.date
             Log.d(TAG, txTitle.text.toString())
             itemView.setOnClickListener{
-                Toast.makeText(context, "Test", Toast.LENGTH_SHORT).show()
+                onItemClickListener.onItemClick(listTask[adapterPosition])
             }
 
         }
     }
+
 }
