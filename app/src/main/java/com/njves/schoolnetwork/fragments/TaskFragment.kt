@@ -9,12 +9,15 @@ import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.viewpager.widget.ViewPager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.tabs.TabLayout
 import com.google.gson.Gson
 import com.njves.schoolnetwork.Models.NetworkService
 import com.njves.schoolnetwork.Models.network.models.NetworkResponse
@@ -23,6 +26,7 @@ import com.njves.schoolnetwork.Models.network.request.TaskService
 import com.njves.schoolnetwork.R
 import com.njves.schoolnetwork.Storage.AuthStorage
 import com.njves.schoolnetwork.adapter.TaskAdapter
+import com.njves.schoolnetwork.adapter.TaskPagerAdapter
 import com.njves.schoolnetwork.callback.OnRecyclerViewTaskOnItemClickListener
 import retrofit2.Call
 import retrofit2.Callback
@@ -33,11 +37,12 @@ class TaskFragment : Fragment(), OnRecyclerViewTaskOnItemClickListener, SwipeRef
     private lateinit var rvTask : RecyclerView
     private lateinit var adapter : TaskAdapter
     private lateinit var tvErrorMsg : TextView
-    private lateinit var fabAddTask : FloatingActionButton
-    private lateinit var interaction : OnFragmentInteraction
+
+
     private lateinit var pbLoading : ProgressBar
     private lateinit var gson : Gson
     private lateinit var swipeLayout : SwipeRefreshLayout
+    private lateinit var tabLayout : TabLayout
     companion object{
         const val TAG  = "TaskFragment"
         const val ARG_TASK = "task"
@@ -46,21 +51,19 @@ class TaskFragment : Fragment(), OnRecyclerViewTaskOnItemClickListener, SwipeRef
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-        if(context is OnFragmentInteraction){
-            interaction = context
-        }else{
-            throw RuntimeException(" must implemented OnFragmentInteraction")
-        }
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val v = layoutInflater.inflate(R.layout.fragment_task, container, false)
         pbLoading = v.findViewById(R.id.pbLoading)
         pbLoading.visibility = View.VISIBLE
+
+
         gson = Gson()
         swipeLayout = v.findViewById(R.id.swipeLayout)
         swipeLayout.setOnRefreshListener(this)
-        fabAddTask = v.findViewById(R.id.fabAdd)
+
         val taskService = NetworkService.instance.getRetrofit().create(TaskService::class.java)
         val storage = AuthStorage(context)
         val call = taskService.getTaskList("GET",storage.getUserDetails()?:"")
@@ -88,19 +91,18 @@ class TaskFragment : Fragment(), OnRecyclerViewTaskOnItemClickListener, SwipeRef
         })
         rvTask = v.findViewById(R.id.rvTask)
         rvTask.layoutManager = LinearLayoutManager(context)
-        fabAddTask.setOnClickListener{
-            interaction.openEditMenu()
-        }
+
 
         return v
     }
-    interface OnFragmentInteraction{
-        fun openEditMenu()
-    }
+
     override fun onItemClick(task: TaskViewModel) {
         val bundle = Bundle()
         bundle.putString(ARG_TASK, gson.toJson(task))
-        findNavController().navigate(R.id.action_nav_task_to_nav_task_detail, bundle)
+        val options = NavOptions.Builder()
+        options.setEnterAnim(R.anim.nav_default_enter_anim)
+        findNavController().navigate(R.id.nav_task_detail, bundle, options.build())
+        
     }
 
     override fun onRefresh() {

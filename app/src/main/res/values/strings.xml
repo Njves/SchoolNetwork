@@ -43,7 +43,7 @@
     <string name="avatar_description">Фото профиля</string>
     <string name="settings_logout">Выйти из аккаунта</string>
     <string name="profile_class_choice">Выбрать класс</string>
-    <string name="receivers_name_placeholder">%1$s %2$s</string>
+    <string name="name_placeholder">%1$s %2$s</string>
     <string name="header_name_placeholder">%1$s %2$s</string>
     <string name="task_detail_files_list">Прикрепленные файлы:</string>
 

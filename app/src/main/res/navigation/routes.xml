@@ -3,14 +3,22 @@
             xmlns:app="http://schemas.android.com/apk/res-auto"
             xmlns:tools="http://schemas.android.com/tools"
             android:id="@+id/routes"
-            app:startDestination="@id/nav_task">
+            app:startDestination="@id/nav_task_tab">
 
     <fragment
             android:id="@+id/nav_profile"
             android:name="com.njves.schoolnetwork.fragments.ProfileFragment"
             android:label="@string/menu_profile"
             tools:layout="@layout/fragment_profile"/>
-
+    <fragment
+            android:id="@+id/nav_task_tab"
+            android:name="com.njves.schoolnetwork.fragments.TaskTabFragment"
+            android:label="@string/menu_task"
+            tools:layout="@layout/fragment_task_tab">
+        <action
+                android:id="@+id/action_nav_task_tab_to_nav_task"
+                app:destination="@id/nav_task"/>
+    </fragment>
     <fragment
             android:id="@+id/nav_task"
             android:name="com.njves.schoolnetwork.fragments.TaskFragment"

@@ -11,8 +11,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.njves.schoolnetwork.Models.network.models.auth.Profile
-import com.njves.schoolnetwork.Models.network.models.auth.User
-import com.njves.schoolnetwork.Models.network.models.profile.UserProfile
 import com.njves.schoolnetwork.R
 
 
@@ -59,7 +57,7 @@ class ReceiversAdapter(val context : Context?, private val listUsers : List<Prof
                 1->pos="Учитель"
                 2->pos="Завуч"
             }
-            val namePlaceholder = String.format(context?.resources?.getString(R.string.receivers_name_placeholder)!!,listUsers[i].firstName,listUsers[i].lastName)
+            val namePlaceholder = String.format(context?.resources?.getString(R.string.name_placeholder)!!,listUsers[i].firstName,listUsers[i].lastName)
             tvName.text = namePlaceholder
             tvPos.text = pos
             itemView.setOnClickListener{

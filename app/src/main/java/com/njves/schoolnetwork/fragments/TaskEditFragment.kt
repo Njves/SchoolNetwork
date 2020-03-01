@@ -10,6 +10,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
@@ -37,17 +38,12 @@ class TaskEditFragment : Fragment() {
     lateinit var btnDatePicker: Button
     lateinit var rvReceivers : RecyclerView
     lateinit var btnSend : Button
-    lateinit var onCloseListener: OnFragmentInteraction
+
     lateinit var adapter : ReceiversAdapter
     var currentUser : User?= null
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-        if(context is OnFragmentInteraction)
-        {
-            onCloseListener = context
-        }else{
-            throw RuntimeException(" must implemented OnFragmentInteraction")
-        }
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -120,10 +116,12 @@ class TaskEditFragment : Fragment() {
                         val message = response.body()?.message
                         if (code == 0) {
                             Snackbar.make(v, "Задача была успешно отправлена",Snackbar.LENGTH_SHORT).show()
-                            onCloseListener.onClose()
+                            // Закрыть фрагмент
+                            findNavController().navigateUp()
                         } else {
                             val errorDialog = AuthErrorDialog.newInstance(message)
                             errorDialog.show(activity?.supportFragmentManager, "dialogError")
+
                         }
                     }
 
@@ -133,7 +131,5 @@ class TaskEditFragment : Fragment() {
         }
         return v
     }
-    public interface OnFragmentInteraction{
-        fun onClose()
-    }
+
 }

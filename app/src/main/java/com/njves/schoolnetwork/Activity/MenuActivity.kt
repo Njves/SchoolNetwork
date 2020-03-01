@@ -1,6 +1,8 @@
 package com.njves.schoolnetwork.Activity
 
+import android.annotation.SuppressLint
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.navigation.findNavController
@@ -17,6 +19,10 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination
+import androidx.navigation.Navigation
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.njves.schoolnetwork.fragments.ProfileFragment
 import com.njves.schoolnetwork.fragments.TaskEditFragment
 import com.njves.schoolnetwork.fragments.TaskFragment
@@ -32,10 +38,13 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class MenuActivity : AppCompatActivity(), OnLogoutListener, TaskFragment.OnFragmentInteraction, TaskEditFragment.OnFragmentInteraction, ProfileFragment.OnProfileUpdateListener, Callback<NetworkResponse<Profile>> {
+class MenuActivity : AppCompatActivity(), OnLogoutListener, ProfileFragment.OnProfileUpdateListener, Callback<NetworkResponse<Profile>> {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var navView : NavigationView
+
+
+    @SuppressLint("RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_menu)
@@ -45,7 +54,7 @@ class MenuActivity : AppCompatActivity(), OnLogoutListener, TaskFragment.OnFragm
 
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         navView = findViewById(R.id.nav_view)
-        val navController = findNavController(R.id.nav_host_fragment)
+       val navController = findNavController(R.id.nav_host_fragment)
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
@@ -54,8 +63,21 @@ class MenuActivity : AppCompatActivity(), OnLogoutListener, TaskFragment.OnFragm
         val storage = AuthStorage(this)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+        val fab = findViewById<FloatingActionButton>(R.id.fabAdd)
+        fab.setOnClickListener{
+            navController.navigate(R.id.nav_task_edit)
+        }
+        navController.addOnDestinationChangedListener { controller, destination, arguments ->
+            when(destination.id)
+            {
+                R.id.nav_task_tab -> fab.visibility = View.VISIBLE
+                R.id.nav_task_detail -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    toolbar.navigationIcon = resources.getDrawable(R.drawable.ic_clear_white_24dp, theme)
+                }
+            }
 
-        
+
+        }
         val profileService = NetworkService.instance.getRetrofit().create(ProfileService::class.java)
         val getProfile = profileService.getProfile("GET", storage.getUserDetails()?:"0")
         getProfile.enqueue(this)
@@ -87,15 +109,8 @@ class MenuActivity : AppCompatActivity(), OnLogoutListener, TaskFragment.OnFragm
 
 
 
-    override fun openEditMenu() {
-        val navController = findNavController(R.id.nav_host_fragment)
-        navController.navigate(R.id.action_nav_task_to_nav_task_edit)
-    }
 
-    override fun onClose() {
-        val navController = findNavController(R.id.nav_host_fragment)
-        navController.navigateUp()
-    }
+
     private fun inflateHeaderView(header : View, data : Profile?) {
         val avatar = header.findViewById<ImageView>(R.id.ivAva)
         val tvName = header.findViewById<TextView>(R.id.tvName)
