@@ -1,5 +1,6 @@
 package com.njves.schoolnetwork.Models.network.request
 
+import com.njves.schoolnetwork.Models.network.*
 import com.njves.schoolnetwork.Models.network.models.NetworkResponse
 import com.njves.schoolnetwork.Models.network.models.auth.RequestProfileModel
 import com.njves.schoolnetwork.Models.network.models.auth.Profile
@@ -10,14 +11,12 @@ import retrofit2.http.*
 
 interface ProfileService {
 
-
-
-    @POST("API/Profile/index.php")
+    @POST(PROFILE_POST)
     fun postProfile(@Body profile: RequestProfileModel): Call<NetworkResponse<UserProfile>>
 
-    @GET("API/Profile/index.php")
+    @GET(PROFILE_GET)
     fun getProfile(@Query("type") type : String,@Query("uid") uid : String)  : Call<NetworkResponse<Profile>>
 
-    @POST("API/Profile/index.php")
+    @POST(PROFILE_UPDATE)
     fun updateProfile(@Body profile : RequestModel) : Call<NetworkResponse<Profile>>
 }

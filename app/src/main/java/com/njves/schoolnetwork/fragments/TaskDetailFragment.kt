@@ -54,7 +54,7 @@ class TaskDetailFragment : Fragment() {
         tvTitle.text = task.title
         tvDescription.text = task.description
         tvSender.text = resources.getString(R.string.name_placeholder, task.sender.firstName, task.sender.lastName)
-        tvAttachFiles.text = "${tvAttachFiles.text}" +"\n Job.work"
+
         return v
     }
 

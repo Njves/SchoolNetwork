@@ -6,12 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
-import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.RecyclerView
-import com.njves.schoolnetwork.Models.network.models.task.TaskPostModel
+import com.njves.schoolnetwork.Models.NetworkService
 import com.njves.schoolnetwork.Models.network.models.task.TaskViewModel
+import com.njves.schoolnetwork.Models.network.request.TaskService
 import com.njves.schoolnetwork.R
+import com.njves.schoolnetwork.Storage.AuthStorage
 import com.njves.schoolnetwork.callback.OnRecyclerViewTaskOnItemClickListener
 
 class TaskAdapter(val context: Context?, var listTask: List<TaskViewModel>, val onItemClickListener : OnRecyclerViewTaskOnItemClickListener) : RecyclerView.Adapter<TaskAdapter.TaskHolder>() {
@@ -36,20 +36,32 @@ class TaskAdapter(val context: Context?, var listTask: List<TaskViewModel>, val 
     }
 
     inner class TaskHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val txTitle: TextView = itemView.findViewById(R.id.title)
+        private val tvTitle: TextView = itemView.findViewById(R.id.title)
         private val txDescription: TextView = itemView.findViewById(R.id.description)
-        private val txFrom: TextView = itemView.findViewById(R.id.from)
-        private val txDate: TextView = itemView.findViewById(R.id.date)
-
+        private val tvFrom: TextView = itemView.findViewById(R.id.from)
+        private val tvDate: TextView = itemView.findViewById(R.id.date)
+        private val tvDelete : TextView = itemView.findViewById(R.id.tvDelete)
         fun bindItem(item: TaskViewModel) {
 
-            txTitle.text = item.title
+            tvTitle.text = item.title
             txDescription.text = item.description
             item.sender.let{
-                txFrom.text = item.sender.firstName
+                tvFrom.text = item.sender.firstName
             }
-            txDate.text = item.date
-            Log.d(TAG, txTitle.text.toString())
+            tvDelete.setOnClickListener{
+                val taskService = NetworkService.instance.getRetrofit().create(TaskService::class.java)
+                val storage = AuthStorage(context)
+                val index = adapterPosition
+                val call = taskService.deleteTask("DELETE", listTask[index].uid,2)
+                Thread(Runnable {
+
+                    val body = call.execute().body()
+
+                }).start()
+                notifyItemRemoved(index)
+            }
+            tvDate.text = item.date
+            Log.d(TAG, tvTitle.text.toString())
             itemView.setOnClickListener{
                 onItemClickListener.onItemClick(listTask[adapterPosition])
             }

@@ -18,7 +18,7 @@ class TaskTabFragment : Fragment() {
         val v = inflater.inflate(R.layout.fragment_task_tab, container, false)
         val tabLayout = v.findViewById<TabLayout>(R.id.tabLayout)
         val pager = v.findViewById<ViewPager>(R.id.pager)
-        pager.adapter = TaskPagerAdapter(childFragmentManager, listOf(TaskFragment(), TaskEditFragment()))
+        pager.adapter = TaskPagerAdapter(childFragmentManager, listOf(TaskFragment.newInstance(TaskFragment.FLAG_GET), TaskFragment.newInstance(TaskFragment.FLAG_MY)))
         tabLayout.setupWithViewPager(pager)
         return v
     }

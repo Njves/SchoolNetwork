@@ -1,5 +1,6 @@
 package com.njves.schoolnetwork.Models.network.request
 
+import com.njves.schoolnetwork.Models.network.USER_GET
 import com.njves.schoolnetwork.Models.network.models.NetworkResponse
 import com.njves.schoolnetwork.Models.network.models.auth.User
 import retrofit2.Call
@@ -12,6 +13,6 @@ interface UserService {
     fun getUsersByPosition(@Query("type") type : String,
                            @Query("position") position : Int,
                            @Query("schoolNumber") schoolNumber : Int) : Call<List<User>>
-    @GET("API/users.php")
+    @GET(USER_GET)
     fun getUser(@Query("uid") uid : String) : Call<NetworkResponse<User>>
 }

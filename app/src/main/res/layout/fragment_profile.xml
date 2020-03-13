@@ -29,7 +29,7 @@
             android:id="@+id/layoutFN"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/ivAvatar"
+            app:layout_constraintTop_toBottomOf="@id/layoutLN"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginTop="16dp"
             android:elevation="8dp"
@@ -44,7 +44,7 @@
             android:id="@+id/layoutLN"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/layoutFN"
+            app:layout_constraintTop_toBottomOf="@id/ivAvatar"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginTop="8dp">
         <com.google.android.material.textfield.TextInputEditText
@@ -57,7 +57,7 @@
             android:id="@+id/layoutMN"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/layoutLN"
+            app:layout_constraintTop_toBottomOf="@id/layoutFN"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginTop="8dp">
         <com.google.android.material.textfield.TextInputEditText
@@ -72,13 +72,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/layoutMN"
-            app:layout_constraintStart_toStartOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_margin="8dp"/>
     <Button
             android:id="@+id/btnClassChoice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/spinnerPosition"
             app:layout_constraintStart_toStartOf="parent"
+            android:layout_margin="8dp"
             android:text="@string/profile_class_choice"/>
 
     <Button

@@ -162,10 +162,13 @@ class ProfileFragment : Fragment() {
                             edLN.text.toString(),
                             edMN.text.toString(),
                             item.index,
-                            schoolClass ?: "0"
+                            null,
+                            schoolClass ?: "0",
+                            null,
+                            null)
                         )
                     )
-                )
+
                 updateProfile.enqueue(object : Callback<NetworkResponse<Profile>> {
                     override fun onFailure(call: Call<NetworkResponse<Profile>>, t: Throwable) {
                         Log.d("ProfileFragment", "Failure request: $t")
@@ -200,7 +203,10 @@ class ProfileFragment : Fragment() {
                                 edLN.text.toString(),
                                 edMN.text.toString(),
                                 item.index,
-                                schoolClass ?: "0"
+                                null,
+                                schoolClass ?: "0",
+                                null,
+                                null
                             )
                         )
                     )

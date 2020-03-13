@@ -15,17 +15,13 @@ import com.google.android.material.navigation.NavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.navigation.NavController
-import androidx.navigation.NavDestination
-import androidx.navigation.Navigation
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.njves.schoolnetwork.fragments.ProfileFragment
-import com.njves.schoolnetwork.fragments.TaskEditFragment
-import com.njves.schoolnetwork.fragments.TaskFragment
 import com.njves.schoolnetwork.Models.NetworkService
 import com.njves.schoolnetwork.Models.network.models.NetworkResponse
 import com.njves.schoolnetwork.Models.network.models.auth.Profile
@@ -42,6 +38,8 @@ class MenuActivity : AppCompatActivity(), OnLogoutListener, ProfileFragment.OnPr
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var navView : NavigationView
+    private var actionDone : MenuItem? = null
+    private var actionAbout : MenuItem? = null
 
 
     @SuppressLint("RestrictedApi")
@@ -70,11 +68,26 @@ class MenuActivity : AppCompatActivity(), OnLogoutListener, ProfileFragment.OnPr
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
             when(destination.id)
             {
-                R.id.nav_task_tab -> fab.visibility = View.VISIBLE
                 R.id.nav_task_detail -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     toolbar.navigationIcon = resources.getDrawable(R.drawable.ic_clear_white_24dp, theme)
                 }
+                R.id.nav_task_edit->{
+                    actionDone?.isVisible = true
+                }
+                R.id.nav_profile->{
+                    actionDone?.isVisible = true
+                }
+
+
+
             }
+            if(destination.id==R.id.nav_task_tab){
+                fab.visibility = View.VISIBLE
+            }else{
+                fab.visibility = View.GONE
+            }
+            //actionDone?.isVisible = destination.id==R.id.nav_task_edit || destination.id == R.id.nav_profile
+
 
 
         }
@@ -86,11 +99,17 @@ class MenuActivity : AppCompatActivity(), OnLogoutListener, ProfileFragment.OnPr
 
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu, menu)
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.menu, menu)
+        actionDone = menu?.findItem(R.id.action_done)
+        actionDone?.isVisible = false
+        actionAbout = menu?.findItem(R.id.action_about)
+        actionAbout?.isVisible = false
         return true
     }
+
 
 
     override fun onSupportNavigateUp(): Boolean {
@@ -117,12 +136,10 @@ class MenuActivity : AppCompatActivity(), OnLogoutListener, ProfileFragment.OnPr
         val tvPos = header.findViewById<TextView>(R.id.tvPos)
         val namePlaceholder = resources.getString(R.string.header_name_placeholder, data?.firstName, data?.lastName)
         tvName.text = namePlaceholder
-        val schoolClass = data?.`class`
-        // TODO: Временное решение
-        when(data?.position) {
-            1-> tvPos.text = "Учитель, $schoolClass"
-            2->tvPos.text = "Завуч"
-        }
+        val posTitle = data?.positionTitle
+        val `class` = data?.classValue
+        tvPos.text = resources.getString(R.string.position_placeholder, posTitle, `class`)
+
 
         Picasso.get().load(R.drawable.ic_avatar_placeholder_black_24dp).placeholder(R.drawable.ic_avatar_placeholder_black_24dp).into(avatar)
     }
@@ -156,6 +173,9 @@ class MenuActivity : AppCompatActivity(), OnLogoutListener, ProfileFragment.OnPr
             Toast.makeText(this@MenuActivity, message, Toast.LENGTH_SHORT).show()
         }
     }
+
+
+
 }
 
 

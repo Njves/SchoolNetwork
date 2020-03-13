@@ -17,11 +17,13 @@
         <activity
                 android:name=".Activity.MenuActivity"
                 android:label="@string/title_activity_menu"
-                android:theme="@style/AppTheme.NoActionBar">
+                android:theme="@style/AppTheme.NoActionBar"
+                android:windowSoftInputMode="adjustResize">
         </activity>
         <activity
                 android:name=".Activity.MainActivity"
-                android:theme="@style/AppThemeAuth">
+                android:theme="@style/AppThemeAuth"
+                android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

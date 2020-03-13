@@ -3,9 +3,8 @@ package com.njves.schoolnetwork.fragments
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.view.MenuItem.SHOW_AS_ACTION_ALWAYS
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -37,7 +36,7 @@ class TaskEditFragment : Fragment() {
     lateinit var etDescription : EditText
     lateinit var btnDatePicker: Button
     lateinit var rvReceivers : RecyclerView
-    lateinit var btnSend : Button
+
 
     lateinit var adapter : ReceiversAdapter
     var currentUser : User?= null
@@ -89,47 +88,52 @@ class TaskEditFragment : Fragment() {
         etDescription = v.findViewById(R.id.edDescription)
         btnDatePicker = v.findViewById(R.id.btnDatePicker)
 
-        btnSend = v.findViewById(R.id.btnSend)
-        btnSend.setOnClickListener{
-            val title = etTitle.text.toString()
+
+
+            /*val title = etTitle.text.toString()
             val desc = etDescription.text.toString()
             val date = Date()
             val receiver = adapter.getUser()?.uid
             val taskService = NetworkService.instance.getRetrofit().create(TaskService::class.java)
             Log.d("TaskEditFragment", adapter.getUser().toString())
-            val storage = AuthStorage(context)
+            val storage1 = AuthStorage(context)
             val sender = storage.getUserDetails()!!
             Log.d("TaskEditFragment", "DEBUG INFO: $receiver,$sender")
-                val postCall = taskService.postCallTask(
-                    RequestTaskModel(
-                        "POST",
-                        TaskPostModel(0, title, desc, date.toString(), storage.getUserDetails()!!, receiver!!)
-                    )
+            val postCall = taskService.postCallTask(
+                RequestTaskModel(
+                    "POST",
+                    TaskPostModel(0, title, desc, date.toString(), storage.getUserDetails()!!, receiver!!)
                 )
-                postCall.enqueue(object : Callback<NetworkResponse<TaskPostModel>> {
-                    override fun onFailure(call: Call<NetworkResponse<TaskPostModel>>, t: Throwable) {
-                        Toast.makeText(context, "Не удалось отправить задачу", Toast.LENGTH_LONG).show()
-                    }
+            )
+            postCall.enqueue(object : Callback<NetworkResponse<TaskPostModel>> {
+                override fun onFailure(call: Call<NetworkResponse<TaskPostModel>>, t: Throwable) {
+                    Toast.makeText(context, "Не удалось отправить задачу", Toast.LENGTH_LONG).show()
+                }
 
-                    override fun onResponse(call: Call<NetworkResponse<TaskPostModel>>, response: Response<NetworkResponse<TaskPostModel>>) {
-                        val code = response.body()?.code
-                        val message = response.body()?.message
-                        if (code == 0) {
-                            Snackbar.make(v, "Задача была успешно отправлена",Snackbar.LENGTH_SHORT).show()
-                            // Закрыть фрагмент
-                            findNavController().navigateUp()
-                        } else {
-                            val errorDialog = AuthErrorDialog.newInstance(message)
-                            errorDialog.show(activity?.supportFragmentManager, "dialogError")
-
+                override fun onResponse(
+                    call: Call<NetworkResponse<TaskPostModel>>,
+                    response: Response<NetworkResponse<TaskPostModel>>
+                ) {
+                    val code = response.body()?.code
+                    val message = response.body()?.message
+                    if (code == 0) {
+                        // TODO:Проблемный код
+                        view?.let {
+                            Snackbar.make(view!!, "Задача была успешно отправлена", Snackbar.LENGTH_SHORT).show()
                         }
+                        // Закрыть фрагмент
+                        findNavController().navigateUp()
+                    } else {
+                        val errorDialog = AuthErrorDialog.newInstance(message)
+                        errorDialog.show(activity?.supportFragmentManager, "dialogError")
+
                     }
+                }
 
-                })
+            })*/
 
-
-        }
         return v
     }
+
 
 }
