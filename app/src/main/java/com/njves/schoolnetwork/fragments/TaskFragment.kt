@@ -1,6 +1,7 @@
 package com.njves.schoolnetwork.fragments
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -24,17 +25,16 @@ import com.njves.schoolnetwork.R
 import com.njves.schoolnetwork.Storage.AuthStorage
 import com.njves.schoolnetwork.adapter.TaskAdapter
 import com.njves.schoolnetwork.callback.OnRecyclerViewTaskOnItemClickListener
+import com.njves.schoolnetwork.dialog.SubmitActionDialog
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class TaskFragment : Fragment(), OnRecyclerViewTaskOnItemClickListener, SwipeRefreshLayout.OnRefreshListener, Callback<NetworkResponse<List<TaskViewModel>>>{
+class TaskFragment : Fragment(), OnRecyclerViewTaskOnItemClickListener, SwipeRefreshLayout.OnRefreshListener, Callback<NetworkResponse<List<TaskViewModel>>>, TaskAdapter.OnActionTask{
 
     private lateinit var rvTask : RecyclerView
     private lateinit var adapter : TaskAdapter
     private lateinit var tvErrorMsg : TextView
-
-
     private lateinit var pbLoading : ProgressBar
     private lateinit var gson : Gson
     private lateinit var swipeLayout : SwipeRefreshLayout
@@ -47,6 +47,7 @@ class TaskFragment : Fragment(), OnRecyclerViewTaskOnItemClickListener, SwipeRef
         const val FLAG = "flag"
         const val FLAG_GET = 0
         const val FLAG_MY = 1
+        const val SUBMIT_DIALOG_CODE = 1
         fun newInstance(flag : Int) : TaskFragment{
             val bundle = Bundle()
             bundle.putInt(FLAG, flag)
@@ -73,61 +74,16 @@ class TaskFragment : Fragment(), OnRecyclerViewTaskOnItemClickListener, SwipeRef
 
         val taskService = NetworkService.instance.getRetrofit().create(TaskService::class.java)
         val storage = AuthStorage(context)
-        val flag = arguments?.get(FLAG)
-        if(flag==0) {
-            val call = taskService.getTaskList("GET", storage.getUserDetails() ?: "")
-            call.enqueue(object : Callback<NetworkResponse<List<TaskViewModel>>> {
-                override fun onFailure(call: Call<NetworkResponse<List<TaskViewModel>>>, t: Throwable) {
-                    Snackbar.make(v, "Произашла ошибка получения данных", Snackbar.LENGTH_LONG)
-
-                    Log.d(TAG, t.toString())
-                    pbLoading.visibility = View.GONE
-                }
-
-                override fun onResponse(
-                    call: Call<NetworkResponse<List<TaskViewModel>>>,
-                    response: Response<NetworkResponse<List<TaskViewModel>>>
-                ) {
-                    pbLoading.visibility = View.GONE
-                    if (response.body()?.code == 0) {
-                        adapter = TaskAdapter(context, response.body()?.data!!, this@TaskFragment)
-                        rvTask.adapter = adapter
-                    } else {
-                        tvErrorMsg = v.findViewById(R.id.tvErrorMsg)
-                        tvErrorMsg.text = response.body()?.message
-                        tvErrorMsg.visibility = View.VISIBLE
-                    }
-                }
-
-            })
-        }else if(flag==1)
-        {
-            val call = taskService.getMyTaskList("GET_MY", storage.getUserDetails() ?: "")
-            call.enqueue(object : Callback<NetworkResponse<List<TaskViewModel>>> {
-                override fun onFailure(call: Call<NetworkResponse<List<TaskViewModel>>>, t: Throwable) {
-                    Snackbar.make(v, "Произашла ошибка получения данных", Snackbar.LENGTH_LONG)
-                    Log.d(TAG, t.toString())
-                    pbLoading.visibility = View.GONE
-                }
-
-                override fun onResponse(
-                    call: Call<NetworkResponse<List<TaskViewModel>>>,
-                    response: Response<NetworkResponse<List<TaskViewModel>>>
-                ) {
-
-                    pbLoading.visibility = View.GONE
-                    if (response.body()?.code == 0) {
-                        Log.d(TAG, response.body().toString())
-                        adapter = TaskAdapter(context, response.body()?.data!!, this@TaskFragment)
-                        rvTask.adapter = adapter
-                    } else {
-                        tvErrorMsg = v.findViewById(R.id.tvErrorMsg)
-                        tvErrorMsg.text = response.body()?.message
-                        tvErrorMsg.visibility = View.VISIBLE
-                    }
-                }
-
-            })
+        // Флаг запроса на фрагменты
+        when(arguments?.get(FLAG)){
+            0-> {
+                val call = taskService.getTaskList("GET", storage.getUserDetails() ?: "")
+                call.enqueue(this)
+            }
+            1-> {
+                val call = taskService.getTaskList("GET_MY", storage.getUserDetails() ?: "")
+                call.enqueue(this)
+            }
         }
         rvTask = v.findViewById(R.id.rvTask)
         rvTask.layoutManager = LinearLayoutManager(context)
@@ -135,56 +91,62 @@ class TaskFragment : Fragment(), OnRecyclerViewTaskOnItemClickListener, SwipeRef
 
         return v
     }
-
+    // Слушатель клика на элемент списка
     override fun onItemClick(task: TaskViewModel) {
         val bundle = Bundle()
         bundle.putString(ARG_TASK, gson.toJson(task))
         val options = NavOptions.Builder()
         options.setEnterAnim(R.anim.nav_default_enter_anim)
         findNavController().navigate(R.id.nav_task_detail, bundle, options.build())
-        
-    }
 
+    }
+    // Обновление refresh layout
     override fun onRefresh() {
         swipeLayout.isRefreshing = false
 
         val taskService = NetworkService.instance.getRetrofit().create(TaskService::class.java)
         val storage = AuthStorage(context)
         val call = taskService.getTaskList("GET",storage.getUserDetails()?:"")
-        call.enqueue(object: Callback<NetworkResponse<List<TaskViewModel>>>{
-            override fun onFailure(call: Call<NetworkResponse<List<TaskViewModel>>>, t: Throwable) {
-
-                Log.d(TAG, t.toString())
-                pbLoading.visibility = View.GONE
-            }
-
-            override fun onResponse(call: Call<NetworkResponse<List<TaskViewModel>>>, response: Response<NetworkResponse<List<TaskViewModel>>>) {
-                pbLoading.visibility = View.GONE
-                if(response.body()?.code==0)
-                {
-                    adapter = TaskAdapter(context,response.body()?.data!!, this@TaskFragment)
-                    rvTask.adapter = adapter
-                }else{
-                    
-                    
-                    tvErrorMsg.text = response.body()?.message
-                    tvErrorMsg.visibility = View.VISIBLE
-                }
-            }
-
-        })
+        call.enqueue(this)
     }
-
+    // Методы запроса
     override fun onResponse(call: Call<NetworkResponse<List<TaskViewModel>>>,
                             response: Response<NetworkResponse<List<TaskViewModel>>>) {
         pbLoading.visibility = View.GONE
-        adapter = TaskAdapter(context,response.body()?.data!!, this@TaskFragment)
-        rvTask.adapter = adapter
+        if (response.body()?.code == 0) {
+            adapter = TaskAdapter(context, response.body()?.data!!, this@TaskFragment)
+            rvTask.adapter = adapter
+        } else {
+            tvErrorMsg = view!!.findViewById(R.id.tvErrorMsg)
+            tvErrorMsg.text = response.body()?.message
+            tvErrorMsg.visibility = View.VISIBLE
+        }
     }
 
     override fun onFailure(call: Call<NetworkResponse<List<TaskViewModel>>>, t: Throwable) {
+        Snackbar.make(view!!, "Произашла ошибка получения данных", Snackbar.LENGTH_LONG)
+        Log.d(TAG, t.toString())
+        pbLoading.visibility = View.GONE
+    }
+    // Коллбэк на удаление
+    override fun onDelete(index : Int) {
+        val submitDialog = SubmitActionDialog(SubmitActionDialog.MODE_DELETE)
+        setTargetFragment(submitDialog, SUBMIT_DIALOG_CODE)
+        submitDialog.show(fragmentManager, "submit_dialog")
 
     }
+    // Результат на диалоги
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(requestCode==1)
+        {
+            when(resultCode)
+            {
+                1->{
 
+                }
+            }
+        }
+    }
 
 }

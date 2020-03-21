@@ -18,7 +18,7 @@ interface TaskService {
     @GET(TASK_GET)
     fun getTaskList(@Query("type") type : String,@Query("uid") uid: String): Call<NetworkResponse<List<TaskViewModel>>>
     // TODO: Исправить костыль
-    @GET("API/Task/")
+    @GET("api/task/")
     fun getMyTaskList(@Query("type") type : String, @Query("uid") uid : String) : Call<NetworkResponse<List<TaskViewModel>>>
 
     @POST(TASK_UPDATE)

@@ -13,6 +13,8 @@ import com.njves.schoolnetwork.Models.network.request.TaskService
 import com.njves.schoolnetwork.R
 import com.njves.schoolnetwork.Storage.AuthStorage
 import com.njves.schoolnetwork.callback.OnRecyclerViewTaskOnItemClickListener
+import com.njves.schoolnetwork.dialog.SubmitActionDialog
+import com.njves.schoolnetwork.dialog.SubmitActionDialog.Companion.MODE_DELETE
 
 class TaskAdapter(val context: Context?, var listTask: List<TaskViewModel>, val onItemClickListener : OnRecyclerViewTaskOnItemClickListener) : RecyclerView.Adapter<TaskAdapter.TaskHolder>() {
 
@@ -49,16 +51,7 @@ class TaskAdapter(val context: Context?, var listTask: List<TaskViewModel>, val 
                 tvFrom.text = item.sender.firstName
             }
             tvDelete.setOnClickListener{
-                val taskService = NetworkService.instance.getRetrofit().create(TaskService::class.java)
-                val storage = AuthStorage(context)
-                val index = adapterPosition
-                val call = taskService.deleteTask("DELETE", listTask[index].uid,2)
-                Thread(Runnable {
-
-                    val body = call.execute().body()
-
-                }).start()
-                notifyItemRemoved(index)
+                notifyItemRemoved(adapterPosition)
             }
             tvDate.text = item.date
             Log.d(TAG, tvTitle.text.toString())
@@ -67,6 +60,11 @@ class TaskAdapter(val context: Context?, var listTask: List<TaskViewModel>, val 
             }
 
         }
+    }
+
+    public interface OnActionTask
+    {
+        fun onDelete(index : Int)
     }
 
 }

@@ -131,17 +131,15 @@ class ProfileFragment : Fragment() {
         callPosition.enqueue(object: Callback<List<Position>>{
             override fun onFailure(call: Call<List<Position>>, t: Throwable) {
                 Log.d(TAG, "An error has occurred request get position")
-
                 Toast.makeText(context, t.toString(), Toast.LENGTH_LONG).show()
             }
 
             override fun onResponse(call: Call<List<Position>>, response: Response<List<Position>>) {
+
                 // Получаем список позиций и создаем с ним адаптер
                 val listPositions = response.body() ?: listOf()
-
                 val positionAdapter = ArrayAdapter<Position>(context!!, R.layout.support_simple_spinner_dropdown_item,
                     listPositions)
-
                 spinnerPosition.adapter = positionAdapter
             }
         })
