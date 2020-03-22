@@ -36,7 +36,7 @@ class TaskEditFragment : Fragment() {
     lateinit var etDescription : EditText
     lateinit var btnDatePicker: Button
     lateinit var rvReceivers : RecyclerView
-
+    lateinit var btnSubmit : Button
 
     lateinit var adapter : ReceiversAdapter
     var currentUser : User?= null
@@ -87,10 +87,10 @@ class TaskEditFragment : Fragment() {
         etTitle = v.findViewById(R.id.edTitle)
         etDescription = v.findViewById(R.id.edDescription)
         btnDatePicker = v.findViewById(R.id.btnDatePicker)
+        btnSubmit = v.findViewById(R.id.btnSubmit)
 
-
-
-            /*val title = etTitle.text.toString()
+        btnSubmit.setOnClickListener {
+            val title = etTitle.text.toString()
             val desc = etDescription.text.toString()
             val date = Date()
             val receiver = adapter.getUser()?.uid
@@ -130,7 +130,8 @@ class TaskEditFragment : Fragment() {
                     }
                 }
 
-            })*/
+            })
+        }
 
         return v
     }

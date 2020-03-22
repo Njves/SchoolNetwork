@@ -52,5 +52,6 @@
     <string name="action_submit">Подтвердить</string>
     <string name="position_placeholder">%1$s, %2$s</string>
     <string name="warning_action_delete">Вы действительно хотите удалить %1$s? После подтверждение, действие будет невозможно отменить.</string>
+    <string name="task_action_delete">Удалить</string>
 
 </resources>

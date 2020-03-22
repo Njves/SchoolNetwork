@@ -26,6 +26,6 @@ interface TaskService {
 
     @POST(TASK_DELETE)
     @FormUrlEncoded
-    fun deleteTask(@Field("type") type : String,@Field("uid") uid : String, @Field("position") pos : Int ) : Call<NetworkResponse<Void>>
+    fun deleteTask(@Field("type") type : String,@Field("task_uid") taskUid : String, @Field("uid") uid : String ) : Call<NetworkResponse<Void>>
 
 }

@@ -49,6 +49,13 @@
             android:layout_width="match_parent"
             android:layout_height="256dp"
             app:layout_constraintTop_toBottomOf="@id/btnDatePicker"/>
-
+    <Button
+            android:id="@+id/btnSubmit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/task_edit_btn_date_picker"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginTop="8dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
