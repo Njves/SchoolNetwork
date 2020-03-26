@@ -38,8 +38,6 @@ class MenuActivity : AppCompatActivity(), OnLogoutListener, ProfileFragment.OnPr
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var navView : NavigationView
-    private var actionDone : MenuItem? = null
-    private var actionAbout : MenuItem? = null
     private lateinit var toolbar : Toolbar
 
     @SuppressLint("RestrictedApi")
