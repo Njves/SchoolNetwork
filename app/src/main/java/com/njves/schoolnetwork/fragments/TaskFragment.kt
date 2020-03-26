@@ -43,14 +43,13 @@ class TaskFragment : Fragment(), OnRecyclerViewTaskOnItemClickListener, SwipeRef
     companion object{
         const val TAG  = "TaskFragment"
         const val ARG_TASK = "task"
-        // TODO: Поменять
-        const val FLAG = "flag"
+        const val FLAG_GETTER = "flag"
         const val FLAG_GET = 0
-        const val FLAG_MY = 1
+        const val FLAG_GET_MY = 1
         const val SUBMIT_DIALOG_CODE = 1
         fun newInstance(flag : Int) : TaskFragment{
             val bundle = Bundle()
-            bundle.putInt(FLAG, flag)
+            bundle.putInt(FLAG_GETTER, flag)
             val instance = TaskFragment()
             instance.arguments = bundle
             return instance
@@ -75,12 +74,12 @@ class TaskFragment : Fragment(), OnRecyclerViewTaskOnItemClickListener, SwipeRef
         val taskService = NetworkService.instance.getRetrofit().create(TaskService::class.java)
         val storage = AuthStorage(context)
         // Флаг запроса на фрагменты
-        when(arguments?.get(FLAG)){
-            0-> {
+        when(arguments?.get(FLAG_GETTER)){
+            FLAG_GET-> {
                 val call = taskService.getTaskList("GET", storage.getUserDetails() ?: "")
                 call.enqueue(this)
             }
-            1-> {
+            FLAG_GET_MY-> {
                 val call = taskService.getTaskList("GET_MY", storage.getUserDetails() ?: "")
                 call.enqueue(this)
             }
@@ -103,12 +102,9 @@ class TaskFragment : Fragment(), OnRecyclerViewTaskOnItemClickListener, SwipeRef
     // Обновление refresh layout
     override fun onRefresh() {
         swipeLayout.isRefreshing = false
+        flagCalling()
+        }
 
-        val taskService = NetworkService.instance.getRetrofit().create(TaskService::class.java)
-        val storage = AuthStorage(context)
-        val call = taskService.getTaskList("GET",storage.getUserDetails()?:"")
-        call.enqueue(this)
-    }
     // Методы запроса
     override fun onResponse(call: Call<NetworkResponse<List<TaskViewModel>>>,
                             response: Response<NetworkResponse<List<TaskViewModel>>>) {
@@ -133,7 +129,6 @@ class TaskFragment : Fragment(), OnRecyclerViewTaskOnItemClickListener, SwipeRef
         val submitDialog = SubmitActionDialog(SubmitActionDialog.MODE_DELETE)
         setTargetFragment(submitDialog, SUBMIT_DIALOG_CODE)
         submitDialog.show(fragmentManager, "submit_dialog")
-
     }
     // Результат на диалоги
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -142,11 +137,27 @@ class TaskFragment : Fragment(), OnRecyclerViewTaskOnItemClickListener, SwipeRef
         {
             when(resultCode)
             {
-                1->{
+                SUBMIT_DIALOG_CODE->{
 
                 }
             }
         }
     }
 
+    private fun flagCalling(){
+        val taskService = NetworkService.instance.getRetrofit().create(TaskService::class.java)
+        val storage = AuthStorage(context)
+        lateinit var call : Call<NetworkResponse<List<TaskViewModel>>>
+        when(arguments?.get(FLAG_GETTER)){
+            FLAG_GET->{
+                call = taskService.getTaskList("GET", storage.getUserDetails() ?: "")
+            }
+            FLAG_GET_MY->{
+                call = taskService.getTaskList("GET_MY", storage.getUserDetails() ?: "")
+            }
+        }
+        call?.let {
+            it.enqueue(this)
+        }
+    }
 }

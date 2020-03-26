@@ -5,23 +5,22 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
-import androidx.drawerlayout.widget.DrawerLayout
-import com.google.android.material.navigation.NavigationView
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.navigation.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.navigateUp
+import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.njves.schoolnetwork.fragments.ProfileFragment
+import com.google.android.material.navigation.NavigationView
 import com.njves.schoolnetwork.Models.NetworkService
 import com.njves.schoolnetwork.Models.network.models.NetworkResponse
 import com.njves.schoolnetwork.Models.network.models.auth.Profile
@@ -29,6 +28,7 @@ import com.njves.schoolnetwork.Models.network.request.ProfileService
 import com.njves.schoolnetwork.R
 import com.njves.schoolnetwork.Storage.AuthStorage
 import com.njves.schoolnetwork.callback.OnLogoutListener
+import com.njves.schoolnetwork.fragments.ProfileFragment
 import com.squareup.picasso.Picasso
 import retrofit2.Call
 import retrofit2.Callback
@@ -40,15 +40,15 @@ class MenuActivity : AppCompatActivity(), OnLogoutListener, ProfileFragment.OnPr
     private lateinit var navView : NavigationView
     private var actionDone : MenuItem? = null
     private var actionAbout : MenuItem? = null
-
+    private lateinit var toolbar : Toolbar
 
     @SuppressLint("RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_menu)
-        val toolbar: Toolbar = findViewById(R.id.toolbar)
+        toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
-
+        
 
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         navView = findViewById(R.id.nav_view)
@@ -65,20 +65,13 @@ class MenuActivity : AppCompatActivity(), OnLogoutListener, ProfileFragment.OnPr
         fab.setOnClickListener{
             navController.navigate(R.id.nav_task_edit)
         }
+
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
             when(destination.id)
             {
                 R.id.nav_task_detail -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     toolbar.navigationIcon = resources.getDrawable(R.drawable.ic_clear_white_24dp, theme)
                 }
-                R.id.nav_task_edit->{
-                    actionDone?.isVisible = true
-                }
-                R.id.nav_profile->{
-                    actionDone?.isVisible = true
-                }
-
-
 
             }
             if(destination.id==R.id.nav_task_tab){
@@ -87,9 +80,6 @@ class MenuActivity : AppCompatActivity(), OnLogoutListener, ProfileFragment.OnPr
                 fab.visibility = View.GONE
             }
             //actionDone?.isVisible = destination.id==R.id.nav_task_edit || destination.id == R.id.nav_profile
-
-
-
         }
         val profileService = NetworkService.instance.getRetrofit().create(ProfileService::class.java)
         val getProfile = profileService.getProfile("GET", storage.getUserDetails()?:"0")
@@ -99,16 +89,6 @@ class MenuActivity : AppCompatActivity(), OnLogoutListener, ProfileFragment.OnPr
 
     }
 
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        val inflater = menuInflater
-        inflater.inflate(R.menu.menu, menu)
-        actionDone = menu?.findItem(R.id.action_done)
-        actionDone?.isVisible = false
-        actionAbout = menu?.findItem(R.id.action_about)
-        actionAbout?.isVisible = false
-        return true
-    }
 
 
 
@@ -125,10 +105,6 @@ class MenuActivity : AppCompatActivity(), OnLogoutListener, ProfileFragment.OnPr
         startActivity(intent)
         finish()
     }
-
-
-
-
 
     private fun inflateHeaderView(header : View, data : Profile?) {
         val avatar = header.findViewById<ImageView>(R.id.ivAva)

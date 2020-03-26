@@ -69,20 +69,21 @@ class ProfileFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val TAG = "ProfileFragment"
         val v = layoutInflater.inflate(R.layout.fragment_profile,container, false)
-        tvProfileStatus = v.findViewById<TextView>(R.id.tvProfileStatus)
-        edFN = v.findViewById<TextInputEditText>(R.id.edFN)
-        edLN = v.findViewById<TextInputEditText>(R.id.edLN)
-        edMN = v.findViewById<TextInputEditText>(R.id.edMN)
-        ivAvatar = v.findViewById(R.id.ivAvatar)
-        spinnerPosition = v.findViewById<Spinner>(R.id.spinnerPosition)
-        btnClassChoice = v.findViewById(R.id.btnClassChoice)
-        btnSubmit = v.findViewById<Button>(R.id.btnSubmit)
 
+        tvProfileStatus = v.findViewById(R.id.tvProfileStatus)
+        edFN = v.findViewById(R.id.edFN)
+        edLN = v.findViewById(R.id.edLN)
+        edMN = v.findViewById(R.id.edMN)
+        ivAvatar = v.findViewById(R.id.ivAvatar)
+        spinnerPosition = v.findViewById(R.id.spinnerPosition)
+        btnClassChoice = v.findViewById(R.id.btnClassChoice)
+        btnSubmit = v.findViewById(R.id.btnSubmit)
+
+        // Контроль показывания кнопки выбора класса
         spinnerPosition.onItemSelectedListener= object : AdapterView.OnItemSelectedListener{
             override fun onNothingSelected(parent: AdapterView<*>?) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
             }
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -93,6 +94,7 @@ class ProfileFragment : Fragment() {
             }
 
         }
+
         val storage = AuthStorage(context)
         val call = NetworkService.instance.getRetrofit().create(ProfileService::class.java)
         val postCall = call.getProfile(TYPE_GET,storage.getUserDetails()?:"")

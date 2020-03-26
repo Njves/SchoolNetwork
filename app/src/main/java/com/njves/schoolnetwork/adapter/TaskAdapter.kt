@@ -54,7 +54,6 @@ class TaskAdapter(val context: Context?, var listTask: List<TaskViewModel>, val 
                 notifyItemRemoved(adapterPosition)
             }
             tvDate.text = item.date
-            Log.d(TAG, tvTitle.text.toString())
             itemView.setOnClickListener{
                 onItemClickListener.onItemClick(listTask[adapterPosition])
             }

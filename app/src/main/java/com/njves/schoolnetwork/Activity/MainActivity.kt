@@ -18,10 +18,11 @@ import com.njves.schoolnetwork.fragments.AuthFragment
 
 class MainActivity : AppCompatActivity(),OnAuthPassedListener, UpdateToolbarTitleListener {
     var currentFragment : Fragment? = null
+    lateinit var toolbar : Toolbar
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportFragmentManager.addOnBackStackChangedListener {
             val isBack = supportFragmentManager.backStackEntryCount>0
@@ -91,8 +92,7 @@ class MainActivity : AppCompatActivity(),OnAuthPassedListener, UpdateToolbarTitl
 
 
     override fun updateActionBar(title: String) {
-        supportActionBar?.setTitle(title)
-
+        toolbar.title = title
     }
 
 
