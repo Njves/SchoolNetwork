@@ -91,6 +91,8 @@ class MenuActivity : AppCompatActivity(), OnLogoutListener, ProfileFragment.OnPr
 
 
     override fun onSupportNavigateUp(): Boolean {
+        val imm = activity?.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view?.windowToken, 0)
         val navController = findNavController(R.id.nav_host_fragment)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
@@ -112,6 +114,9 @@ class MenuActivity : AppCompatActivity(), OnLogoutListener, ProfileFragment.OnPr
         tvName.text = namePlaceholder
         val posTitle = data?.positionTitle
         val `class` = data?.classValue
+        if(`class`=="0"){
+            `class` = "";
+        }
         tvPos.text = resources.getString(R.string.position_placeholder, posTitle, `class`)
 
 
