@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.gson.Gson
+import com.njves.schoolnetwork.Models.KeyboardUtils
 import com.njves.schoolnetwork.Models.NetworkService
 import com.njves.schoolnetwork.Models.NetworkService.Companion.TYPE_GET
 import com.njves.schoolnetwork.Models.NetworkService.Companion.TYPE_POST
@@ -119,10 +120,10 @@ class ProfileFragment : Fragment() {
         // Назначение существующего пользователя
         val storage = AuthStorage(context)
         val call = NetworkService.instance.getRetrofit().create(ProfileService::class.java)
-        val postCall = call.getProfile(TYPE_GET, storage.getUserDetails() ?: "")
+        val getCall = call.getProfile(TYPE_GET, storage.getUserDetails() ?: "")
         var profile: Profile?
         Log.d("ProfileFragment", arguments?.getString("user").toString())
-        postCall.enqueue(object : Callback<NetworkResponse<Profile>> {
+        getCall.enqueue(object : Callback<NetworkResponse<Profile>> {
             override fun onFailure(call: Call<NetworkResponse<Profile>>, t: Throwable) {
                 Toast.makeText(context, t.toString(), Toast.LENGTH_LONG).show()
             }
@@ -193,7 +194,7 @@ class ProfileFragment : Fragment() {
         return super.onOptionsItemSelected(item)
     }
 
-    fun sendData() {
+    private fun sendData() {
         val storage = AuthStorage(context)
         // Проверка на успешность запроса
         val profileService = NetworkService.instance.getRetrofit().create(ProfileService::class.java)
@@ -233,8 +234,7 @@ class ProfileFragment : Fragment() {
                     if (code == 0) {
                         Snackbar.make(view!!, "Профиль успешно обновлен", Snackbar.LENGTH_SHORT).show()
                         onProfileUpdateListener.onUpdateProfile()
-                        val imm = activity?.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-                        imm.hideSoftInputFromWindow(view?.windowToken, 0)
+                        KeyboardUtils.hideKeyboard(activity!!)
                     } else {
                         Snackbar.make(view!!, "Ошибка: $message", Snackbar.LENGTH_SHORT).show()
                     }

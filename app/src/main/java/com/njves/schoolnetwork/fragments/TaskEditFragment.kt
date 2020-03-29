@@ -1,10 +1,12 @@
 package com.njves.schoolnetwork.fragments
 
+import android.app.DatePickerDialog
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.Button
+import android.widget.DatePicker
 import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -12,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
+import com.njves.schoolnetwork.Models.KeyboardUtils
 import com.njves.schoolnetwork.Models.NetworkService
 import com.njves.schoolnetwork.Models.network.models.NetworkResponse
 import com.njves.schoolnetwork.Models.network.models.auth.Profile
@@ -36,7 +39,7 @@ class TaskEditFragment : Fragment(){
     lateinit var btnDatePicker: Button
     lateinit var rvReceivers : RecyclerView
     lateinit var btnSubmit : Button
-
+    var datePick : GregorianCalendar? = null
     lateinit var adapter : ReceiversAdapter
 
     override fun onAttach(context: Context?) {
@@ -74,7 +77,17 @@ class TaskEditFragment : Fragment(){
         etDescription = v.findViewById(R.id.edDescription)
         btnDatePicker = v.findViewById(R.id.btnDatePicker)
         btnSubmit = v.findViewById(R.id.btnSubmit)
+        btnDatePicker.setOnClickListener{
+            val calendar = GregorianCalendar()
 
+            val dataSet = DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
+                datePick = GregorianCalendar(year, month, dayOfMonth)
+            }
+
+            val dialog = DatePickerDialog(context!!,dataSet,calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
+            dialog.show()
+
+        }
         btnSubmit.setOnClickListener {
             submitData()
         }
@@ -94,7 +107,7 @@ class TaskEditFragment : Fragment(){
         val postCall = taskService.postCallTask(
             RequestTaskModel(
                 "POST",
-                TaskPostModel(0, title, desc, date.toString(), storage.getUserDetails()!!, receiver!!)
+                TaskPostModel(0, title, desc, datePick?.time.toString() ?: date.toString(), storage.getUserDetails()!!, receiver!!)
             )
         )
         postCall.enqueue(object : Callback<NetworkResponse<TaskPostModel>> {
@@ -113,6 +126,7 @@ class TaskEditFragment : Fragment(){
                     view?.let {
                         Snackbar.make(view!!, "Задача была успешно отправлена", Snackbar.LENGTH_SHORT).show()
                     }
+                    KeyboardUtils.hideKeyboard(activity!!)
                     // Закрыть фрагмент
                     findNavController().navigateUp()
                 } else {

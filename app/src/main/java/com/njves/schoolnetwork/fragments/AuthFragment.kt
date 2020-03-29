@@ -32,7 +32,7 @@ class AuthFragment : Fragment() {
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val v = layoutInflater.inflate(R.layout.fragment_auth, container, false)
-
+        updateToolbarTitleListener.updateActionBar(getString(R.string.app_name))
         // Инициализация view
         val ivLogo = v.findViewById<ImageView>(R.id.ivLogo)
         val btnLogin = v.findViewById<Button>(R.id.btnLogin)

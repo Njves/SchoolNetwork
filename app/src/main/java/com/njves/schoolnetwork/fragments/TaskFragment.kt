@@ -120,7 +120,7 @@ class TaskFragment : Fragment(), OnRecyclerViewTaskOnItemClickListener, SwipeRef
     }
 
     override fun onFailure(call: Call<NetworkResponse<List<TaskViewModel>>>, t: Throwable) {
-        Snackbar.make(view!!, "Произашла ошибка получения данных", Snackbar.LENGTH_LONG)
+        Snackbar.make(view!!, "Произошла ошибка получения данных", Snackbar.LENGTH_LONG)
         Log.d(TAG, t.toString())
         pbLoading.visibility = View.GONE
     }

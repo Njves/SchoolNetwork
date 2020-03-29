@@ -1,6 +1,7 @@
 package com.njves.schoolnetwork.Activity
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -8,6 +9,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -19,8 +21,10 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
+import com.njves.schoolnetwork.Models.KeyboardUtils
 import com.njves.schoolnetwork.Models.NetworkService
 import com.njves.schoolnetwork.Models.network.models.NetworkResponse
 import com.njves.schoolnetwork.Models.network.models.auth.Profile
@@ -46,11 +50,11 @@ class MenuActivity : AppCompatActivity(), OnLogoutListener, ProfileFragment.OnPr
         setContentView(R.layout.activity_menu)
         toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
-        
+
 
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         navView = findViewById(R.id.nav_view)
-       val navController = findNavController(R.id.nav_host_fragment)
+        val navController = findNavController(R.id.nav_host_fragment)
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
@@ -65,6 +69,8 @@ class MenuActivity : AppCompatActivity(), OnLogoutListener, ProfileFragment.OnPr
         }
 
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
+            val appBarLayout = findViewById<AppBarLayout>(R.id.appBarLayout)
+            appBarLayout.setExpanded(true, true)
             when(destination.id)
             {
                 R.id.nav_task_detail -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -91,8 +97,7 @@ class MenuActivity : AppCompatActivity(), OnLogoutListener, ProfileFragment.OnPr
 
 
     override fun onSupportNavigateUp(): Boolean {
-        val imm = activity?.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(view?.windowToken, 0)
+        KeyboardUtils.hideKeyboard(this)
         val navController = findNavController(R.id.nav_host_fragment)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
@@ -113,7 +118,7 @@ class MenuActivity : AppCompatActivity(), OnLogoutListener, ProfileFragment.OnPr
         val namePlaceholder = resources.getString(R.string.header_name_placeholder, data?.firstName, data?.lastName)
         tvName.text = namePlaceholder
         val posTitle = data?.positionTitle
-        val `class` = data?.classValue
+        var `class` = data?.classValue
         if(`class`=="0"){
             `class` = "";
         }
