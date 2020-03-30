@@ -7,15 +7,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.njves.schoolnetwork.Models.NetworkService
 import com.njves.schoolnetwork.Models.network.models.task.TaskViewModel
-import com.njves.schoolnetwork.Models.network.request.TaskService
 import com.njves.schoolnetwork.R
-import com.njves.schoolnetwork.Storage.AuthStorage
 import com.njves.schoolnetwork.callback.OnRecyclerViewTaskOnItemClickListener
-import com.njves.schoolnetwork.dialog.SubmitActionDialog
-import com.njves.schoolnetwork.dialog.SubmitActionDialog.Companion.MODE_DELETE
-
+import java.lang.ref.WeakReference
+import java.text.SimpleDateFormat
+import java.util.*
+/*
+* Особенности архитектуры на Java unix time нужно умножать на 1000, если получать с сервера то делить на 1000
+*/
 class TaskAdapter(val context: Context?, var listTask: List<TaskViewModel>, val onItemClickListener : OnRecyclerViewTaskOnItemClickListener) : RecyclerView.Adapter<TaskAdapter.TaskHolder>() {
 
     companion object {
@@ -53,7 +53,8 @@ class TaskAdapter(val context: Context?, var listTask: List<TaskViewModel>, val 
             tvDelete.setOnClickListener{
                 notifyItemRemoved(adapterPosition)
             }
-            tvDate.text = item.date
+            val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+            tvDate.text = dateFormat.format(Date(item.date*1000.toLong()))
             itemView.setOnClickListener{
                 onItemClickListener.onItemClick(listTask[adapterPosition])
             }
@@ -61,7 +62,7 @@ class TaskAdapter(val context: Context?, var listTask: List<TaskViewModel>, val 
         }
     }
 
-    public interface OnActionTask
+    interface OnActionTask
     {
         fun onDelete(index : Int)
     }

@@ -71,6 +71,7 @@ class MenuActivity : AppCompatActivity(), OnLogoutListener, ProfileFragment.OnPr
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
             val appBarLayout = findViewById<AppBarLayout>(R.id.appBarLayout)
             appBarLayout.setExpanded(true, true)
+            KeyboardUtils.hideKeyboard(this)
             when(destination.id)
             {
                 R.id.nav_task_detail -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -120,7 +121,7 @@ class MenuActivity : AppCompatActivity(), OnLogoutListener, ProfileFragment.OnPr
         val posTitle = data?.positionTitle
         var `class` = data?.classValue
         if(`class`=="0"){
-            `class` = "";
+            `class` = ""
         }
         tvPos.text = resources.getString(R.string.position_placeholder, posTitle, `class`)
 
