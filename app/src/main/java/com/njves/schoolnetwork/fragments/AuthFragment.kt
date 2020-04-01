@@ -49,4 +49,9 @@ class AuthFragment : Fragment() {
 
         return v
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+    }
 }

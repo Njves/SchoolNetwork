@@ -16,7 +16,7 @@ import java.util.*
 /*
 * Особенности архитектуры на Java unix time нужно умножать на 1000, если получать с сервера то делить на 1000
 */
-class TaskAdapter(val context: Context?, var listTask: List<TaskViewModel>, val onItemClickListener : OnRecyclerViewTaskOnItemClickListener) : RecyclerView.Adapter<TaskAdapter.TaskHolder>() {
+class TaskAdapter(val context: Context?, var listTask: ArrayList<TaskViewModel>, val onItemClickListener : TaskActionListener) : RecyclerView.Adapter<TaskAdapter.TaskHolder>() {
 
     companion object {
         const val TAG = "TaskAdapter"
@@ -51,20 +51,28 @@ class TaskAdapter(val context: Context?, var listTask: List<TaskViewModel>, val 
                 tvFrom.text = item.sender.firstName
             }
             tvDelete.setOnClickListener{
-                notifyItemRemoved(adapterPosition)
+                val adapterPos = adapterPosition
+                onItemClickListener.onRemove(adapterPosition,listTask[adapterPosition])
+                listTask.removeAt(adapterPos)
+
             }
-            val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+            val dateFormat = SimpleDateFormat("dd.MMM.yyyy", Locale.getDefault())
             tvDate.text = dateFormat.format(Date(item.date*1000.toLong()))
             itemView.setOnClickListener{
-                onItemClickListener.onItemClick(listTask[adapterPosition])
+                onItemClickListener.onClick(listTask[adapterPosition])
             }
+
 
         }
     }
 
-    interface OnActionTask
+    interface TaskActionListener
     {
-        fun onDelete(index : Int)
+        fun onRemove(index : Int, task : TaskViewModel)
+        fun onRemoveRanged()
+        fun onClick(task : TaskViewModel)
+        fun onUpdate()
+        fun onInsert()
     }
 
 }
