@@ -19,14 +19,10 @@ import com.njves.schoolnetwork.Models.network.models.task.TaskViewModel
 import com.njves.schoolnetwork.Models.network.request.TaskService
 
 import com.njves.schoolnetwork.R
-import com.njves.schoolnetwork.Storage.AuthStorage
+import com.njves.schoolnetwork.preferences.AuthStorage
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-
 
 class TaskDetailFragment : Fragment() {
     private lateinit var tvTitle : TextView

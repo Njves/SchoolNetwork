@@ -1,5 +1,6 @@
 package com.njves.schoolnetwork.fragments
 
+
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -7,33 +8,24 @@ import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
-import com.google.gson.Gson
 import com.njves.schoolnetwork.Models.KeyboardUtils
-import com.njves.schoolnetwork.Models.NetworkService
-import com.njves.schoolnetwork.Models.NetworkService.Companion.TYPE_GET
-import com.njves.schoolnetwork.Models.NetworkService.Companion.TYPE_POST
-import com.njves.schoolnetwork.Models.network.models.NetworkResponse
-import com.njves.schoolnetwork.Models.network.models.auth.*
-import com.njves.schoolnetwork.Models.network.models.profile.UserProfile
-import com.njves.schoolnetwork.Models.network.request.PositionListService
-import com.njves.schoolnetwork.Models.network.request.ProfileService
-
-
+import com.njves.schoolnetwork.Models.network.models.auth.Position
+import com.njves.schoolnetwork.Models.network.models.auth.Profile
 import com.njves.schoolnetwork.R
-import com.njves.schoolnetwork.Storage.AuthStorage
 import com.njves.schoolnetwork.callback.OnAuthPassedListener
 import com.njves.schoolnetwork.dialog.ClassChoiceDialog
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.njves.schoolnetwork.preferences.AuthStorage
+import com.njves.schoolnetwork.presenter.position.IPosition
+import com.njves.schoolnetwork.presenter.position.PositionPresenter
+import com.njves.schoolnetwork.presenter.profile.IProfile
+import com.njves.schoolnetwork.presenter.profile.ProfilePresenter
 
-class ProfileFragment : Fragment() {
+class ProfileFragment : Fragment(), IProfile, IPosition {
     // TODO: При нажатие на подтвердить приложение вылетает с ошибкой о null user
     lateinit var edFN: TextInputEditText
     lateinit var edLN: TextInputEditText
@@ -43,9 +35,10 @@ class ProfileFragment : Fragment() {
     lateinit var spinnerPosition: Spinner
     lateinit var btnClassChoice: Button
     lateinit var tvProfileStatus: TextView
-
     lateinit var onAuthPassedListener: OnAuthPassedListener
     lateinit var onProfileUpdateListener: OnProfileUpdateListener
+    private var profilePresenter = ProfilePresenter(this)
+    private var positionPresenter = PositionPresenter(this)
     var schoolClass: String? = null
 
     companion object {
@@ -71,7 +64,10 @@ class ProfileFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val v = layoutInflater.inflate(R.layout.fragment_profile, container, false)
+        // init menu
         setHasOptionsMenu(true)
+
+        // init view
         tvProfileStatus = v.findViewById(R.id.tvProfileStatus)
         edFN = v.findViewById(R.id.edFN)
         edLN = v.findViewById(R.id.edLN)
@@ -80,28 +76,8 @@ class ProfileFragment : Fragment() {
         spinnerPosition = v.findViewById(R.id.spinnerPosition)
         btnClassChoice = v.findViewById(R.id.btnClassChoice)
         btnSubmit = v.findViewById(R.id.btnSubmit)
-
-        // Создаем объект запроса создания
-        val positionListService = NetworkService.instance.getRetrofit().create(PositionListService::class.java)
-        val callPosition = positionListService.callPositionList()
-        // Выполняем запрос
-        callPosition.enqueue(object : Callback<List<Position>> {
-            override fun onFailure(call: Call<List<Position>>, t: Throwable) {
-                Log.d(TAG, "An error has occurred request get position $t")
-                Toast.makeText(context, "Не удалось получить должности учителей!", Toast.LENGTH_LONG).show()
-                spinnerPosition.setBackgroundColor(Color.RED)
-            }
-
-            override fun onResponse(call: Call<List<Position>>, response: Response<List<Position>>) {
-                // Получаем список позиций и создаем с ним адаптер
-                val listPositions = response.body() ?: listOf()
-                val positionAdapter = ArrayAdapter(
-                    context!!, R.layout.support_simple_spinner_dropdown_item,
-                    listPositions
-                )
-                spinnerPosition.adapter = positionAdapter
-            }
-        })
+        // init data
+        init()
 
         // Контроль показывания кнопки выбора класса
         spinnerPosition.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -113,36 +89,14 @@ class ProfileFragment : Fragment() {
                 if((parent?.selectedItem as Position).index==1)
                     btnClassChoice.visibility = View.VISIBLE
                 else btnClassChoice.visibility = View.GONE
+                val item = spinnerPosition.selectedItem as Position
+                Toast.makeText(context, "${item.index} ${item.title}", Toast.LENGTH_SHORT).show()
 
             }
 
         }
-        // Назначение существующего пользователя
-        val storage = AuthStorage(context)
-        val call = NetworkService.instance.getRetrofit().create(ProfileService::class.java)
-        val getCall = call.getProfile(TYPE_GET, storage.getUserDetails() ?: "")
-        var profile: Profile?
-        Log.d("ProfileFragment", arguments?.getString("user").toString())
-        getCall.enqueue(object : Callback<NetworkResponse<Profile>> {
-            override fun onFailure(call: Call<NetworkResponse<Profile>>, t: Throwable) {
-                Toast.makeText(context, t.toString(), Toast.LENGTH_LONG).show()
-            }
 
-            override fun onResponse(
-                call: Call<NetworkResponse<Profile>>,
-                response: Response<NetworkResponse<Profile>>
-            ) {
-                if (response.body()?.code == 0) {
-                    profile = response.body()?.data
-                    profile?.let {
-                        edFN.setText(it.firstName)
-                        edLN.setText(it.lastName)
-                        edMN.setText(it.middleName)
 
-                    }
-                }
-            }
-        })
         // Открытие диалога с выбором класса
         btnClassChoice.setOnClickListener {
             val dialog: DialogFragment = ClassChoiceDialog()
@@ -153,7 +107,6 @@ class ProfileFragment : Fragment() {
 
         btnSubmit.setOnClickListener {
             sendData()
-
         }
         return v
     }
@@ -197,90 +150,67 @@ class ProfileFragment : Fragment() {
     private fun sendData() {
         val storage = AuthStorage(context)
         // Проверка на успешность запроса
-        val profileService = NetworkService.instance.getRetrofit().create(ProfileService::class.java)
         // TODO: Заменить position
-        val item = spinnerPosition.selectedItem as Position
-        val gson = Gson()
-        val user = gson.fromJson(arguments?.getString("user"), User::class.java)
-        if (user == null) {
-            val updateProfile = profileService.updateProfile(
-                RequestModel(
-                    "UPDATE", Profile(
-                        storage.getUserDetails(),
-                        edFN.text.toString(),
-                        edLN.text.toString(),
-                        edMN.text.toString(),
-                        item.index,
-                        null,
-                        schoolClass ?: "0",
-                        null,
-                        null
-                    )
-                )
-            )
-            updateProfile.enqueue(object : Callback<NetworkResponse<Profile>> {
-                override fun onFailure(call: Call<NetworkResponse<Profile>>, t: Throwable) {
-                    Log.d("ProfileFragment", "Failure request: $t")
-                    Toast.makeText(context, "Произашла ошибка запроса", Toast.LENGTH_SHORT).show()
-                }
+        val item = spinnerPosition.selectedItem
+        val index = (item as Position).index
+        Log.d(TAG, item.toString())
+        val request = Profile(
+            storage.getUserDetails(),
+            edFN.text.toString(),
+            edLN.text.toString(),
+            edMN.text.toString(),
+            index,
+            null,
+            schoolClass ?: "0",
+            null,
+            null)
+        profilePresenter.postProfile("UPDATE", request)
+    }
+    private fun init() {
+        val storage = AuthStorage(context)
+        profilePresenter.getProfile(storage.getUserDetails()!!)
+        positionPresenter.getPositions()
 
-                override fun onResponse(
-                    call: Call<NetworkResponse<Profile>>,
-                    response: Response<NetworkResponse<Profile>>
-                ) {
-                    val code = response.body()?.code
-                    val message = response.body()?.message
-                    Log.d("ProfileFragment", response.body().toString())
-                    if (code == 0) {
-                        Snackbar.make(view!!, "Профиль успешно обновлен", Snackbar.LENGTH_SHORT).show()
-                        onProfileUpdateListener.onUpdateProfile()
-                        KeyboardUtils.hideKeyboard(activity!!)
-                    } else {
-                        Snackbar.make(view!!, "Ошибка: $message", Snackbar.LENGTH_SHORT).show()
-                    }
-                }
+    }
+    private fun initView(profile: Profile){
+        edFN.setText(profile.firstName)
+        edLN.setText(profile.lastName)
+        edMN.setText(profile.middleName)
+        spinnerPosition.setSelection(profile.position-1)
+    }
+    override fun onSuccessGet(profile: Profile?) {
+        profile?.let { initView(it) }
+    }
 
-            })
+    override fun onSuccessPost(profile: Profile?) {
+        Snackbar.make(view!!, "Профиль успешно обновлен", Snackbar.LENGTH_SHORT).show()
+        KeyboardUtils.hideKeyboard(activity!!)
+        profile?.let { initView(it) }
+    }
 
-        } else {
-            val callProfile = profileService.postProfile(
-                RequestProfileModel(
-                    TYPE_POST,
-                    UserProfile(
-                        user, Profile(
-                            storage.getUserDetails(),
-                            edFN.text.toString(),
-                            edLN.text.toString(),
-                            edMN.text.toString(),
-                            item.index,
-                            null,
-                            schoolClass ?: "0",
-                            null,
-                            null
-                        )
-                    )
-                )
-            )
-            callProfile.enqueue(object : Callback<NetworkResponse<UserProfile>> {
-                override fun onFailure(call: Call<NetworkResponse<UserProfile>>, t: Throwable) {
-                    Log.d(TAG, "Failure request post profile: $t")
-                    context?.let {
-                        Toast.makeText(context, t.message, Toast.LENGTH_LONG).show()
-                    }
+    override fun onError(message: String) {
+        Snackbar.make(view!!, "Ошибка: $message", Snackbar.LENGTH_SHORT).show()
+        spinnerPosition.setBackgroundColor(Color.RED)
+    }
 
-                }
+    override fun onFail(t: Throwable) {
+        Log.e(TAG, "206 $t")
+        Snackbar.make(view!!, "Произошла ошибка сети", Snackbar.LENGTH_SHORT).show()
+    }
 
-                override fun onResponse(
-                    call: Call<NetworkResponse<UserProfile>>,
-                    response: Response<NetworkResponse<UserProfile>>
-                ) {
-                    if (response.body()?.code == 0) {
-                        Toast.makeText(context, "You success create profile!", Toast.LENGTH_LONG).show()
+    override fun showProgressBar() {
 
-                        onAuthPassedListener.onSuccess(response.body()?.data?.user?.uid)
-                    }
-                }
-            })
-        }
+    }
+
+    override fun hideProgressBar() {
+
+    }
+
+    override fun onSuccess(positionList: List<Position>) {
+        val positionAdapter = ArrayAdapter(
+            context!!, R.layout.support_simple_spinner_dropdown_item,
+            positionList
+        )
+        spinnerPosition.adapter = positionAdapter
     }
 }

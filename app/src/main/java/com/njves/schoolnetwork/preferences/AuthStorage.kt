@@ -1,9 +1,8 @@
-package com.njves.schoolnetwork.Storage
+package com.njves.schoolnetwork.preferences
 
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
-import android.util.Log
 
 class AuthStorage(context : Context?) {
 

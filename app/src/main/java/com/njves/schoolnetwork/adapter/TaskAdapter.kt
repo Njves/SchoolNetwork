@@ -9,14 +9,12 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.njves.schoolnetwork.Models.network.models.task.TaskViewModel
 import com.njves.schoolnetwork.R
-import com.njves.schoolnetwork.callback.OnRecyclerViewTaskOnItemClickListener
-import java.lang.ref.WeakReference
 import java.text.SimpleDateFormat
 import java.util.*
 /*
 * Особенности архитектуры на Java unix time нужно умножать на 1000, если получать с сервера то делить на 1000
 */
-class TaskAdapter(val context: Context?, var listTask: ArrayList<TaskViewModel>, val onItemClickListener : TaskActionListener) : RecyclerView.Adapter<TaskAdapter.TaskHolder>() {
+class TaskAdapter(val context: Context?, var listTask: ArrayList<TaskViewModel>, val onItemClickListener : TaskAdapterActionListener) : RecyclerView.Adapter<TaskAdapter.TaskHolder>() {
 
     companion object {
         const val TAG = "TaskAdapter"
@@ -50,29 +48,20 @@ class TaskAdapter(val context: Context?, var listTask: ArrayList<TaskViewModel>,
             item.sender.let{
                 tvFrom.text = item.sender.firstName
             }
-            tvDelete.setOnClickListener{
-                val adapterPos = adapterPosition
-                onItemClickListener.onRemove(adapterPosition,listTask[adapterPosition])
-                listTask.removeAt(adapterPos)
-
-            }
             val dateFormat = SimpleDateFormat("dd.MMM.yyyy", Locale.getDefault())
             tvDate.text = dateFormat.format(Date(item.date*1000.toLong()))
             itemView.setOnClickListener{
-                onItemClickListener.onClick(listTask[adapterPosition])
+                onItemClickListener.onItemClick(listTask[adapterPosition])
             }
 
 
         }
     }
-
-    interface TaskActionListener
-    {
-        fun onRemove(index : Int, task : TaskViewModel)
-        fun onRemoveRanged()
-        fun onClick(task : TaskViewModel)
-        fun onUpdate()
-        fun onInsert()
+    public interface TaskAdapterActionListener{
+        fun onItemClick(item: TaskViewModel)
     }
+
+
+
 
 }

@@ -11,7 +11,12 @@ class NetworkService {
         val instance = NetworkService()
         const val TYPE_POST = "POST"
         const val TYPE_GET = "GET"
+
+
     }
+
+
+
     private constructor(){
 
     }
@@ -26,4 +31,4 @@ class NetworkService {
 
 
 }
-const val SERVER_URL = "http://host1809534.hostland.pro/SNServer/"
+const val SERVER_URL = "http://host1812384.hostland.pro/SPlanner/"

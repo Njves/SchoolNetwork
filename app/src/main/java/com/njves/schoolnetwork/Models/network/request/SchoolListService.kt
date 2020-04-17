@@ -5,7 +5,7 @@ import com.njves.schoolnetwork.Models.network.models.auth.School
 import retrofit2.Call
 import retrofit2.http.GET
 
-interface SchoolsListService {
+interface SchoolListService {
     @GET(SCHOOL_LIST_GET)
     fun callSchoolList() : Call<List<School>>
 }

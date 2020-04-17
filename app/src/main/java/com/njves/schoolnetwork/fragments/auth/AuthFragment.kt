@@ -1,4 +1,4 @@
-package com.njves.schoolnetwork.fragments
+package com.njves.schoolnetwork.fragments.auth
 
 import android.content.Context
 import android.os.Bundle
@@ -16,7 +16,6 @@ import java.lang.RuntimeException
 class AuthFragment : Fragment() {
     lateinit var updateToolbarTitleListener: UpdateToolbarTitleListener
     companion object {
-
         fun newInstance(): AuthFragment {
             val instance = AuthFragment()
             val bundle = Bundle()
@@ -26,8 +25,7 @@ class AuthFragment : Fragment() {
     }
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-
-        if (context is UpdateToolbarTitleListener)updateToolbarTitleListener = context
+        if (context is UpdateToolbarTitleListener) updateToolbarTitleListener = context
         else throw RuntimeException(" must implemented UpdateTitleListener")
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

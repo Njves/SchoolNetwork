@@ -1,21 +1,18 @@
 package com.njves.schoolnetwork.Activity
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -26,11 +23,12 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.njves.schoolnetwork.Models.KeyboardUtils
 import com.njves.schoolnetwork.Models.NetworkService
+
 import com.njves.schoolnetwork.Models.network.models.NetworkResponse
 import com.njves.schoolnetwork.Models.network.models.auth.Profile
 import com.njves.schoolnetwork.Models.network.request.ProfileService
 import com.njves.schoolnetwork.R
-import com.njves.schoolnetwork.Storage.AuthStorage
+import com.njves.schoolnetwork.preferences.AuthStorage
 import com.njves.schoolnetwork.callback.OnLogoutListener
 import com.njves.schoolnetwork.fragments.ProfileFragment
 import com.squareup.picasso.Picasso
@@ -89,6 +87,7 @@ class MenuActivity : AppCompatActivity(), OnLogoutListener, ProfileFragment.OnPr
         val profileService = NetworkService.instance.getRetrofit().create(ProfileService::class.java)
         val getProfile = profileService.getProfile("GET", storage.getUserDetails()?:"0")
         getProfile.enqueue(this)
+
 
 
 
@@ -157,10 +156,30 @@ class MenuActivity : AppCompatActivity(), OnLogoutListener, ProfileFragment.OnPr
             // TODO: Временное решение
             Toast.makeText(this@MenuActivity, message, Toast.LENGTH_SHORT).show()
         }
+
     }
 
+    override fun onStart() {
+        super.onStart()
+        Log.d("MenuTest", "OnStart")
+    }
 
-
+    override fun onResume() {
+        super.onResume()
+        Log.d("MenuTest", "OnResume")
+    }
+    override fun onPause(){
+        super.onPause()
+        Log.d("MenuTest", "onPause")
+    }
+    override fun onStop(){
+        super.onStop()
+        Log.d("MenuTest", "onStop")
+    }
+    override fun onRestart(){
+        super.onRestart()
+        Log.d("MenuTest", "onRestart")
+    }
 }
 
 

@@ -9,11 +9,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 
 import com.njves.schoolnetwork.R
-import com.njves.schoolnetwork.Storage.AuthStorage
+import com.njves.schoolnetwork.preferences.AuthStorage
 import com.njves.schoolnetwork.callback.UpdateToolbarTitleListener
 
 import com.njves.schoolnetwork.callback.OnAuthPassedListener
-import com.njves.schoolnetwork.fragments.AuthFragment
+import com.njves.schoolnetwork.fragments.auth.AuthFragment
 
 
 class MainActivity : AppCompatActivity(),OnAuthPassedListener, UpdateToolbarTitleListener {
@@ -22,13 +22,12 @@ class MainActivity : AppCompatActivity(),OnAuthPassedListener, UpdateToolbarTitl
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        toolbar = findViewById<Toolbar>(R.id.toolbar)
+        toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportFragmentManager.addOnBackStackChangedListener {
             val isBack = supportFragmentManager.backStackEntryCount>0
-            if(supportFragmentManager.backStackEntryCount>0)
-            {
-                Log.d("MainActivityBackStack", supportFragmentManager.backStackEntryCount.toString()+", $isBack")
+            if(supportFragmentManager.backStackEntryCount>0) {
+                Log.d("MainActivityBackStack", "${supportFragmentManager.backStackEntryCount}: $isBack")
                 supportActionBar?.setDisplayShowHomeEnabled(true)
                 supportActionBar?.setDisplayHomeAsUpEnabled(true)
             }
@@ -38,10 +37,8 @@ class MainActivity : AppCompatActivity(),OnAuthPassedListener, UpdateToolbarTitl
             }
 
         }
-
         // TODO: Добавить дополнительную проверку на сервере
         // Проверяем если пользователь уже авторизован на телефоне
-
         if(checkUser()) {
             startMenuActivity()
         }
@@ -71,8 +68,7 @@ class MainActivity : AppCompatActivity(),OnAuthPassedListener, UpdateToolbarTitl
     {
         val storage = AuthStorage(this)
         Log.d("MainActivity", storage.getUserDetails()?:"")
-        if(storage.isLogged()==true && storage.getUserDetails()!=null)
-        {
+        if(storage.isLogged()==true && storage.getUserDetails()!=null) {
             return true
         }
         return false
@@ -94,6 +90,5 @@ class MainActivity : AppCompatActivity(),OnAuthPassedListener, UpdateToolbarTitl
     override fun updateActionBar(title: String) {
         toolbar.title = title
     }
-
 
 }

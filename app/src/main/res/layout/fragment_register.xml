@@ -1,113 +1,121 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/fragmentRegister"
+<ScrollView
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="16dp"
         android:background="#FFF">
-    <ProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:visibility="invisible"/>
-
-    <Spinner
-            android:id="@+id/spinnerSchoolNumber"
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/fragmentRegister"
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="@id/layoutName"
-
-            android:layout_marginBottom="8dp"/>
-    <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/layoutName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/spinnerSchoolNumber"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginTop="8dp"
-            app:counterEnabled="true"
-            app:counterMaxLength="32"
-            app:layout_constraintBottom_toTopOf="@id/layoutEmail">
-        <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edName"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:hint="@string/register_hint_name"
-                android:maxLines="1"
-                android:maxLength="32"/>
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/layoutEmail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/layoutName"
-            app:layout_constraintStart_toStartOf="parent"
-            app:counterEnabled="true"
-            app:counterMaxLength="64"
+            android:layout_height="match_parent"
+            android:padding="16dp"
             >
-        <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edEmail"
+        <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:visibility="invisible"/>
+        <Spinner
+                android:id="@+id/spinnerSchoolNumber"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/register_hint_email"
-                android:maxLines="1"
-                android:maxLength="64"/>
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/layoutPass"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/layoutEmail"
-            app:layout_constraintStart_toStartOf="parent"
-            >
-        <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edPass"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/layoutName"
+                android:layout_marginBottom="8dp"/>
+        <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layoutName"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:hint="@string/register_hint_pass"
-                android:inputType="textPassword"/>
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/spinnerSchoolNumber"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginTop="8dp"
+                app:counterEnabled="true"
+                app:counterMaxLength="32"
+                app:layout_constraintBottom_toTopOf="@id/layoutEmail">
+            <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edName"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="@string/register_hint_name"
+                    android:maxLength="32"
+                    android:maxLines="1"
+                    android:inputType="text"
+                    android:imeOptions="actionNext"/>
 
-    </com.google.android.material.textfield.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/layoutPassRetry"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/layoutPass"
-            app:layout_constraintStart_toStartOf="parent"
-
-
-            android:layout_marginTop="8dp">
-        <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edPassRetry"
+        <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layoutEmail"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:hint="@string/register_hint_pass_retry"
-                android:inputType="textPassword"/>
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/layoutName"
+                app:layout_constraintStart_toStartOf="parent"
+                app:counterEnabled="true"
+                app:counterMaxLength="64"
+                >
+            <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/register_hint_email"
+                    android:maxLines="1"
+                    android:maxLength="64"
+                    android:inputType="textEmailAddress"
+                    android:imeOptions="actionNext"/>
+        </com.google.android.material.textfield.TextInputLayout>
 
-    </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layoutPass"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/layoutEmail"
+                app:layout_constraintStart_toStartOf="parent"
+                app:passwordToggleEnabled="true"
+                >
+            <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edPass"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="@string/register_hint_pass"
+                    android:inputType="textPassword"
+                    android:imeOptions="actionNext"/>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fabNext"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:src="@drawable/ic_arrow_forward_black_24dp"
-            android:scaleType="centerCrop"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layoutPassRetry"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/layoutPass"
+                app:layout_constraintStart_toStartOf="parent"
+                app:passwordToggleEnabled="true"
+                android:layout_marginTop="8dp">
+            <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edPassRetry"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="@string/register_hint_pass_retry"
+                    android:inputType="textPassword"
+                    android:imeOptions="actionGo"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fabNext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:src="@drawable/ic_arrow_forward_black_24dp"
+                android:scaleType="centerCrop"/>
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

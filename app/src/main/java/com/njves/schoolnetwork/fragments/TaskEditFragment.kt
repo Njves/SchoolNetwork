@@ -13,7 +13,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
-import com.njves.schoolnetwork.Models.KeyboardUtils
 import com.njves.schoolnetwork.Models.NetworkService
 import com.njves.schoolnetwork.Models.network.models.NetworkResponse
 import com.njves.schoolnetwork.Models.network.models.auth.Profile
@@ -22,7 +21,7 @@ import com.njves.schoolnetwork.Models.network.models.task.TaskPostModel
 import com.njves.schoolnetwork.Models.network.request.TaskService
 import com.njves.schoolnetwork.Models.network.request.TeachersService
 import com.njves.schoolnetwork.R
-import com.njves.schoolnetwork.Storage.AuthStorage
+import com.njves.schoolnetwork.preferences.AuthStorage
 import com.njves.schoolnetwork.adapter.ReceiversAdapter
 import com.njves.schoolnetwork.dialog.AuthErrorDialog
 import retrofit2.Call
