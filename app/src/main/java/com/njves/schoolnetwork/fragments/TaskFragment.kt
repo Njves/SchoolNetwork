@@ -46,7 +46,6 @@ class TaskFragment : Fragment(), ITask{
 
     companion object{
         const val TAG  = "TaskFragment"
-        const val ARG_TASK = "task"
         const val FLAG_GETTER = "flag"
         const val FLAG_GET = 0
         const val FLAG_GET_MY = 1
@@ -95,7 +94,7 @@ class TaskFragment : Fragment(), ITask{
 
     override fun onItemClickListener(task: TaskViewModel) {
         val bundle = Bundle()
-        bundle.putString(ARG_TASK, gson.toJson(task))
+        bundle.putString(TaskDetailFragment.ARG_TASK, gson.toJson(task))
         val options = NavOptions.Builder()
         options.setEnterAnim(R.anim.nav_default_enter_anim)
         findNavController().navigate(R.id.nav_task_detail, bundle, options.build())

@@ -11,6 +11,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
+import java.lang.NullPointerException
 
 class TaskPresenter(private val iTask: ITask) : SwipeRefreshLayout.OnRefreshListener, TaskAdapter.TaskAdapterActionListener{
     private var retrofit = NetworkService.instance.getRetrofit()
@@ -33,6 +34,10 @@ class TaskPresenter(private val iTask: ITask) : SwipeRefreshLayout.OnRefreshList
                 val code = response.body()?.code
                 val message = response.body()?.message
                 val taskList = response.body()?.data
+
+                if(response.code()!=200) {iTask.onError(response.errorBody()?.string()!!); return}
+
+
                 if(code==NetworkResponse.SUCCESS_RESPONSE) {
                     if(taskList != null){
                         if(taskList.isNotEmpty()){

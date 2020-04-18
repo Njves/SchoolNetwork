@@ -20,34 +20,36 @@ import com.njves.schoolnetwork.Models.network.request.TaskService
 
 import com.njves.schoolnetwork.R
 import com.njves.schoolnetwork.preferences.AuthStorage
+import com.njves.schoolnetwork.presenter.task.task_detail.ITaskDetail
+import com.njves.schoolnetwork.presenter.task.task_detail.TaskDetailPresenter
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class TaskDetailFragment : Fragment() {
+class TaskDetailFragment : Fragment(), ITaskDetail {
     private lateinit var tvTitle : TextView
     private lateinit var tvDescription : TextView
     private lateinit var ivSenderAvatar : ImageView
     private lateinit var tvSender : TextView
     private lateinit var tvAttachFiles : TextView
     private lateinit var btnDelete : Button
-    private var argTask : String? = null
+    private var argJsonTask : String? = null
     private lateinit var task : TaskViewModel
-    private var gson : Gson = Gson()
+    private var gson = Gson()
+    private var taskDetailPresenter = TaskDetailPresenter(this)
 
     companion object{
         const val TAG  = "TaskDetailFragment"
+        const val ARG_TASK = "task_item"
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         arguments?.let {
-            argTask = it.getString(TaskFragment.ARG_TASK)
-            task = gson.fromJson(argTask, TaskViewModel::class.java)
+            argJsonTask = it.getString(ARG_TASK)
+            task = gson.fromJson(argJsonTask, TaskViewModel::class.java)
+            taskDetailPresenter.initTask(task)
             Log.d("TaskDetailFragment", task.toString())
         }
-
-
     }
 
     override fun onCreateView(
@@ -61,39 +63,39 @@ class TaskDetailFragment : Fragment() {
         ivSenderAvatar = v.findViewById(R.id.ivSenderAvatar)
         tvAttachFiles = v.findViewById(R.id.tvAttachedFiles)
         btnDelete = v.findViewById(R.id.btnDelete)
-        initView()
         btnDelete.setOnClickListener{
-            val taskService =  NetworkService.instance.getRetrofit().create(TaskService::class.java)
             val storage = AuthStorage(context)
-            val call = taskService.deleteTask("DELETE", task.uid, storage.getUserDetails()?:"")
-            call.enqueue(object : Callback<NetworkResponse<Void>> {
-                override fun onFailure(call: Call<NetworkResponse<Void>>, t: Throwable) {
-                    Snackbar.make(v, "Произашла ошибка запроса", Snackbar.LENGTH_SHORT).show()
-                    Log.e(TAG, "Fail request to delete task $t")
-                }
-
-                override fun onResponse(call: Call<NetworkResponse<Void>>, response: Response<NetworkResponse<Void>>) {
-                    val httpCode = response.code()
-                    val body = response.body()
-                    if(httpCode==200){
-                        if(body?.code==0){
-                            Snackbar.make(v, "Задача успешно удалена", Snackbar.LENGTH_SHORT).show()
-                            findNavController().navigateUp()
-                        }
-                    }
-                }
-
-            })
+            taskDetailPresenter.deleteTask(storage.getUserDetails()!!, task)
         }
         return v
     }
-    private fun initView()
-    {
+
+
+    override fun onDelete() {
+        Snackbar.make(view!!, "Задача успешно удалена", Snackbar.LENGTH_SHORT).show()
+        findNavController().navigateUp()
+    }
+
+    override fun onInit(task: TaskViewModel) {
         tvTitle.text = task.title
         tvDescription.text = task.description
         tvSender.text = resources.getString(R.string.name_placeholder, task.sender.firstName, task.sender.lastName)
+    }
+
+    override fun onError(message: String) {
+        Snackbar.make(view!!, message, Snackbar.LENGTH_SHORT).show()
+    }
+
+    override fun onFail(t: Throwable) {
+        Snackbar.make(view!!, "Произошла ошибка запроса!", Snackbar.LENGTH_SHORT).show()
+        Log.wtf(TAG, t.toString())
+    }
+
+    override fun showProgressBar() {
 
     }
 
+    override fun hideProgressBar() {
 
+    }
 }
