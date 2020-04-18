@@ -1,4 +1,4 @@
-package com.njves.schoolnetwork.presenter.task
+package com.njves.schoolnetwork.presenter.task.task_list
 
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.njves.schoolnetwork.Models.NetworkService
@@ -6,12 +6,9 @@ import com.njves.schoolnetwork.Models.network.models.NetworkResponse
 import com.njves.schoolnetwork.Models.network.models.task.TaskViewModel
 import com.njves.schoolnetwork.Models.network.request.TaskService
 import com.njves.schoolnetwork.adapter.TaskAdapter
-import com.njves.schoolnetwork.callback.OnRecyclerViewTaskOnItemClickListener
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import java.lang.NullPointerException
 
 class TaskPresenter(private val iTask: ITask) : SwipeRefreshLayout.OnRefreshListener, TaskAdapter.TaskAdapterActionListener{
     private var retrofit = NetworkService.instance.getRetrofit()

@@ -47,7 +47,7 @@ class TaskDetailFragment : Fragment(), ITaskDetail {
         arguments?.let {
             argJsonTask = it.getString(ARG_TASK)
             task = gson.fromJson(argJsonTask, TaskViewModel::class.java)
-            taskDetailPresenter.initTask(task)
+
             Log.d("TaskDetailFragment", task.toString())
         }
     }
@@ -63,6 +63,7 @@ class TaskDetailFragment : Fragment(), ITaskDetail {
         ivSenderAvatar = v.findViewById(R.id.ivSenderAvatar)
         tvAttachFiles = v.findViewById(R.id.tvAttachedFiles)
         btnDelete = v.findViewById(R.id.btnDelete)
+        taskDetailPresenter.initTask(task)
         btnDelete.setOnClickListener{
             val storage = AuthStorage(context)
             taskDetailPresenter.deleteTask(storage.getUserDetails()!!, task)

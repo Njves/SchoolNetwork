@@ -1,4 +1,4 @@
-package com.njves.schoolnetwork.presenter.task
+package com.njves.schoolnetwork.presenter.task.task_list
 
 import com.njves.schoolnetwork.Models.network.models.task.TaskViewModel
 import com.njves.schoolnetwork.presenter.IError

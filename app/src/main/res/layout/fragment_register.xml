@@ -7,17 +7,12 @@
         android:layout_height="match_parent"
         android:background="#FFF"
         android:padding="16dp">
-<ScrollView
-
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
+<ScrollView android:layout_width="match_parent"
+            android:layout_height="match_parent">
     <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/fragmentRegister"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-
-            >
+            android:layout_height="match_parent">
         <ProgressBar
                 android:id="@+id/progressBar"
                 android:layout_width="wrap_content"

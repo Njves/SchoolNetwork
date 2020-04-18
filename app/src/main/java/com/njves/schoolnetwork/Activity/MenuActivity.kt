@@ -82,13 +82,10 @@ class MenuActivity : AppCompatActivity(), OnLogoutListener, ProfileFragment.OnPr
             }else{
                 fab.visibility = View.GONE
             }
-            //actionDone?.isVisible = destination.id==R.id.nav_task_edit || destination.id == R.id.nav_profile
         }
         val profileService = NetworkService.instance.getRetrofit().create(ProfileService::class.java)
         val getProfile = profileService.getProfile("GET", storage.getUserDetails()?:"0")
         getProfile.enqueue(this)
-
-
 
 
     }

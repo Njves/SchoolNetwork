@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.*
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -24,20 +25,26 @@ import com.njves.schoolnetwork.R
 import com.njves.schoolnetwork.preferences.AuthStorage
 import com.njves.schoolnetwork.adapter.ReceiversAdapter
 import com.njves.schoolnetwork.dialog.AuthErrorDialog
+import com.njves.schoolnetwork.presenter.task.task_edit.ITaskEdit
+import com.njves.schoolnetwork.presenter.task.task_edit.TaskEditPresenter
+import org.threeten.bp.ZonedDateTime
+import org.threeten.bp.format.DateTimeFormatter
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.*
 
-class TaskEditFragment : Fragment(){
-    lateinit var etTitle : EditText
-    lateinit var etDescription : EditText
+class TaskEditFragment : Fragment(), ITaskEdit {
+    lateinit var etTitle: EditText
+    lateinit var etDescription: EditText
     lateinit var btnDatePicker: Button
     lateinit var rvReceivers : RecyclerView
-    lateinit var btnSubmit : Button
+    lateinit var btnSubmit: Button
+    lateinit var pb: ProgressBar
     var datePick = GregorianCalendar()
     lateinit var adapter : ReceiversAdapter
+    private var presenter = TaskEditPresenter(this)
 
     companion object{
         const val TAG = "TaskEditFragment"
@@ -54,26 +61,11 @@ class TaskEditFragment : Fragment(){
         setHasOptionsMenu(true)
         // init recycler view
         rvReceivers = v.findViewById(R.id.rvReceivers)
+        pb = v.findViewById(R.id.pbLoading)
         rvReceivers.layoutManager = LinearLayoutManager(context)
-        Log.d("TaskEditFragment", "OnCreateView TaskEditFragment")
-
+        
         // Получаем список учителей
-        val teachersService = NetworkService.instance.getRetrofit().create(TeachersService::class.java)
-        val call = teachersService.getTeacherList(1,1)
-        call.enqueue(object : Callback<NetworkResponse<List<Profile>>>{
-            override fun onFailure(call: Call<NetworkResponse<List<Profile>>>, t: Throwable) {
-                Toast.makeText(context, "Не удалось получить список учителей", Toast.LENGTH_LONG).show()
-                Log.e(TAG, "On failure get teachers list, throwable $t")
-            }
-
-            override fun onResponse(
-                call: Call<NetworkResponse<List<Profile>>>,
-                response: Response<NetworkResponse<List<Profile>>>) {
-                adapter = ReceiversAdapter(context, response.body()?.data?:listOf())
-                rvReceivers.adapter = adapter
-                Log.i(TAG, "OnResponse TeachersList")
-            }
-        })
+        presenter.getListProfile(1,1)
         etTitle = v.findViewById(R.id.edTitle)
         etDescription = v.findViewById(R.id.edDescription)
         btnDatePicker = v.findViewById(R.id.btnDatePicker)
@@ -97,40 +89,11 @@ class TaskEditFragment : Fragment(){
         val desc = etDescription.text.toString()
         val receiver = adapter.getUser()?.uid
         val taskService = NetworkService.instance.getRetrofit().create(TaskService::class.java)
-
         val sdf = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
-        Log.d(TAG, "$title, $desc, $receiver, ${sdf.format(datePick.time)} ${datePick.time} ${datePick.time.time/1000}")
-        val postCall = taskService.postCallTask(
-            RequestTaskModel(
-                "POST",
-                TaskPostModel(0, title, desc, datePick.time.time/1000, storage.getUserDetails(), receiver)
-            )
-        )
-        postCall.enqueue(object : Callback<NetworkResponse<TaskPostModel>> {
-            override fun onFailure(call: Call<NetworkResponse<TaskPostModel>>, t: Throwable) {
-                Toast.makeText(context, "Не удалось отправить задачу", Toast.LENGTH_LONG).show()
-                Log.e(TAG, "Failure to send task, throwable: $t")
-            }
+        val task = TaskPostModel(0, title, desc, datePick.time.time/1000, storage.getUserDetails(), receiver)
+        presenter.sendTask(task)
 
-            override fun onResponse(
-                call: Call<NetworkResponse<TaskPostModel>>,
-                response: Response<NetworkResponse<TaskPostModel>>
-            ) {
-                Log.i(TAG, "Response call to create task")
-                val code = response.body()?.code
-                val message = response.body()?.message
-                if (code == 0) {
-                    view?.let {
-                        Snackbar.make(view!!, "Задача была успешно отправлена", Snackbar.LENGTH_SHORT).show()
-                    }
-                    // Закрыть фрагмент
-                    findNavController().navigateUp()
-                } else {
-                    AuthErrorDialog.newInstance(message).show(activity?.supportFragmentManager, "dialogError")
-                }
-            }
 
-        })
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?) {
@@ -150,5 +113,39 @@ class TaskEditFragment : Fragment(){
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onSuccessGetList(list: List<Profile>) {
+        adapter = ReceiversAdapter(context, list)
+        rvReceivers.adapter = adapter
+    }
+
+    override fun pickDate() {
+
+    }
+
+    override fun onSuccessSend() {
+        view?.let {
+            Snackbar.make(view!!, "Задача была успешно отправлена", Snackbar.LENGTH_SHORT).show()
+        }
+        // Закрыть фрагмент
+        findNavController().navigateUp()
+    }
+
+    override fun onError(message: String) {
+        AuthErrorDialog.newInstance(message).show(activity?.supportFragmentManager, "dialogError")
+    }
+
+    override fun onFail(t: Throwable) {
+        Toast.makeText(context, "Не удалось отправить задачу", Toast.LENGTH_LONG).show()
+        Log.e(TAG, t.toString())
+    }
+
+    override fun showProgressBar() {
+        pb.visibility = View.VISIBLE
+    }
+
+    override fun hideProgressBar() {
+        pb.visibility = View.GONE
     }
 }

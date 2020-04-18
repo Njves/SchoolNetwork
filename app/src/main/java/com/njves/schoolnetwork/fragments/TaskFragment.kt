@@ -1,7 +1,6 @@
 package com.njves.schoolnetwork.fragments
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -18,21 +17,16 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import com.njves.schoolnetwork.Models.NetworkService
-import com.njves.schoolnetwork.Models.network.models.NetworkResponse
 import com.njves.schoolnetwork.Models.network.models.task.TaskViewModel
 import com.njves.schoolnetwork.Models.network.request.TaskService
 import com.njves.schoolnetwork.R
 import com.njves.schoolnetwork.preferences.AuthStorage
 import com.njves.schoolnetwork.adapter.TaskAdapter
-import com.njves.schoolnetwork.callback.OnRecyclerViewTaskOnItemClickListener
-import com.njves.schoolnetwork.presenter.task.ITask
-import com.njves.schoolnetwork.presenter.task.TaskPresenter
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.njves.schoolnetwork.presenter.task.task_list.ITask
+import com.njves.schoolnetwork.presenter.task.task_list.TaskPresenter
 import java.util.ArrayList
 
-class TaskFragment : Fragment(), ITask{
+class TaskFragment : Fragment(), ITask {
 
     private lateinit var rvTask : RecyclerView
     private lateinit var adapter : TaskAdapter
@@ -74,7 +68,7 @@ class TaskFragment : Fragment(), ITask{
         swipeLayout = v.findViewById(R.id.swipeLayout)
         swipeLayout.setOnRefreshListener(taskPresenter)
 
-        val taskService = NetworkService.instance.getRetrofit().create(TaskService::class.java)
+
         storage = AuthStorage(context)
         // Флаг запроса на фрагменты
         when(arguments?.get(FLAG_GETTER)){
