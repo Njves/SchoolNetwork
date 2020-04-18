@@ -31,37 +31,41 @@ import com.njves.schoolnetwork.R
 import com.njves.schoolnetwork.preferences.AuthStorage
 import com.njves.schoolnetwork.callback.OnLogoutListener
 import com.njves.schoolnetwork.fragments.ProfileFragment
+import com.njves.schoolnetwork.presenter.menu.IMenu
+import com.njves.schoolnetwork.presenter.menu.MenuPresenter
 import com.squareup.picasso.Picasso
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class MenuActivity : AppCompatActivity(), OnLogoutListener, ProfileFragment.OnProfileUpdateListener, Callback<NetworkResponse<Profile>> {
+class MenuActivity : AppCompatActivity(), ProfileFragment.OnProfileUpdateListener, IMenu {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var navView : NavigationView
     private lateinit var toolbar : Toolbar
-
+    private var presenter = MenuPresenter(this)
+    companion object{
+        const val TAG = "MenuActivity"
+    }
     @SuppressLint("RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_menu)
         toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
-
-
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         navView = findViewById(R.id.nav_view)
         val navController = findNavController(R.id.nav_host_fragment)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             navController.graph, drawerLayout
         )
-        val storage = AuthStorage(this)
+
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
         val fab = findViewById<FloatingActionButton>(R.id.fabAdd)
+        val storage = AuthStorage(this)
+        presenter.getProfile(storage.getUserDetails()!!)
+
         fab.setOnClickListener{
             navController.navigate(R.id.nav_task_edit)
         }
@@ -83,15 +87,7 @@ class MenuActivity : AppCompatActivity(), OnLogoutListener, ProfileFragment.OnPr
                 fab.visibility = View.GONE
             }
         }
-        val profileService = NetworkService.instance.getRetrofit().create(ProfileService::class.java)
-        val getProfile = profileService.getProfile("GET", storage.getUserDetails()?:"0")
-        getProfile.enqueue(this)
-
-
     }
-
-
-
 
     override fun onSupportNavigateUp(): Boolean {
         KeyboardUtils.hideKeyboard(this)
@@ -99,14 +95,7 @@ class MenuActivity : AppCompatActivity(), OnLogoutListener, ProfileFragment.OnPr
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
-    override fun onLogout() {
-        val storage = AuthStorage(this)
-        storage.clearUserDetails()
-        storage.setLogged(false)
-        val intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
-        finish()
-    }
+
 
     private fun inflateHeaderView(header : View, data : Profile?) {
         val avatar = header.findViewById<ImageView>(R.id.ivAva)
@@ -130,52 +119,34 @@ class MenuActivity : AppCompatActivity(), OnLogoutListener, ProfileFragment.OnPr
 
     override fun onUpdateProfile() {
         val storage = AuthStorage(this)
-        val profileService = NetworkService.instance.getRetrofit().create(ProfileService::class.java)
-        val getProfile = profileService.getProfile("GET", storage.getUserDetails()?:"0")
-        getProfile.enqueue(this)
+        presenter.getProfile(storage.getUserDetails()!!)
 
     }
 
-    override fun onFailure(call: Call<NetworkResponse<Profile>>, t: Throwable) {
-        Log.d("MenuActivity", "Failure request: $t")
-        Toast.makeText(this@MenuActivity, "Произашла ошибка запроса к серверу", Toast.LENGTH_SHORT).show()
-    }
 
-    override fun onResponse(call: Call<NetworkResponse<Profile>>, response: Response<NetworkResponse<Profile>>) {
+
+
+
+    override fun onSuccess(profile: Profile) {
         val header = navView.getHeaderView(0)
-        val code = response.body()?.code
-        val message = response.body()?.message
-        if(code==0) {
-            val data = response.body()?.data
-            Log.d("MenuActivity", data.toString())
-            inflateHeaderView(header, data)
-        }else{
-            // TODO: Временное решение
-            Toast.makeText(this@MenuActivity, message, Toast.LENGTH_SHORT).show()
-        }
-
+        inflateHeaderView(header, profile)
     }
 
-    override fun onStart() {
-        super.onStart()
-        Log.d("MenuTest", "OnStart")
+    override fun onError(message: String) {
+        Toast.makeText(this@MenuActivity, message, Toast.LENGTH_SHORT).show()
     }
 
-    override fun onResume() {
-        super.onResume()
-        Log.d("MenuTest", "OnResume")
+    override fun onFail(t: Throwable) {
+        Toast.makeText(this@MenuActivity, "Не удалось получить профиль", Toast.LENGTH_SHORT).show()
+        Log.wtf(TAG,t.toString())
     }
-    override fun onPause(){
-        super.onPause()
-        Log.d("MenuTest", "onPause")
+
+    override fun showProgressBar() {
+        TODO("Not yet implemented")
     }
-    override fun onStop(){
-        super.onStop()
-        Log.d("MenuTest", "onStop")
-    }
-    override fun onRestart(){
-        super.onRestart()
-        Log.d("MenuTest", "onRestart")
+
+    override fun hideProgressBar() {
+        TODO("Not yet implemented")
     }
 }
 

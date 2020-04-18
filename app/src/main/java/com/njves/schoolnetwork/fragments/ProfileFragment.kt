@@ -186,6 +186,7 @@ class ProfileFragment : Fragment(), IProfile, IPosition {
         Snackbar.make(view!!, "Профиль успешно обновлен", Snackbar.LENGTH_SHORT).show()
         KeyboardUtils.hideKeyboard(activity!!)
         profile?.let { initView(it) }
+        onProfileUpdateListener.onUpdateProfile()
     }
 
     override fun onError(message: String) {

@@ -1,6 +1,7 @@
 package com.njves.schoolnetwork.fragments
 
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -8,9 +9,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import com.njves.schoolnetwork.Activity.MainActivity
 
 import com.njves.schoolnetwork.R
 import com.njves.schoolnetwork.callback.OnLogoutListener
+import com.njves.schoolnetwork.preferences.AuthStorage
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -46,7 +49,12 @@ class SettingsFragment : Fragment() {
         val v = inflater.inflate(R.layout.fragment_settings, container, false)
         val btnLogout = v.findViewById<Button>(R.id.btnLogout)
         btnLogout.setOnClickListener{
-            btnLogoutListener?.onLogout()
+            val storage = AuthStorage(context)
+            storage.clearUserDetails()
+            storage.setLogged(false)
+            val intent = Intent(activity, MainActivity::class.java)
+            startActivity(intent)
+            activity?.finish()
         }
         return v
     }

@@ -28,7 +28,7 @@ class TaskEditPresenter(val iTaskEdit: ITaskEdit) {
                 val message = response.body()?.message
                 val body = response.body()
                 if(response.code()!=200) iTaskEdit.onError(response.errorBody()?.string()!!)
-                if(code==0)iTaskEdit.onSuccessSend()
+                if(code==NetworkResponse.SUCCESS_RESPONSE)iTaskEdit.onSuccessSend()
                 else iTaskEdit.onError(message!!)
             }
 

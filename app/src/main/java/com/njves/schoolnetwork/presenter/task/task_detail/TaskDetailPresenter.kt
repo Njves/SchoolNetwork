@@ -21,7 +21,7 @@ class TaskDetailPresenter(val iTaskDetail: ITaskDetail) {
                 iTaskDetail.hideProgressBar()
                 if(response.code()!=200) iTaskDetail.onError(response.errorBody()?.string()!!)
                 val body = response.body()
-                if(body?.code==0){
+                if(body?.code==NetworkResponse.SUCCESS_RESPONSE){
                     iTaskDetail.onDelete()
                 }
             }
