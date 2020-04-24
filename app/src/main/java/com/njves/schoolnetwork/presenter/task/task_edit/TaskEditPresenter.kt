@@ -6,7 +6,7 @@ import com.njves.schoolnetwork.Models.NetworkService
 import com.njves.schoolnetwork.Models.network.models.NetworkResponse
 import com.njves.schoolnetwork.Models.network.models.auth.Profile
 import com.njves.schoolnetwork.Models.network.models.task.RequestTaskModel
-import com.njves.schoolnetwork.Models.network.models.task.TaskPostModel
+import com.njves.schoolnetwork.Models.network.models.task.Task
 import com.njves.schoolnetwork.Models.network.request.TaskService
 import com.njves.schoolnetwork.Models.network.request.TeachersService
 import com.njves.schoolnetwork.fragments.TaskEditFragment
@@ -18,11 +18,11 @@ class TaskEditPresenter(val iTaskEdit: ITaskEdit) {
     private var retrofit = NetworkService.instance.getRetrofit()
     private var taskService  = retrofit.create(TaskService::class.java)
     private var teachersService = retrofit.create(TeachersService::class.java)
-    fun sendTask(task: TaskPostModel){
+    fun sendTask(task: Task){
         iTaskEdit.showProgressBar()
         val call = taskService.postCallTask(RequestTaskModel("POST", task))
-        call.enqueue(object : Callback<NetworkResponse<TaskPostModel>>{
-            override fun onResponse(call: Call<NetworkResponse<TaskPostModel>>, response: Response<NetworkResponse<TaskPostModel>>) {
+        call.enqueue(object : Callback<NetworkResponse<Task>>{
+            override fun onResponse(call: Call<NetworkResponse<Task>>, response: Response<NetworkResponse<Task>>) {
                 iTaskEdit.hideProgressBar()
                 val code = response.body()?.code
                 val message = response.body()?.message
@@ -32,7 +32,7 @@ class TaskEditPresenter(val iTaskEdit: ITaskEdit) {
                 else iTaskEdit.onError(message!!)
             }
 
-            override fun onFailure(call: Call<NetworkResponse<TaskPostModel>>, t: Throwable) {
+            override fun onFailure(call: Call<NetworkResponse<Task>>, t: Throwable) {
                 iTaskEdit.hideProgressBar()
                 iTaskEdit.onFail(t)
             }

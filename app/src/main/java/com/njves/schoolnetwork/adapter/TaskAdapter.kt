@@ -7,14 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.njves.schoolnetwork.Models.network.models.task.TaskViewModel
+import com.njves.schoolnetwork.Models.network.models.task.Task
 import com.njves.schoolnetwork.R
 import java.text.SimpleDateFormat
 import java.util.*
 /*
 * Особенности архитектуры на Java unix time нужно умножать на 1000, если получать с сервера то делить на 1000
 */
-class TaskAdapter(val context: Context?, var listTask: ArrayList<TaskViewModel>, val onItemClickListener : TaskAdapterActionListener) : RecyclerView.Adapter<TaskAdapter.TaskHolder>() {
+class TaskAdapter(val context: Context?, var listTask: ArrayList<Task>, val onItemClickListener : TaskAdapterActionListener) : RecyclerView.Adapter<TaskAdapter.TaskHolder>() {
 
     companion object {
         const val TAG = "TaskAdapter"
@@ -41,7 +41,7 @@ class TaskAdapter(val context: Context?, var listTask: ArrayList<TaskViewModel>,
         private val tvFrom: TextView = itemView.findViewById(R.id.from)
         private val tvDate: TextView = itemView.findViewById(R.id.date)
         private val tvDelete : TextView = itemView.findViewById(R.id.tvDelete)
-        fun bindItem(item: TaskViewModel) {
+        fun bindItem(item: Task) {
 
             tvTitle.text = item.title
             txDescription.text = item.description
@@ -58,7 +58,7 @@ class TaskAdapter(val context: Context?, var listTask: ArrayList<TaskViewModel>,
         }
     }
     public interface TaskAdapterActionListener{
-        fun onItemClick(item: TaskViewModel)
+        fun onItemClick(item: Task)
     }
 
 

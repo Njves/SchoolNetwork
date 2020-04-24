@@ -124,12 +124,10 @@ class MenuActivity : AppCompatActivity(), ProfileFragment.OnProfileUpdateListene
     }
 
 
-
-
-
     override fun onSuccess(profile: Profile) {
         val header = navView.getHeaderView(0)
         inflateHeaderView(header, profile)
+        AuthStorage.getInstance(this).setLocalUserProfile(profile)
     }
 
     override fun onError(message: String) {

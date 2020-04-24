@@ -3,7 +3,7 @@ package com.njves.schoolnetwork.presenter.task.task_list
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.njves.schoolnetwork.Models.NetworkService
 import com.njves.schoolnetwork.Models.network.models.NetworkResponse
-import com.njves.schoolnetwork.Models.network.models.task.TaskViewModel
+import com.njves.schoolnetwork.Models.network.models.task.Task
 import com.njves.schoolnetwork.Models.network.request.TaskService
 import com.njves.schoolnetwork.adapter.TaskAdapter
 import retrofit2.Call
@@ -17,16 +17,16 @@ class TaskPresenter(private val iTask: ITask) : SwipeRefreshLayout.OnRefreshList
         iTask.onRefresh()
     }
 
-    override fun onItemClick(item: TaskViewModel) {
+    override fun onItemClick(item: Task) {
         iTask.onItemClickListener(item)
     }
 
     fun getTaskList(type: String, uid: String){
         iTask.showProgressBar()
         val call = taskService.getTaskList(type, uid)
-        call.enqueue(object : Callback<NetworkResponse<List<TaskViewModel>>> {
-            override fun onResponse(call: Call<NetworkResponse<List<TaskViewModel>>>,
-                                    response: Response<NetworkResponse<List<TaskViewModel>>>) {
+        call.enqueue(object : Callback<NetworkResponse<List<Task>>> {
+            override fun onResponse(call: Call<NetworkResponse<List<Task>>>,
+                                    response: Response<NetworkResponse<List<Task>>>) {
                 iTask.hideProgressBar()
                 val code = response.body()?.code
                 val message = response.body()?.message
@@ -52,7 +52,7 @@ class TaskPresenter(private val iTask: ITask) : SwipeRefreshLayout.OnRefreshList
                 }
             }
 
-            override fun onFailure(call: Call<NetworkResponse<List<TaskViewModel>>>, t: Throwable) {
+            override fun onFailure(call: Call<NetworkResponse<List<Task>>>, t: Throwable) {
                 iTask.hideProgressBar()
                 iTask.onFail(t)
             }

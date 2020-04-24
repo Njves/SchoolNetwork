@@ -13,18 +13,12 @@ import android.widget.TextView
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
-import com.njves.schoolnetwork.Models.NetworkService
-import com.njves.schoolnetwork.Models.network.models.NetworkResponse
-import com.njves.schoolnetwork.Models.network.models.task.TaskViewModel
-import com.njves.schoolnetwork.Models.network.request.TaskService
+import com.njves.schoolnetwork.Models.network.models.task.Task
 
 import com.njves.schoolnetwork.R
 import com.njves.schoolnetwork.preferences.AuthStorage
 import com.njves.schoolnetwork.presenter.task.task_detail.ITaskDetail
 import com.njves.schoolnetwork.presenter.task.task_detail.TaskDetailPresenter
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class TaskDetailFragment : Fragment(), ITaskDetail {
     private lateinit var tvTitle : TextView
@@ -34,7 +28,7 @@ class TaskDetailFragment : Fragment(), ITaskDetail {
     private lateinit var tvAttachFiles : TextView
     private lateinit var btnDelete : Button
     private var argJsonTask : String? = null
-    private lateinit var task : TaskViewModel
+    private lateinit var taskm : Task
     private var gson = Gson()
     private var taskDetailPresenter = TaskDetailPresenter(this)
 
@@ -46,9 +40,9 @@ class TaskDetailFragment : Fragment(), ITaskDetail {
         super.onCreate(savedInstanceState)
         arguments?.let {
             argJsonTask = it.getString(ARG_TASK)
-            task = gson.fromJson(argJsonTask, TaskViewModel::class.java)
+            taskm = gson.fromJson(argJsonTask, Task::class.java)
 
-            Log.d("TaskDetailFragment", task.toString())
+            Log.d("TaskDetailFragment", taskm.toString())
         }
     }
 
@@ -63,10 +57,10 @@ class TaskDetailFragment : Fragment(), ITaskDetail {
         ivSenderAvatar = v.findViewById(R.id.ivSenderAvatar)
         tvAttachFiles = v.findViewById(R.id.tvAttachedFiles)
         btnDelete = v.findViewById(R.id.btnDelete)
-        taskDetailPresenter.initTask(task)
+        taskDetailPresenter.initTask(taskm)
         btnDelete.setOnClickListener{
             val storage = AuthStorage(context)
-            taskDetailPresenter.deleteTask(storage.getUserDetails()!!, task)
+            taskDetailPresenter.deleteTask(storage.getUserDetails()!!, taskm)
         }
         return v
     }
@@ -77,7 +71,7 @@ class TaskDetailFragment : Fragment(), ITaskDetail {
         findNavController().navigateUp()
     }
 
-    override fun onInit(task: TaskViewModel) {
+    override fun onInit(task: Task) {
         tvTitle.text = task.title
         tvDescription.text = task.description
         tvSender.text = resources.getString(R.string.name_placeholder, task.sender.firstName, task.sender.lastName)

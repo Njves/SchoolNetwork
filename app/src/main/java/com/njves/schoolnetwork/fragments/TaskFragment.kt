@@ -16,9 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
-import com.njves.schoolnetwork.Models.NetworkService
-import com.njves.schoolnetwork.Models.network.models.task.TaskViewModel
-import com.njves.schoolnetwork.Models.network.request.TaskService
+import com.njves.schoolnetwork.Models.network.models.task.Task
 import com.njves.schoolnetwork.R
 import com.njves.schoolnetwork.preferences.AuthStorage
 import com.njves.schoolnetwork.adapter.TaskAdapter
@@ -86,7 +84,7 @@ class TaskFragment : Fragment(), ITask {
         return v
     }
 
-    override fun onItemClickListener(task: TaskViewModel) {
+    override fun onItemClickListener(task: Task) {
         val bundle = Bundle()
         bundle.putString(TaskDetailFragment.ARG_TASK, gson.toJson(task))
         val options = NavOptions.Builder()
@@ -94,9 +92,10 @@ class TaskFragment : Fragment(), ITask {
         findNavController().navigate(R.id.nav_task_detail, bundle, options.build())
     }
 
-    override fun onSuccessGet(taskList: List<TaskViewModel>) {
-        adapter = TaskAdapter(context, taskList as ArrayList<TaskViewModel>, taskPresenter)
+    override fun onSuccessGet(taskList: List<Task>) {
+        adapter = TaskAdapter(context, taskList as ArrayList<Task>, taskPresenter)
         rvTask.adapter = adapter
+        Log.d(TAG, taskList.hashCode().toString())
     }
 
     override fun onSuccessGetEmptyList() {

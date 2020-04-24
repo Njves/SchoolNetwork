@@ -4,6 +4,6 @@ import com.njves.schoolnetwork.Models.network.models.auth.Profile
 import com.njves.schoolnetwork.presenter.IError
 
 interface IProfile : IError {
-    fun onSuccessGet(profile : Profile?)
-    fun onSuccessPost(profile : Profile?)
+    fun onProfileFilled(profile : Profile?)
+    fun onProfileEmpty()
 }

@@ -14,11 +14,15 @@ class MenuPresenter(val iMenu: IMenu) {
     fun getProfile(uid: String){
 
         val getProfile = profileService.getProfile("GET", uid)
-        getProfile.enqueue(object : Callback<NetworkResponse<Profile>>{
-            override fun onResponse(call: Call<NetworkResponse<Profile>>, response: Response<NetworkResponse<Profile>>) {
+        getProfile.enqueue(object : Callback<NetworkResponse<Profile?>>{
+            override fun onResponse(call: Call<NetworkResponse<Profile?>>, response: Response<NetworkResponse<Profile?>>) {
                 val code = response.body()?.code
                 val message  = response.body()?.message!!
-                val profile = response.body()?.data!!
+                val profile = response.body()?.data
+                if(profile==null){
+                    iMenu.onError("Накладочка")
+                    return;
+                }
                 if(response.code()!=200) iMenu.onError(response.errorBody()?.string()!!)
                 if(code==NetworkResponse.SUCCESS_RESPONSE) {
                     iMenu.onSuccess(profile)
@@ -27,7 +31,7 @@ class MenuPresenter(val iMenu: IMenu) {
                 }
             }
 
-            override fun onFailure(call: Call<NetworkResponse<Profile>>, t: Throwable) {
+            override fun onFailure(call: Call<NetworkResponse<Profile?>>, t: Throwable) {
                 iMenu.onFail(t)
             }
         })

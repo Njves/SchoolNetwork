@@ -18,7 +18,7 @@ import com.njves.schoolnetwork.Models.NetworkService
 import com.njves.schoolnetwork.Models.network.models.NetworkResponse
 import com.njves.schoolnetwork.Models.network.models.auth.Profile
 import com.njves.schoolnetwork.Models.network.models.task.RequestTaskModel
-import com.njves.schoolnetwork.Models.network.models.task.TaskPostModel
+import com.njves.schoolnetwork.Models.network.models.task.Task
 import com.njves.schoolnetwork.Models.network.request.TaskService
 import com.njves.schoolnetwork.Models.network.request.TeachersService
 import com.njves.schoolnetwork.R
@@ -65,7 +65,7 @@ class TaskEditFragment : Fragment(), ITaskEdit {
         rvReceivers.layoutManager = LinearLayoutManager(context)
         
         // Получаем список учителей
-        presenter.getListProfile(1,1)
+        presenter.getListProfile(AuthStorage.getInstance(context).getLocalUserProfile()?.position!!,1)
         etTitle = v.findViewById(R.id.edTitle)
         etDescription = v.findViewById(R.id.edDescription)
         btnDatePicker = v.findViewById(R.id.btnDatePicker)
@@ -87,13 +87,10 @@ class TaskEditFragment : Fragment(), ITaskEdit {
         val storage = AuthStorage(context)
         val title = etTitle.text.toString()
         val desc = etDescription.text.toString()
-        val receiver = adapter.getUser()?.uid
-        val taskService = NetworkService.instance.getRetrofit().create(TaskService::class.java)
-        val sdf = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
-        val task = TaskPostModel(0, title, desc, datePick.time.time/1000, storage.getUserDetails(), receiver)
+        val sender = storage.getLocalUserProfile()
+        val receiver = adapter.getUser()
+        val task = Task(0, title, desc, datePick.time.time/1000, storage.getLocalUserProfile()!!, receiver!!, null)
         presenter.sendTask(task)
-
-
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?) {

@@ -34,12 +34,7 @@ class SettingsFragment : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
-        if(context is OnLogoutListener)
-        {
-            btnLogoutListener = context as OnLogoutListener
-        }else{
-            throw RuntimeException("must implements OnLogoutListener in activity")
-        }
+        
     }
 
     override fun onCreateView(

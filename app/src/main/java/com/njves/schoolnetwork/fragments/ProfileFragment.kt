@@ -77,7 +77,8 @@ class ProfileFragment : Fragment(), IProfile, IPosition {
         btnClassChoice = v.findViewById(R.id.btnClassChoice)
         btnSubmit = v.findViewById(R.id.btnSubmit)
         // init data
-        init()
+        profilePresenter.getProfile(AuthStorage.instance?.getUserDetails() ?: "")
+        positionPresenter.getPositions()
 
         // Контроль показывания кнопки выбора класса
         spinnerPosition.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -148,14 +149,10 @@ class ProfileFragment : Fragment(), IProfile, IPosition {
     }
 
     private fun sendData() {
-        val storage = AuthStorage(context)
-        // Проверка на успешность запроса
-        // TODO: Заменить position
         val item = spinnerPosition.selectedItem
         val index = (item as Position).index
-        Log.d(TAG, item.toString())
-        val request = Profile(
-            storage.getUserDetails(),
+        val profile = Profile(
+            AuthStorage.instance!!.getUserDetails(),
             edFN.text.toString(),
             edLN.text.toString(),
             edMN.text.toString(),
@@ -164,12 +161,7 @@ class ProfileFragment : Fragment(), IProfile, IPosition {
             schoolClass ?: "0",
             null,
             null)
-        profilePresenter.postProfile("UPDATE", request)
-    }
-    private fun init() {
-        val storage = AuthStorage(context)
-        profilePresenter.getProfile(storage.getUserDetails()!!)
-        positionPresenter.getPositions()
+        profilePresenter.postProfile(profile)
 
     }
     private fun initView(profile: Profile){
@@ -178,15 +170,20 @@ class ProfileFragment : Fragment(), IProfile, IPosition {
         edMN.setText(profile.middleName)
         spinnerPosition.setSelection(profile.position-1)
     }
-    override fun onSuccessGet(profile: Profile?) {
-        profile?.let { initView(it) }
-    }
 
-    override fun onSuccessPost(profile: Profile?) {
+    override fun onProfileFilled(profile: Profile?) {
         Snackbar.make(view!!, "Профиль успешно обновлен", Snackbar.LENGTH_SHORT).show()
         KeyboardUtils.hideKeyboard(activity!!)
         profile?.let { initView(it) }
         onProfileUpdateListener.onUpdateProfile()
+        if (profile != null) {
+            AuthStorage.getInstance(context).setLocalUserProfile(profile)
+            initView(profile)
+        }
+    }
+
+    override fun onProfileEmpty() {
+
     }
 
     override fun onError(message: String) {

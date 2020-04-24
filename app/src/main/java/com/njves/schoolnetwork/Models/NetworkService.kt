@@ -24,7 +24,9 @@ class NetworkService {
     {
 
         val interceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
-        val okClient = OkHttpClient.Builder().addInterceptor(interceptor).build()
+
+        val okClient = OkHttpClient.Builder().addInterceptor(interceptor).retryOnConnectionFailure(true).build()
+
         val retrofit = Retrofit.Builder().addConverterFactory(GsonConverterFactory.create()).baseUrl(SERVER_URL).client(okClient).build()
         return retrofit
     }

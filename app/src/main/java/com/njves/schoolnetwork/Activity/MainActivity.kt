@@ -43,12 +43,14 @@ class MainActivity : AppCompatActivity(),OnAuthPassedListener, UpdateToolbarTitl
             startMenuActivity()
         }
         else {
-            if(currentFragment==null)
-            {
-                // Показываем фрагмент авторизации
-                currentFragment = AuthFragment.newInstance()
-                supportFragmentManager.beginTransaction().replace(R.id.authContainer, currentFragment as AuthFragment)
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit()
+            if(savedInstanceState==null) {
+                if (currentFragment == null) {
+                    // Показываем фрагмент авторизации
+                    currentFragment = AuthFragment.newInstance()
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.authContainer, currentFragment as AuthFragment)
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit()
+                }
             }
         }
     }
