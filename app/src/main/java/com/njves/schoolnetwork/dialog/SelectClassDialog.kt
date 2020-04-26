@@ -11,7 +11,7 @@ import androidx.fragment.app.DialogFragment
 import com.njves.schoolnetwork.fragments.ProfileFragment
 import com.njves.schoolnetwork.R
 
-class ClassChoiceDialog : DialogFragment() {
+class SelectClassDialog : DialogFragment() {
 
 
 
@@ -44,7 +44,7 @@ class ClassChoiceDialog : DialogFragment() {
             val intent = Intent()
             intent.putExtra("number", npNumber.value)
             intent.putExtra("char", alphabet[npChar.value])
-            targetFragment?.onActivityResult(ProfileFragment.REQUEST_CODE_DIALOG_CLASS_CHOICE, Activity.RESULT_OK,intent)
+            targetFragment?.onActivityResult(ProfileFragment.REQUEST_CODE_DIALOG_CLASS_SELECT, Activity.RESULT_OK,intent)
         }
 
 

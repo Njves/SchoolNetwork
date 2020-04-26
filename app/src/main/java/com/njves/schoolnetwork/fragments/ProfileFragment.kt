@@ -4,7 +4,9 @@ package com.njves.schoolnetwork.fragments
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -18,32 +20,37 @@ import com.njves.schoolnetwork.Models.network.models.auth.Position
 import com.njves.schoolnetwork.Models.network.models.auth.Profile
 import com.njves.schoolnetwork.R
 import com.njves.schoolnetwork.callback.OnAuthPassedListener
-import com.njves.schoolnetwork.dialog.ClassChoiceDialog
+import com.njves.schoolnetwork.dialog.SelectClassDialog
 import com.njves.schoolnetwork.preferences.AuthStorage
+import com.njves.schoolnetwork.presenter.navigator.ProfileNavigator
 import com.njves.schoolnetwork.presenter.position.IPosition
 import com.njves.schoolnetwork.presenter.position.PositionPresenter
 import com.njves.schoolnetwork.presenter.profile.IProfile
 import com.njves.schoolnetwork.presenter.profile.ProfilePresenter
+import de.hdodenhof.circleimageview.CircleImageView
 
-class ProfileFragment : Fragment(), IProfile, IPosition {
+class ProfileFragment : Fragment(), IProfile, IPosition, ProfileNavigator {
+
+
     // TODO: При нажатие на подтвердить приложение вылетает с ошибкой о null user
     lateinit var edFN: TextInputEditText
     lateinit var edLN: TextInputEditText
     lateinit var edMN: TextInputEditText
-    lateinit var ivAvatar: ImageView
+    lateinit var ivAvatar: CircleImageView
     lateinit var btnSubmit: Button
     lateinit var spinnerPosition: Spinner
-    lateinit var btnClassChoice: Button
+    lateinit var btnSelectClass: Button
     lateinit var tvProfileStatus: TextView
     lateinit var onAuthPassedListener: OnAuthPassedListener
     lateinit var onProfileUpdateListener: OnProfileUpdateListener
-    private var profilePresenter = ProfilePresenter(this)
-    private var positionPresenter = PositionPresenter(this)
+    private var profilePresenter = ProfilePresenter(this, this, AuthStorage.getInstance(context), this)
     var schoolClass: String? = null
-
+    var uri: Uri? = null
     companion object {
         const val TAG = "ProfileFragment"
-        const val REQUEST_CODE_DIALOG_CLASS_CHOICE = 1
+        const val REQUEST_CODE_DIALOG_CLASS_SELECT = 1
+        const val SELECT_CLASS_DIALOG = "select_class"
+        const val REQUEST_PHOTO_CODE = 2
         fun newInstance(user: String): Fragment {
             val fragment = ProfileFragment()
             val bundle = Bundle()
@@ -74,40 +81,44 @@ class ProfileFragment : Fragment(), IProfile, IPosition {
         edMN = v.findViewById(R.id.edMN)
         ivAvatar = v.findViewById(R.id.ivAvatar)
         spinnerPosition = v.findViewById(R.id.spinnerPosition)
-        btnClassChoice = v.findViewById(R.id.btnClassChoice)
+        btnSelectClass = v.findViewById(R.id.btnClassChoice)
         btnSubmit = v.findViewById(R.id.btnSubmit)
         // init data
-        profilePresenter.getProfile(AuthStorage.instance?.getUserDetails() ?: "")
-        positionPresenter.getPositions()
+        profilePresenter.getProfile(AuthStorage.getInstance(context).getUserDetails()!!)
+        profilePresenter.getPositions()
 
         // Контроль показывания кнопки выбора класса
         spinnerPosition.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
-
             }
-
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 if((parent?.selectedItem as Position).index==1)
-                    btnClassChoice.visibility = View.VISIBLE
-                else btnClassChoice.visibility = View.GONE
-                val item = spinnerPosition.selectedItem as Position
-                Toast.makeText(context, "${item.index} ${item.title}", Toast.LENGTH_SHORT).show()
-
+                    btnSelectClass.visibility = View.VISIBLE
+                else btnSelectClass.visibility = View.GONE
             }
-
         }
-
-
         // Открытие диалога с выбором класса
-        btnClassChoice.setOnClickListener {
-            val dialog: DialogFragment = ClassChoiceDialog()
-            dialog.setTargetFragment(this, REQUEST_CODE_DIALOG_CLASS_CHOICE)
-            dialog.show(fragmentManager, "")
+        btnSelectClass.setOnClickListener {
+            profilePresenter.showDialog(SelectClassDialog())
         }
-
+        ivAvatar.setOnClickListener{
+            profilePresenter.requestPhoto(REQUEST_PHOTO_CODE)
+        }
 
         btnSubmit.setOnClickListener {
-            sendData()
+            val selectedItem = spinnerPosition.selectedItem
+            val pos = (selectedItem as Position)
+            profilePresenter.postProfile(
+                AuthStorage.getInstance(context).getUserDetails()!!,
+                edFN.text.toString(),
+                edLN.text.toString(),
+                edMN.text.toString(),
+                pos.index,
+                pos.title,
+                schoolClass ?: "0",
+                null)
+            if(uri!=null) profilePresenter.uploadImage(context!!, uri!!)
+            else Toast.makeText(context, "Ошибка", Toast.LENGTH_SHORT).show()
         }
         return v
     }
@@ -117,11 +128,17 @@ class ProfileFragment : Fragment(), IProfile, IPosition {
 
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
-                REQUEST_CODE_DIALOG_CLASS_CHOICE -> {
+                REQUEST_CODE_DIALOG_CLASS_SELECT -> {
                     val classNumber = data?.getIntExtra("number", 0)
                     val classChar = data?.getStringExtra("char")
                     schoolClass = "$classNumber$classChar"
 
+                }
+                REQUEST_PHOTO_CODE->{
+                    uri = data!!.data!!
+                    val imageStream = context?.contentResolver?.openInputStream(data?.data!!);
+                    val selectedImages = BitmapFactory.decodeStream(imageStream);
+                    ivAvatar.setImageBitmap(selectedImages);
                 }
             }
         }
@@ -142,28 +159,23 @@ class ProfileFragment : Fragment(), IProfile, IPosition {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.action_done -> {
-                sendData()
+                val selectedItem = spinnerPosition.selectedItem
+                val pos = (selectedItem as Position)
+                profilePresenter.postProfile(
+                    AuthStorage.getInstance(context).getUserDetails()!!,
+                    edFN.text.toString(),
+                    edLN.text.toString(),
+                    edMN.text.toString(),
+                    pos.index,
+                    pos.title,
+                    schoolClass ?: "0",
+                    null)
             }
         }
         return super.onOptionsItemSelected(item)
     }
 
-    private fun sendData() {
-        val item = spinnerPosition.selectedItem
-        val index = (item as Position).index
-        val profile = Profile(
-            AuthStorage.instance!!.getUserDetails(),
-            edFN.text.toString(),
-            edLN.text.toString(),
-            edMN.text.toString(),
-            index,
-            null,
-            schoolClass ?: "0",
-            null,
-            null)
-        profilePresenter.postProfile(profile)
 
-    }
     private fun initView(profile: Profile){
         edFN.setText(profile.firstName)
         edLN.setText(profile.lastName)
@@ -177,13 +189,12 @@ class ProfileFragment : Fragment(), IProfile, IPosition {
         profile?.let { initView(it) }
         onProfileUpdateListener.onUpdateProfile()
         if (profile != null) {
-            AuthStorage.getInstance(context).setLocalUserProfile(profile)
             initView(profile)
         }
     }
 
     override fun onProfileEmpty() {
-
+        Snackbar.make(view!!, "Профиль пустой", Snackbar.LENGTH_SHORT).show()
     }
 
     override fun onError(message: String) {
@@ -210,5 +221,14 @@ class ProfileFragment : Fragment(), IProfile, IPosition {
             positionList
         )
         spinnerPosition.adapter = positionAdapter
+    }
+
+    override fun showDialogSelect(dialog: DialogFragment) {
+        dialog.setTargetFragment(this, REQUEST_CODE_DIALOG_CLASS_SELECT)
+        dialog.show(fragmentManager, SELECT_CLASS_DIALOG)
+    }
+
+    override fun requestPhoto(intent: Intent, requestCode: Int) {
+        startActivityForResult(intent, requestCode)
     }
 }

@@ -7,7 +7,7 @@ import com.njves.schoolnetwork.Models.network.models.auth.Profile
 
 class AuthStorage(val context : Context?) {
     companion object{
-        val instance : AuthStorage? = null
+        private val instance : AuthStorage? = null
         fun getInstance(context: Context?) : AuthStorage{
             return instance ?: AuthStorage(context)
         }
@@ -23,7 +23,7 @@ class AuthStorage(val context : Context?) {
         const val PROFILE_POSITION = "position"
         const val PROFILE_CLASS = "class"
         const val PROFILE_AVATAR_LINK = "avatar_link"
-
+        const val IS_PROFILE = "is_profile"
     }
 
 
@@ -68,21 +68,28 @@ class AuthStorage(val context : Context?) {
 
     fun getLocalUserProfile() : Profile? {
         val uid = preferences?.getString(PROFILE_UID, null)
-        val firstName = preferences?.getString(PROFILE_FIRST_NAME, null)
-        val lastName = preferences?.getString(PROFILE_LAST_NAME, null)
-        val middleName = preferences?.getString(PROFILE_MIDDLE_NAME, null)
+        val firstName = preferences?.getString(PROFILE_FIRST_NAME, "")
+        val lastName = preferences?.getString(PROFILE_LAST_NAME, "")
+        val middleName = preferences?.getString(PROFILE_MIDDLE_NAME, "")
         val position = preferences?.getInt(PROFILE_POSITION, 0)
-        val profileClass = preferences?.getString(PROFILE_CLASS, null)
-        val avatarLink = preferences?.getString(PROFILE_AVATAR_LINK, null)
-        return Profile(uid, firstName!!, lastName!!, middleName!!, position!!,null, profileClass?:"0",null, avatarLink!!)
+        val profileClass = preferences?.getInt(PROFILE_CLASS, 0)
+        val avatarLink = preferences?.getString(PROFILE_AVATAR_LINK, "")
+        return Profile(uid, firstName!!, lastName!!, middleName!!, position!!,null, profileClass?:0,null, avatarLink!!)
     }
     fun setLocalUserProfile(profile: Profile){
         editor?.putString(PROFILE_FIRST_NAME,profile.firstName)
         editor?.putString(PROFILE_LAST_NAME,profile.lastName)
         editor?.putString(PROFILE_MIDDLE_NAME,profile.middleName)
         editor?.putInt(PROFILE_POSITION,profile.position)
-        editor?.putString(PROFILE_CLASS,profile.`class`)
+        editor?.putInt(PROFILE_CLASS,profile.`class`)
         editor?.putString(PROFILE_AVATAR_LINK,profile.avatarLink)
         editor?.apply()
+        setIsProfile(true)
+    }
+    fun getIsProfile() : Boolean{
+        return preferences?.getBoolean(IS_PROFILE, false) ?: false
+    }
+    fun setIsProfile(flag: Boolean){
+        editor?.putBoolean(IS_PROFILE, flag)?.apply()
     }
 }

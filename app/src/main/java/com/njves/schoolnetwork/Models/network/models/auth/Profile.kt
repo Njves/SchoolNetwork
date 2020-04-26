@@ -8,6 +8,6 @@ data class Profile(@SerializedName("uid_key") val uid : String?,
                    @SerializedName("middle_name") val middleName : String,
                    val position : Int,
                    @SerializedName("position_title") val positionTitle : String?,
-                   val `class` : String,
+                   val `class` : Int,
                    @SerializedName("class_value") val classValue : String?,
                     @SerializedName("avatar_link") val avatarLink : String?)

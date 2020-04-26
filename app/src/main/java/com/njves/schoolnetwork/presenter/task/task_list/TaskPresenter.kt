@@ -18,7 +18,7 @@ class TaskPresenter(private val iTask: ITask) : SwipeRefreshLayout.OnRefreshList
     }
 
     override fun onItemClick(item: Task) {
-        iTask.onItemClickListener(item)
+        iTask.onNavigateToDetail(item)
     }
 
     fun getTaskList(type: String, uid: String){
@@ -38,9 +38,9 @@ class TaskPresenter(private val iTask: ITask) : SwipeRefreshLayout.OnRefreshList
                 if(code==NetworkResponse.SUCCESS_RESPONSE) {
                     if(taskList != null){
                         if(taskList.isNotEmpty()){
-                            iTask.onSuccessGet(taskList)
+                            iTask.onResponseList(taskList)
                         }else{
-                            iTask.onSuccessGetEmptyList()
+                            iTask.onResponseEmptyList()
                         }
                     }else{
                         iTask.onError("Ошибка получения списка задач")

@@ -7,6 +7,8 @@ import com.njves.schoolnetwork.Models.network.models.auth.Profile
 import com.njves.schoolnetwork.Models.network.models.auth.RequestModel
 import com.njves.schoolnetwork.Models.network.models.profile.ProfileWrapper
 import com.njves.schoolnetwork.Models.network.models.profile.UserProfile
+import okhttp3.MultipartBody
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -20,4 +22,8 @@ interface ProfileService {
 
     @POST(PROFILE_UPDATE)
     fun updateProfile(@Body profile : ProfileWrapper) : Call<NetworkResponse<Profile>>
+
+    @Multipart
+    @POST("api/profile/avatar.php")
+    fun uploadImage(@Part file: MultipartBody.Part): Call<ResponseBody>
 }

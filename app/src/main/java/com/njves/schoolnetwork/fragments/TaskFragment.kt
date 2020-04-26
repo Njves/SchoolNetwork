@@ -84,7 +84,7 @@ class TaskFragment : Fragment(), ITask {
         return v
     }
 
-    override fun onItemClickListener(task: Task) {
+    override fun onNavigateToDetail(task: Task) {
         val bundle = Bundle()
         bundle.putString(TaskDetailFragment.ARG_TASK, gson.toJson(task))
         val options = NavOptions.Builder()
@@ -92,13 +92,13 @@ class TaskFragment : Fragment(), ITask {
         findNavController().navigate(R.id.nav_task_detail, bundle, options.build())
     }
 
-    override fun onSuccessGet(taskList: List<Task>) {
+    override fun onResponseList(taskList: List<Task>) {
         adapter = TaskAdapter(context, taskList as ArrayList<Task>, taskPresenter)
         rvTask.adapter = adapter
         Log.d(TAG, taskList.hashCode().toString())
     }
 
-    override fun onSuccessGetEmptyList() {
+    override fun onResponseEmptyList() {
         showErrorMsg("У вас пока что нет задач")
     }
 
