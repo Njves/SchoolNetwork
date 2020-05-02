@@ -2,17 +2,16 @@ package com.njves.schoolnetwork.presenter.menu
 
 import com.njves.schoolnetwork.Models.NetworkService
 import com.njves.schoolnetwork.Models.network.models.NetworkResponse
-import com.njves.schoolnetwork.Models.network.models.auth.Profile
+import com.njves.schoolnetwork.Models.network.models.profile.Profile
 import com.njves.schoolnetwork.Models.network.request.ProfileService
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class MenuPresenter(val iMenu: IMenu) {
+class MenuPresenter(private val iMenu: IMenu) {
     private val retrofit = NetworkService.instance.getRetrofit()
     private val profileService = retrofit.create(ProfileService::class.java)
     fun getProfile(uid: String){
-
         val getProfile = profileService.getProfile("GET", uid)
         getProfile.enqueue(object : Callback<NetworkResponse<Profile?>>{
             override fun onResponse(call: Call<NetworkResponse<Profile?>>, response: Response<NetworkResponse<Profile?>>) {
@@ -35,5 +34,10 @@ class MenuPresenter(val iMenu: IMenu) {
                 iMenu.onFail(t)
             }
         })
+    }
+    fun setProfileAvatar(avatarLink: String?){
+        if(avatarLink!=null){
+            iMenu.onSetAvatarImage(avatarLink)
+        }
     }
 }

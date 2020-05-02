@@ -1,4 +1,4 @@
-package com.njves.schoolnetwork.Models.network.models.auth
+package com.njves.schoolnetwork.Models.network.models.profile
 
 import com.google.gson.annotations.SerializedName
 

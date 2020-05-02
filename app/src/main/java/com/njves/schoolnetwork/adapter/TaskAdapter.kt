@@ -36,10 +36,10 @@ class TaskAdapter(val context: Context?, var listTask: ArrayList<Task>, val onIt
     }
 
     inner class TaskHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val tvTitle: TextView = itemView.findViewById(R.id.title)
-        private val txDescription: TextView = itemView.findViewById(R.id.description)
-        private val tvFrom: TextView = itemView.findViewById(R.id.from)
-        private val tvDate: TextView = itemView.findViewById(R.id.date)
+        private val tvTitle: TextView = itemView.findViewById(R.id.tvTitle)
+        private val txDescription: TextView = itemView.findViewById(R.id.tvDescription)
+        private val tvFrom: TextView = itemView.findViewById(R.id.tvFrom)
+        private val tvDate: TextView = itemView.findViewById(R.id.tvDate)
         private val tvDelete : TextView = itemView.findViewById(R.id.tvDelete)
         fun bindItem(item: Task) {
 

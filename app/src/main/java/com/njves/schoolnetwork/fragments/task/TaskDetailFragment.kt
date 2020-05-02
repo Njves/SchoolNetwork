@@ -1,4 +1,4 @@
-package com.njves.schoolnetwork.fragments
+package com.njves.schoolnetwork.fragments.task
 
 
 import android.os.Bundle

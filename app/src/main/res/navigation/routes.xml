@@ -12,7 +12,7 @@
             tools:layout="@layout/fragment_profile"/>
     <fragment
             android:id="@+id/nav_task_tab"
-            android:name="com.njves.schoolnetwork.fragments.TaskTabFragment"
+            android:name="com.njves.schoolnetwork.fragments.task.TaskTabFragment"
             android:label="@string/menu_task"
             tools:layout="@layout/fragment_task_tab">
         <action
@@ -21,7 +21,7 @@
     </fragment>
     <fragment
             android:id="@+id/nav_task"
-            android:name="com.njves.schoolnetwork.fragments.TaskFragment"
+            android:name="com.njves.schoolnetwork.fragments.task.TaskFragment"
             android:label="@string/menu_task"
             tools:layout="@layout/fragment_task">
         <action
@@ -33,24 +33,32 @@
     </fragment>
 
     <fragment
-        android:id="@+id/nav_settings"
-        android:name="com.njves.schoolnetwork.fragments.SettingsFragment"
-        android:label="@string/nav_settings"
-        tools:layout="@layout/fragment_settings"
-        />
+            android:id="@+id/nav_settings"
+            android:name="com.njves.schoolnetwork.fragments.settings.SettingsFragment"
+            android:label="@string/nav_settings"
+            tools:layout="@layout/fragment_settings">
+        <action
+                android:id="@+id/action_nav_settings_to_nav_settings_user"
+                app:destination="@id/nav_settings_user"/>
+    </fragment>
 
     <fragment
             android:id="@+id/nav_task_edit"
-            android:name="com.njves.schoolnetwork.fragments.TaskEditFragment"
-            android:label="TaskEdit"
-            tools:layout="@layout/fragment_task_edit"
-            >
+            android:name="com.njves.schoolnetwork.fragments.task.TaskEditFragment"
+            android:label="@string/nav_task_edit"
+            tools:layout="@layout/fragment_task_edit">
     </fragment>
 
     <fragment
             android:id="@+id/nav_task_detail"
-            android:name="com.njves.schoolnetwork.fragments.TaskDetailFragment"
-            android:label="TaskDetail"
+            android:name="com.njves.schoolnetwork.fragments.task.TaskDetailFragment"
+            android:label="@string/nav_task_detail"
             tools:layout="@layout/fragment_task_detail"/>
+
+    <fragment
+            android:id="@+id/nav_settings_user"
+            android:name="com.njves.schoolnetwork.fragments.settings.UserSettingsFragment"
+            android:label="@string/nav_settings_user"
+            tools:layout="@layout/fragment_user_settings"/>
 
 </navigation>

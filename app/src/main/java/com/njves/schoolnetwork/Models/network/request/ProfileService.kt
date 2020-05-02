@@ -2,11 +2,10 @@ package com.njves.schoolnetwork.Models.network.request
 
 import com.njves.schoolnetwork.Models.network.*
 import com.njves.schoolnetwork.Models.network.models.NetworkResponse
-import com.njves.schoolnetwork.Models.network.models.auth.RequestProfileModel
-import com.njves.schoolnetwork.Models.network.models.auth.Profile
-import com.njves.schoolnetwork.Models.network.models.auth.RequestModel
+
+import com.njves.schoolnetwork.Models.network.models.profile.Profile
+
 import com.njves.schoolnetwork.Models.network.models.profile.ProfileWrapper
-import com.njves.schoolnetwork.Models.network.models.profile.UserProfile
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 import retrofit2.Call

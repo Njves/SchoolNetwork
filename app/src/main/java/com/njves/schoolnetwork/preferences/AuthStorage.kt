@@ -3,7 +3,7 @@ package com.njves.schoolnetwork.preferences
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
-import com.njves.schoolnetwork.Models.network.models.auth.Profile
+import com.njves.schoolnetwork.Models.network.models.profile.Profile
 
 class AuthStorage(val context : Context?) {
     companion object{
@@ -74,7 +74,17 @@ class AuthStorage(val context : Context?) {
         val position = preferences?.getInt(PROFILE_POSITION, 0)
         val profileClass = preferences?.getInt(PROFILE_CLASS, 0)
         val avatarLink = preferences?.getString(PROFILE_AVATAR_LINK, "")
-        return Profile(uid, firstName!!, lastName!!, middleName!!, position!!,null, profileClass?:0,null, avatarLink!!)
+        return Profile(
+            uid,
+            firstName!!,
+            lastName!!,
+            middleName!!,
+            position!!,
+            null,
+            profileClass ?: 0,
+            null,
+            avatarLink!!
+        )
     }
     fun setLocalUserProfile(profile: Profile){
         editor?.putString(PROFILE_FIRST_NAME,profile.firstName)

@@ -1,4 +1,4 @@
-package com.njves.schoolnetwork.fragments
+package com.njves.schoolnetwork.fragments.task
 
 import android.content.Context
 import android.os.Bundle
@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import com.njves.schoolnetwork.Models.network.models.task.Task
@@ -32,6 +33,7 @@ class TaskFragment : Fragment(), ITask {
     private lateinit var gson : Gson
     private lateinit var swipeLayout : SwipeRefreshLayout
     private lateinit var tvErrorMsg : TextView
+    private lateinit var fabTaskEdit: FloatingActionButton
     private lateinit var taskPresenter: TaskPresenter
     private lateinit var storage: AuthStorage
     private var flag : Int = 0
@@ -42,7 +44,7 @@ class TaskFragment : Fragment(), ITask {
         const val FLAG_GET = 0
         const val FLAG_GET_MY = 1
         const val SUBMIT_DIALOG_CODE = 1
-        fun newInstance(flag : Int) : TaskFragment{
+        fun newInstance(flag : Int) : TaskFragment {
             val bundle = Bundle()
             bundle.putInt(FLAG_GETTER, flag)
             val instance = TaskFragment()
@@ -66,14 +68,13 @@ class TaskFragment : Fragment(), ITask {
         swipeLayout = v.findViewById(R.id.swipeLayout)
         swipeLayout.setOnRefreshListener(taskPresenter)
 
-
         storage = AuthStorage(context)
         // Флаг запроса на фрагменты
         when(arguments?.get(FLAG_GETTER)){
-            FLAG_GET-> {
+            FLAG_GET -> {
                 taskPresenter.getTaskList("GET", storage.getUserDetails()!!)
             }
-            FLAG_GET_MY-> {
+            FLAG_GET_MY -> {
                 taskPresenter.getTaskList("GET_MY", storage.getUserDetails()!!)
             }
         }
@@ -126,10 +127,10 @@ class TaskFragment : Fragment(), ITask {
     override fun onRefresh() {
         swipeLayout.isRefreshing = false
         when(arguments?.get(FLAG_GETTER)){
-            FLAG_GET-> {
+            FLAG_GET -> {
                 taskPresenter.getTaskList("GET", storage.getUserDetails()!!)
             }
-            FLAG_GET_MY-> {
+            FLAG_GET_MY -> {
                 taskPresenter.getTaskList("GET_MY", storage.getUserDetails()!!)
             }
         }

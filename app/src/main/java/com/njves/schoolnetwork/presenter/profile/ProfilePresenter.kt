@@ -5,13 +5,12 @@ import android.content.Intent
 import android.database.Cursor
 import android.net.Uri
 import android.provider.MediaStore
-import android.util.Log
 import androidx.fragment.app.DialogFragment
+import com.njves.schoolnetwork.Models.ImageFileClass
 import com.njves.schoolnetwork.Models.NetworkService
-import com.njves.schoolnetwork.Models.NetworkService.Companion.TYPE_POST
 import com.njves.schoolnetwork.Models.network.models.NetworkResponse
 import com.njves.schoolnetwork.Models.network.models.auth.Position
-import com.njves.schoolnetwork.Models.network.models.auth.Profile
+import com.njves.schoolnetwork.Models.network.models.profile.Profile
 import com.njves.schoolnetwork.Models.network.models.profile.ProfileWrapper
 import com.njves.schoolnetwork.Models.network.request.PositionListService
 import com.njves.schoolnetwork.Models.network.request.ProfileService
@@ -26,6 +25,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
+import java.io.File
 
 class ProfilePresenter(private val iProfile: IProfile,private  val navigator: ProfileNavigator,private val storage : AuthStorage,private val iPosition: IPosition) {
     private var retrofit: Retrofit = NetworkService.instance.getRetrofit()
@@ -33,7 +33,17 @@ class ProfilePresenter(private val iProfile: IProfile,private  val navigator: Pr
     private var positionService = retrofit.create(PositionListService::class.java)
 
     fun postProfile(uid: String, fn: String, ln: String, mn: String, pos: Int,posTitle: String, classValue: String?, avatarLink: String?){
-        val profile = Profile(uid, fn, ln, mn, pos, posTitle,0, classValue, avatarLink )
+        val profile = Profile(
+            uid,
+            fn,
+            ln,
+            mn,
+            pos,
+            posTitle,
+            0,
+            classValue,
+            avatarLink
+        )
         var type = "POST"
         if(storage.getIsProfile()) type = "UPDATE"
         val postCall = profileService.postProfile(ProfileWrapper(type, profile))
@@ -112,9 +122,10 @@ class ProfilePresenter(private val iProfile: IProfile,private  val navigator: Pr
     }
 
     fun uploadImage(context: Context,uri: Uri){
-        val localFile = getRealPath(context,uri)
+        val localPath = ImageFileClass.getPath(context, uri)
+        val localFile = File(localPath)
         val part = RequestBody.create(MediaType.parse(context.contentResolver.getType(uri)!!) ,localFile)
-        val file = MultipartBody.Part.createFormData("file", localFile, part)
+        val file = MultipartBody.Part.createFormData("file", localFile.getName(), part)
         profileService.uploadImage(file).enqueue(object: Callback<ResponseBody>{
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                 iProfile.onFail(t)

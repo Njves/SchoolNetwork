@@ -26,7 +26,7 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             android:layout_marginTop="8dp"
-            android:src="@drawable/ic_avatar_placeholder_black_24dp"
+            android:src="@drawable/ic_account_circle_black_24dp"
             android:contentDescription="@string/avatar_description"/>
     <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/layoutFN"

@@ -1,4 +1,4 @@
-package com.njves.schoolnetwork.fragments
+package com.njves.schoolnetwork.fragments.task
 
 import android.app.DatePickerDialog
 import android.content.Context
@@ -14,25 +14,14 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
-import com.njves.schoolnetwork.Models.NetworkService
-import com.njves.schoolnetwork.Models.network.models.NetworkResponse
-import com.njves.schoolnetwork.Models.network.models.auth.Profile
-import com.njves.schoolnetwork.Models.network.models.task.RequestTaskModel
+import com.njves.schoolnetwork.Models.network.models.profile.Profile
 import com.njves.schoolnetwork.Models.network.models.task.Task
-import com.njves.schoolnetwork.Models.network.request.TaskService
-import com.njves.schoolnetwork.Models.network.request.TeachersService
 import com.njves.schoolnetwork.R
 import com.njves.schoolnetwork.preferences.AuthStorage
 import com.njves.schoolnetwork.adapter.ReceiversAdapter
 import com.njves.schoolnetwork.dialog.AuthErrorDialog
 import com.njves.schoolnetwork.presenter.task.task_edit.ITaskEdit
 import com.njves.schoolnetwork.presenter.task.task_edit.TaskEditPresenter
-import org.threeten.bp.ZonedDateTime
-import org.threeten.bp.format.DateTimeFormatter
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import java.text.SimpleDateFormat
 import java.util.*
 
 class TaskEditFragment : Fragment(), ITaskEdit {

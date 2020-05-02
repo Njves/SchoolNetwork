@@ -27,8 +27,6 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <include layout="@layout/content_menu"/>
-
-
     <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabAdd"
             android:layout_width="wrap_content"
@@ -37,5 +35,6 @@
             app:srcCompat="@android:drawable/ic_dialog_email"
             app:layout_scrollFlags="scroll|enterAlways"
             android:layout_margin="16dp"
-            android:visibility="gone"/>
+            android:visibility="gone"
+            />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

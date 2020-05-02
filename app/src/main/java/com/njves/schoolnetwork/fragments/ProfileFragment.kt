@@ -17,16 +17,16 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.njves.schoolnetwork.Models.KeyboardUtils
 import com.njves.schoolnetwork.Models.network.models.auth.Position
-import com.njves.schoolnetwork.Models.network.models.auth.Profile
+import com.njves.schoolnetwork.Models.network.models.profile.Profile
 import com.njves.schoolnetwork.R
 import com.njves.schoolnetwork.callback.OnAuthPassedListener
 import com.njves.schoolnetwork.dialog.SelectClassDialog
 import com.njves.schoolnetwork.preferences.AuthStorage
 import com.njves.schoolnetwork.presenter.navigator.ProfileNavigator
 import com.njves.schoolnetwork.presenter.position.IPosition
-import com.njves.schoolnetwork.presenter.position.PositionPresenter
 import com.njves.schoolnetwork.presenter.profile.IProfile
 import com.njves.schoolnetwork.presenter.profile.ProfilePresenter
+import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 
 class ProfileFragment : Fragment(), IProfile, IPosition, ProfileNavigator {

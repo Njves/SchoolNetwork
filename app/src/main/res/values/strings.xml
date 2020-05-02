@@ -24,6 +24,9 @@
     <string name="nav_logout">Выйти из аккаунта</string>
     <string name="nav_settings">Настройки</string>
     <string name="nav_profile">Профиль</string>
+    <string name="nav_task_edit">Отправить задачу</string>
+    <string name="nav_task_detail">Описание задачи</string>
+    <string name="nav_settings_user">Настройки пользователя</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Имя Фамилия</string>
@@ -53,5 +56,6 @@
     <string name="position_placeholder">%1$s %2$s</string>
     <string name="warning_action_delete">Вы действительно хотите удалить %1$s? После подтверждение, действие будет невозможно отменить.</string>
     <string name="task_action_delete">Удалить</string>
+    <string name="user_settings">Аккаунт</string>
 
 </resources>

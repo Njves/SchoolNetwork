@@ -11,49 +11,50 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackgroundBorderless">
 
         <TextView
-                android:id="@+id/title"
+                android:id="@+id/tvTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="title"
                 android:layout_margin="8dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/description"
+                app:layout_constraintBottom_toTopOf="@id/tvDescription"
                 android:textSize="18sp"
+                android:textColor="@color/colorBlack"
                 />
 
         <TextView
-                android:id="@+id/description"
+                android:id="@+id/tvDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="desc"
                 android:layout_margin="8dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/from"
+                app:layout_constraintBottom_toTopOf="@id/tvFrom"
                 android:textSize="14sp"
                 />
 
         <TextView
-                android:id="@+id/from"
+                android:id="@+id/tvFrom"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="from"
                 android:layout_margin="8dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/description"/>
+                app:layout_constraintTop_toBottomOf="@id/tvDescription"/>
 
         <TextView
-                android:id="@+id/date"
+                android:id="@+id/tvDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="date"
                 android:layout_margin="8dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/from"
-               />
+                app:layout_constraintTop_toBottomOf="@id/tvFrom"/>
         <TextView
                 android:id="@+id/tvDelete"
                 android:layout_width="wrap_content"

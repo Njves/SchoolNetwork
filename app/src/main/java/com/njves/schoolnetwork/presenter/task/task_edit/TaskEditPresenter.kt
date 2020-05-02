@@ -1,15 +1,12 @@
 package com.njves.schoolnetwork.presenter.task.task_edit
 
-import android.util.Log
-import android.widget.Toast
 import com.njves.schoolnetwork.Models.NetworkService
 import com.njves.schoolnetwork.Models.network.models.NetworkResponse
-import com.njves.schoolnetwork.Models.network.models.auth.Profile
+import com.njves.schoolnetwork.Models.network.models.profile.Profile
 import com.njves.schoolnetwork.Models.network.models.task.RequestTaskModel
 import com.njves.schoolnetwork.Models.network.models.task.Task
 import com.njves.schoolnetwork.Models.network.request.TaskService
 import com.njves.schoolnetwork.Models.network.request.TeachersService
-import com.njves.schoolnetwork.fragments.TaskEditFragment
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

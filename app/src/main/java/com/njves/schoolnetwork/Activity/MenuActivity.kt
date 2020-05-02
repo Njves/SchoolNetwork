@@ -1,18 +1,15 @@
 package com.njves.schoolnetwork.Activity
 
-import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.lifecycle.Lifecycle
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -22,56 +19,57 @@ import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.njves.schoolnetwork.Models.KeyboardUtils
-import com.njves.schoolnetwork.Models.NetworkService
-
-import com.njves.schoolnetwork.Models.network.models.NetworkResponse
-import com.njves.schoolnetwork.Models.network.models.auth.Profile
-import com.njves.schoolnetwork.Models.network.request.ProfileService
+import com.njves.schoolnetwork.Models.network.models.profile.Profile
 import com.njves.schoolnetwork.R
-import com.njves.schoolnetwork.preferences.AuthStorage
-import com.njves.schoolnetwork.callback.OnLogoutListener
 import com.njves.schoolnetwork.fragments.ProfileFragment
+import com.njves.schoolnetwork.preferences.AuthStorage
 import com.njves.schoolnetwork.presenter.menu.IMenu
 import com.njves.schoolnetwork.presenter.menu.MenuPresenter
 import com.squareup.picasso.Picasso
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import de.hdodenhof.circleimageview.CircleImageView
 
 class MenuActivity : AppCompatActivity(), ProfileFragment.OnProfileUpdateListener, IMenu {
-
+    private lateinit var ivAvatar: CircleImageView
+    private lateinit var tvFullName: TextView
+    private lateinit var tvPosition: TextView
+    private lateinit var pbMenu: ProgressBar
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var navView : NavigationView
     private lateinit var toolbar : Toolbar
+    private lateinit var appBarLayout: AppBarLayout
+    private lateinit var fabEditTask: FloatingActionButton
     private var presenter = MenuPresenter(this)
     companion object{
         const val TAG = "MenuActivity"
     }
-    @SuppressLint("RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_menu)
         toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
+
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         navView = findViewById(R.id.nav_view)
+        val headerView = navView.getHeaderView(0)
+        ivAvatar = headerView.findViewById(R.id.ivAvatar)
+        tvFullName = headerView.findViewById(R.id.tvName)
+        tvPosition = headerView.findViewById(R.id.tvPos)
+        pbMenu = headerView.findViewById(R.id.pbMenu)
+        appBarLayout = findViewById(R.id.appBarLayout)
+        fabEditTask = findViewById(R.id.fabAdd)
         val navController = findNavController(R.id.nav_host_fragment)
         appBarConfiguration = AppBarConfiguration(
             navController.graph, drawerLayout
         )
-
+        fabEditTask.setOnClickListener{
+            navController.navigate(R.id.nav_task_edit)
+        }
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-        val fab = findViewById<FloatingActionButton>(R.id.fabAdd)
         val storage = AuthStorage(this)
         presenter.getProfile(storage.getUserDetails()!!)
 
-        fab.setOnClickListener{
-            navController.navigate(R.id.nav_task_edit)
-        }
-
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
-            val appBarLayout = findViewById<AppBarLayout>(R.id.appBarLayout)
             appBarLayout.setExpanded(true, true)
             KeyboardUtils.hideKeyboard(this)
             when(destination.id)
@@ -79,12 +77,11 @@ class MenuActivity : AppCompatActivity(), ProfileFragment.OnProfileUpdateListene
                 R.id.nav_task_detail -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     toolbar.navigationIcon = resources.getDrawable(R.drawable.ic_clear_white_24dp, theme)
                 }
-
             }
             if(destination.id==R.id.nav_task_tab){
-                fab.visibility = View.VISIBLE
+                fabEditTask.show()
             }else{
-                fab.visibility = View.GONE
+                fabEditTask.hide()
             }
         }
     }
@@ -95,38 +92,24 @@ class MenuActivity : AppCompatActivity(), ProfileFragment.OnProfileUpdateListene
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
-
-
-    private fun inflateHeaderView(header : View, data : Profile?) {
-        val avatar = header.findViewById<ImageView>(R.id.ivAva)
-        val tvName = header.findViewById<TextView>(R.id.tvName)
-        val tvPos = header.findViewById<TextView>(R.id.tvPos)
+    private fun inflateHeaderView(data : Profile?) {
         val namePlaceholder = resources.getString(R.string.header_name_placeholder, data?.firstName, data?.lastName)
-        tvName.text = namePlaceholder
+        tvFullName.text = namePlaceholder
         val posTitle = data?.positionTitle
         var `class` = data?.classValue
         if(`class`=="0"){
             `class` = ""
         }
-        tvPos.text = resources.getString(R.string.position_placeholder, posTitle, `class`)
-
-
-        Picasso.get().load(R.drawable.ic_avatar_placeholder_black_24dp).placeholder(R.drawable.ic_avatar_placeholder_black_24dp).into(avatar)
+        tvPosition.text = resources.getString(R.string.position_placeholder, posTitle, `class`)
+        presenter.setProfileAvatar(data!!.avatarLink)
     }
-
-
-
 
     override fun onUpdateProfile() {
         val storage = AuthStorage(this)
         presenter.getProfile(storage.getUserDetails()!!)
-
     }
-
-
     override fun onSuccess(profile: Profile) {
-        val header = navView.getHeaderView(0)
-        inflateHeaderView(header, profile)
+        inflateHeaderView(profile)
         AuthStorage.getInstance(this).setLocalUserProfile(profile)
     }
 
@@ -140,12 +123,17 @@ class MenuActivity : AppCompatActivity(), ProfileFragment.OnProfileUpdateListene
     }
 
     override fun showProgressBar() {
-        TODO("Not yet implemented")
+        pbMenu.visibility = View.VISIBLE
     }
 
     override fun hideProgressBar() {
-        TODO("Not yet implemented")
+        pbMenu.visibility = View.GONE
     }
+
+    override fun onSetAvatarImage(avatarLink: String) {
+        Picasso.get().load(avatarLink).noFade().into(ivAvatar)
+    }
+
 }
 
 

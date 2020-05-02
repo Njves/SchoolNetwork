@@ -13,6 +13,9 @@ import retrofit2.Response
 class TaskPresenter(private val iTask: ITask) : SwipeRefreshLayout.OnRefreshListener, TaskAdapter.TaskAdapterActionListener{
     private var retrofit = NetworkService.instance.getRetrofit()
     private var taskService = retrofit.create(TaskService::class.java)
+    init{
+
+    }
     override fun onRefresh() {
         iTask.onRefresh()
     }
@@ -57,5 +60,8 @@ class TaskPresenter(private val iTask: ITask) : SwipeRefreshLayout.OnRefreshList
                 iTask.onFail(t)
             }
         })
+    }
+    fun navigateToTaskEdit(){
+
     }
 }

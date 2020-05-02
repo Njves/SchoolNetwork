@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="@dimen/nav_header_height"
         android:background="@drawable/side_nav_bar"
@@ -13,16 +11,20 @@
         android:theme="@style/ThemeOverlay.AppCompat.Dark"
         android:orientation="vertical"
         android:gravity="bottom">
-
-    <ImageView
-            android:layout_width="64dp"
-            android:layout_height="64dp"
+    <ProgressBar
+            android:id="@+id/pbMenu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_gravity="center"/>
+    <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:paddingTop="@dimen/nav_header_vertical_spacing"
-            app:srcCompat="@drawable/ic_avatar_placeholder_black_24dp"
             android:scaleType="centerCrop"
             android:contentDescription="@string/nav_header_desc"
-            android:id="@+id/ivAva"
-            tools:ignore="VectorDrawableCompat"/>
+            android:id="@+id/ivAvatar"
+            android:src="@drawable/ic_account_circle_black_24dp"/>
 
     <TextView
             android:id="@+id/tvName"
@@ -33,10 +35,9 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
 
     <TextView
-
+            android:id="@+id/tvPos"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/nav_header_subtitle"
-            android:id="@+id/tvPos"/>
-
+            />
 </LinearLayout>

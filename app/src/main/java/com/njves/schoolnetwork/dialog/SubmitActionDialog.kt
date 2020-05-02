@@ -1,6 +1,5 @@
 package com.njves.schoolnetwork.dialog
 
-import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.DialogInterface
@@ -8,7 +7,6 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
 import com.njves.schoolnetwork.R
-import com.njves.schoolnetwork.fragments.TaskFragment
 
 class SubmitActionDialog(val MODE : Int): DialogFragment() {
 
