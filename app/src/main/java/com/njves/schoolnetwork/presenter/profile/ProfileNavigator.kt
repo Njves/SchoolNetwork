@@ -1,4 +1,4 @@
-package com.njves.schoolnetwork.presenter.navigator
+package com.njves.schoolnetwork.presenter.profile
 
 import android.content.Intent
 import androidx.fragment.app.DialogFragment

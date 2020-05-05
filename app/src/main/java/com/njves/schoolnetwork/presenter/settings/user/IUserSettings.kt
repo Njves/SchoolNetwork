@@ -5,6 +5,10 @@ import com.njves.schoolnetwork.presenter.IError
 
 interface IUserSettings : IError {
     fun onUserReceive(user: User)
+    fun showDialog()
+    fun onEmailUpdate()
+    fun onPasswordUpdate()
+    fun onSchoolUpdate()
 
 
 }

@@ -16,7 +16,7 @@ class MenuPresenter(private val iMenu: IMenu) {
         getProfile.enqueue(object : Callback<NetworkResponse<Profile?>>{
             override fun onResponse(call: Call<NetworkResponse<Profile?>>, response: Response<NetworkResponse<Profile?>>) {
                 val code = response.body()?.code
-                val message  = response.body()?.message!!
+                val message  = response.body()?.message
                 val profile = response.body()?.data
                 if(profile==null){
                     iMenu.onError("Накладочка")
@@ -26,7 +26,7 @@ class MenuPresenter(private val iMenu: IMenu) {
                 if(code==NetworkResponse.SUCCESS_RESPONSE) {
                     iMenu.onSuccess(profile)
                 }else{
-                    iMenu.onError(message)
+                    iMenu.onError(message!!)
                 }
             }
 

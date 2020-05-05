@@ -107,7 +107,7 @@ class TaskFragment : Fragment(), ITask {
 
     }
 
-    override fun onError(message: String) {
+    override fun onError(message: String?) {
         Snackbar.make(view!!, "Ошибка: $message", Snackbar.LENGTH_SHORT).show()
     }
 

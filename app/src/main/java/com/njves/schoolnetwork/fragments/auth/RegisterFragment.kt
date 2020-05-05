@@ -104,7 +104,7 @@ class RegisterFragment : Fragment(), IAuth, ISchool {
         onAuthPassedListener.onSuccess(user!!.uid)
     }
 
-    override fun onError(message: String) {
+    override fun onError(message: String?) {
         Log.d("RegisterFragment", "Error: $message")
         val errorDialog = AuthErrorDialog.newInstance(message)
         errorDialog.show(activity?.supportFragmentManager, "errorDialog")

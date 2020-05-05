@@ -118,7 +118,7 @@ class TaskEditFragment : Fragment(), ITaskEdit {
         findNavController().navigateUp()
     }
 
-    override fun onError(message: String) {
+    override fun onError(message: String?) {
         AuthErrorDialog.newInstance(message).show(activity?.supportFragmentManager, "dialogError")
     }
 

@@ -22,14 +22,15 @@ import com.njves.schoolnetwork.R
 import com.njves.schoolnetwork.callback.OnAuthPassedListener
 import com.njves.schoolnetwork.dialog.SelectClassDialog
 import com.njves.schoolnetwork.preferences.AuthStorage
-import com.njves.schoolnetwork.presenter.navigator.ProfileNavigator
+import com.njves.schoolnetwork.presenter.profile.ProfileNavigator
 import com.njves.schoolnetwork.presenter.position.IPosition
 import com.njves.schoolnetwork.presenter.profile.IProfile
 import com.njves.schoolnetwork.presenter.profile.ProfilePresenter
-import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
+import java.lang.RuntimeException
 
-class ProfileFragment : Fragment(), IProfile, IPosition, ProfileNavigator {
+class ProfileFragment : Fragment(), IProfile, IPosition,
+    ProfileNavigator {
 
 
     // TODO: При нажатие на подтвердить приложение вылетает с ошибкой о null user
@@ -41,32 +42,26 @@ class ProfileFragment : Fragment(), IProfile, IPosition, ProfileNavigator {
     lateinit var spinnerPosition: Spinner
     lateinit var btnSelectClass: Button
     lateinit var tvProfileStatus: TextView
-    lateinit var onAuthPassedListener: OnAuthPassedListener
+    
     lateinit var onProfileUpdateListener: OnProfileUpdateListener
     private var profilePresenter = ProfilePresenter(this, this, AuthStorage.getInstance(context), this)
     var schoolClass: String? = null
     var uri: Uri? = null
+
     companion object {
         const val TAG = "ProfileFragment"
         const val REQUEST_CODE_DIALOG_CLASS_SELECT = 1
         const val SELECT_CLASS_DIALOG = "select_class"
         const val REQUEST_PHOTO_CODE = 2
-        fun newInstance(user: String): Fragment {
-            val fragment = ProfileFragment()
-            val bundle = Bundle()
-            bundle.putString("user", user)
-            fragment.arguments = bundle
-
-            return fragment
-        }
     }
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-        if (context is OnAuthPassedListener)
-            onAuthPassedListener = context
         if (context is OnProfileUpdateListener)
             onProfileUpdateListener = context
+        else {
+            throw RuntimeException(context.toString() + " must implemented OnProfileUpdateListener")
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -197,7 +192,7 @@ class ProfileFragment : Fragment(), IProfile, IPosition, ProfileNavigator {
         Snackbar.make(view!!, "Профиль пустой", Snackbar.LENGTH_SHORT).show()
     }
 
-    override fun onError(message: String) {
+    override fun onError(message: String?) {
         Snackbar.make(view!!, "Ошибка: $message", Snackbar.LENGTH_SHORT).show()
         spinnerPosition.setBackgroundColor(Color.RED)
     }

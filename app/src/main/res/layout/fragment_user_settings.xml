@@ -12,39 +12,67 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/dividerInfo"
+            android:text="Информация"
+            android:layout_marginTop="16dp"/>
+    <View
+            android:id="@+id/dividerInfo"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorBlack"
             app:layout_constraintTop_toTopOf="parent"
-            android:text="Информация"/>
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="8dp"/>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/settingsEmail"
+        <TextView
+                android:id="@+id/tvChangeEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/sectionInfo"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginTop="8dp"
+                android:text="@string/settings_change_email"
+                style="@style/AppTheme.SettingsButton"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:gravity="start|center"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackground"/>
+
+    <TextView
+            android:id="@+id/tvChangePassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/sectionInfo"
+            app:layout_constraintTop_toBottomOf="@id/tvChangeEmail"
             app:layout_constraintStart_toStartOf="parent"
-            android:orientation="horizontal"
-            android:layout_marginTop="16dp">
-        <TextView
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Изменить почту"
-                android:gravity="start"/>
+            android:layout_marginTop="8dp"
+            android:text="@string/settings_change_password"
+            style="@style/AppTheme.SettingsButton"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:gravity="start|center"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground"/>
 
-        <TextView
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:text="email"/>
-    </androidx.constraintlayout.widget.ConstraintLayout>
-    <com.google.android.material.button.MaterialButton
-            android:layout_width="wrap_content"
+    <TextView
+            android:id="@+id/tvChangeSchool"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:text="Test"
-            app:strokeColor="@color/colorPrimary"/>
+            app:layout_constraintTop_toBottomOf="@id/tvChangePassword"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="8dp"
+            android:text="@string/settings_change_school"
+            style="@style/AppTheme.SettingsButton"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:gravity="start|center"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground"/>
+
+
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

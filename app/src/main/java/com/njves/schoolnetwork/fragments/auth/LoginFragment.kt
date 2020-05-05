@@ -75,7 +75,7 @@ class LoginFragment : Fragment(), IAuth {
         onAuthPassedListener.onSuccess(user?.uid)
     }
 
-    override fun onError(message: String) {
+    override fun onError(message: String?) {
         AuthErrorDialog.newInstance(message).show(childFragmentManager, null)
     }
 

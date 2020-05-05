@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
@@ -67,7 +68,8 @@ class TaskDetailFragment : Fragment(), ITaskDetail {
 
 
     override fun onDelete() {
-        Snackbar.make(view!!, "Задача успешно удалена", Snackbar.LENGTH_SHORT).show()
+
+        Toast.makeText(context, "Задача успешно удалена", Toast.LENGTH_SHORT).show()
         findNavController().navigateUp()
     }
 
@@ -77,12 +79,12 @@ class TaskDetailFragment : Fragment(), ITaskDetail {
         tvSender.text = resources.getString(R.string.name_placeholder, task.sender.firstName, task.sender.lastName)
     }
 
-    override fun onError(message: String) {
-        Snackbar.make(view!!, message, Snackbar.LENGTH_SHORT).show()
+    override fun onError(message: String?) {
+        Snackbar.make(view!!, "Произашла ошибка $message", Snackbar.LENGTH_SHORT).show()
     }
 
     override fun onFail(t: Throwable) {
-        Snackbar.make(view!!, "Произошла ошибка запроса!", Snackbar.LENGTH_SHORT).show()
+        Snackbar.make(view!!, "Произашла ошибка запроса!", Snackbar.LENGTH_SHORT).show()
         Log.wtf(TAG, t.toString())
     }
 

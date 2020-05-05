@@ -113,8 +113,9 @@ class MenuActivity : AppCompatActivity(), ProfileFragment.OnProfileUpdateListene
         AuthStorage.getInstance(this).setLocalUserProfile(profile)
     }
 
-    override fun onError(message: String) {
-        Toast.makeText(this@MenuActivity, message, Toast.LENGTH_SHORT).show()
+    override fun onError(message: String?) {
+
+        Toast.makeText(this@MenuActivity, "Произашла ошибка $message", Toast.LENGTH_SHORT).show()
     }
 
     override fun onFail(t: Throwable) {

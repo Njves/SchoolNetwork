@@ -33,4 +33,4 @@ class NetworkService {
 
 
 }
-const val SERVER_URL = "http://host1812384.hostland.pro/SPlanner/"
+const val SERVER_URL = "http://host1814327.hostland.pro/SPlanner/"
