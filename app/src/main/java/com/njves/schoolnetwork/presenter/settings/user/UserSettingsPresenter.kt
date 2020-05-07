@@ -44,10 +44,13 @@ class UserSettingsPresenter(private val iUserSettings: IUserSettings,private val
         val changeEmail = userService.updateEmail(map)
         changeEmail.enqueue(object: Callback<NetworkResponse<Void>>{
             override fun onResponse(call: Call<NetworkResponse<Void>>, response: Response<NetworkResponse<Void>>) {
+                var message = response.body()?.message
+                if(message==null)
+                    message = response.errorBody()?.string()
                 if(response.body()?.code==NetworkResponse.SUCCESS_RESPONSE){
                     iUserSettings.onEmailUpdate()
                 }else{
-                    iUserSettings.onError(response.body()!!.message)
+                    iUserSettings.onError(message)
                 }
             }
 
@@ -57,8 +60,8 @@ class UserSettingsPresenter(private val iUserSettings: IUserSettings,private val
         })
     }
 
-    fun updatePassword(uid: String, oldPassword: String, newPassword: String, newPasswordRetry: String){
-        val map = HashMap<String, String>()
+    fun updatePassword(uid: String, oldPassword: String?, newPassword: String?, newPasswordRetry: String?){
+        val map = HashMap<String, String?>()
         map["type"] = PASSWORD_TYPE
         map["uid"] = uid
         map["old_password"] = oldPassword
@@ -67,6 +70,8 @@ class UserSettingsPresenter(private val iUserSettings: IUserSettings,private val
         val changePassword = userService.updatePassword(map)
         changePassword.enqueue(object: Callback<NetworkResponse<Void>>{
             override fun onResponse(call: Call<NetworkResponse<Void>>, response: Response<NetworkResponse<Void>>) {
+                // TODO: Обработчик HTTP кодов
+                if(response.code()!=200) iUserSettings.onError("Неизвестная ошибка")
                 if(response.body()?.code==NetworkResponse.SUCCESS_RESPONSE){
                     iUserSettings.onPasswordUpdate()
                 }else{
@@ -80,11 +85,11 @@ class UserSettingsPresenter(private val iUserSettings: IUserSettings,private val
         })
     }
 
-    fun updateSchool(uid: String,school: String){
+    fun updateSchool(uid: String,school: Int){
         val map = HashMap<String, String>()
         map["type"] = SCHOOL_TYPE
         map["uid"] = uid
-        map["school"] = school
+        map["school"] = school.toString()
         val changeSchool = userService.updateEmail(map)
         changeSchool.enqueue(object: Callback<NetworkResponse<Void>>{
             override fun onResponse(call: Call<NetworkResponse<Void>>, response: Response<NetworkResponse<Void>>) {
@@ -101,6 +106,13 @@ class UserSettingsPresenter(private val iUserSettings: IUserSettings,private val
         })
     }
 
+    fun showPasswordDialog(password: String) {
+        navigator.showPasswordDialog(password)
+    }
+
+    fun showSchoolDialog(s: Int) {
+        navigator.showSchoolDialog(s)
+    }
 
 
 }

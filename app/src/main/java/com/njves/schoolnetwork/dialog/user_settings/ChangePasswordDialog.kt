@@ -1,11 +1,16 @@
 package com.njves.schoolnetwork.dialog.user_settings
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.textfield.TextInputEditText
 import com.njves.schoolnetwork.R
+import com.njves.schoolnetwork.fragments.settings.UserSettingsFragment
+import com.njves.schoolnetwork.presenter.settings.user.UserSettingsPresenter
 
 class ChangePasswordDialog : DialogFragment() {
     var password: String? = null
@@ -27,8 +32,16 @@ class ChangePasswordDialog : DialogFragment() {
         val edNewPass = view?.findViewById<TextInputEditText>(R.id.edNewPass)
         val edNewPassRetry = view?.findViewById<TextInputEditText>(R.id.edNewPassRetry)
 
-
         builder.setView(view)
+        builder.setPositiveButton(R.string.action_submit
+        ) { dialog, which ->
+            val oldPass = edOldPass!!.text.toString()
+            val newPass = edNewPass!!.text.toString()
+            val newPassRetry = edNewPassRetry!!.text.toString()
+            val intent = Intent()
+            intent.putExtra(PASSWORD_RESULT,arrayOf(oldPass, newPass, newPassRetry))
+            targetFragment!!.onActivityResult(UserSettingsFragment.PASSWORD_DIALOG, Activity.RESULT_OK, intent)
+        }
 
         return builder.create()
     }

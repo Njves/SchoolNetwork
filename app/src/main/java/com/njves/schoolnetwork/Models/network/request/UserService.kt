@@ -9,15 +9,15 @@ interface UserService {
     @GET("api/user")
     fun getUser(@Query("type")type : String,@Query("uid") uid: String) : Call<NetworkResponse<User>>
 
-    @POST("api/user.php")
+    @POST("api/user/index.php")
     @FormUrlEncoded
     fun updateEmail(@FieldMap map: HashMap<String, String>) : Call<NetworkResponse<Void>>
 
-    @POST("api/user.php")
+    @POST("api//user/index.php")
     @FormUrlEncoded
-    fun updatePassword(@FieldMap map: HashMap<String, String>): Call<NetworkResponse<Void>>
+    fun updatePassword(@FieldMap map: HashMap<String, String?>): Call<NetworkResponse<Void>>
 
-    @POST("api/user.php")
+    @POST("api/user/index.php")
     @FormUrlEncoded
     fun updateSchool(@FieldMap map: HashMap<String, String>): Call<NetworkResponse<Void>>
 }

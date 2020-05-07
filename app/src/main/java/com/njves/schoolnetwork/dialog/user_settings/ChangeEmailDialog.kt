@@ -3,6 +3,7 @@ package com.njves.schoolnetwork.dialog.user_settings
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -40,16 +41,17 @@ class ChangeEmailDialog : DialogFragment() {
         val builder = AlertDialog.Builder(context)
         tvCurrentEmail = view.findViewById(R.id.tvCurrentEmail)
         edNewEmail = view.findViewById(R.id.edNewEmail)
-        btnSubmit = view.findViewById(R.id.btnSubmit)
         tvCurrentEmail.text = email?:""
-        btnSubmit.setOnClickListener{
-            val newEmail = edNewEmail.text.toString()
-            val intent = Intent()
-            intent.putExtra(EMAIL_RESULT, newEmail)
-            val target = targetFragment
-            targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
-        }
         builder.setView(view)
+        builder.setPositiveButton(R.string.action_submit, object: DialogInterface.OnClickListener{
+            override fun onClick(dialog: DialogInterface?, which: Int) {
+                val newEmail = edNewEmail.text.toString()
+                val intent = Intent()
+                intent.putExtra(EMAIL_RESULT, newEmail)
+                val target = targetFragment
+                targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
+            }
+        })
         return builder.create()
     }
 }

@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -27,6 +28,7 @@ class UserSettingsFragment : Fragment(), IUserSettings, UserSettingsNavigator {
     private lateinit var tvChangeSchool: TextView
     private lateinit var presenter: UserSettingsPresenter
     private var dialog: DialogFragment? = null
+    private var fragment: Fragment? = null
     private var user: User? = null
     companion object{
         const val TAG = "UserSettingsFragment"
@@ -48,10 +50,10 @@ class UserSettingsFragment : Fragment(), IUserSettings, UserSettingsNavigator {
             presenter.showEmailDialog(user?.email!!)
         }
         tvChangePassword.setOnClickListener{
-            
+            presenter.showPasswordDialog(user?.password!!)
         }
         tvChangeSchool.setOnClickListener{
-
+            presenter.showSchoolDialog(user?.schoolNumber!!)
         }
 
 
@@ -62,18 +64,15 @@ class UserSettingsFragment : Fragment(), IUserSettings, UserSettingsNavigator {
         this.user = user
     }
 
-    override fun showDialog() {
-
-    }
 
     override fun onError(message: String?) {
         if(message != null)
-        Snackbar.make(view!!, message, Snackbar.LENGTH_INDEFINITE).show()
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
 
     }
 
     override fun onFail(t: Throwable) {
-        Snackbar.make(view!!, "Неизвестная ошибка", Snackbar.LENGTH_INDEFINITE).show()
+        Toast.makeText(context, "Ошибка сервера", Toast.LENGTH_LONG).show()
         Log.wtf(TAG, t.toString())
         findNavController().navigateUp()
     }
@@ -98,22 +97,22 @@ class UserSettingsFragment : Fragment(), IUserSettings, UserSettingsNavigator {
         dialog?.show(fragmentManager, "password_dialog")
     }
 
-    override fun showSchoolDialog(school: String) {
-        dialog = ChangeSchoolDialog.newInstance(12)
-        dialog?.setTargetFragment(dialog, SCHOOL_DIALOG)
+    override fun showSchoolDialog(school: Int) {
+        dialog = ChangeSchoolDialog.newInstance(school)
+        dialog?.setTargetFragment(this, SCHOOL_DIALOG)
         dialog?.show(fragmentManager, "school_dialog")
     }
 
     override fun onEmailUpdate() {
-
+        Snackbar.make(view!!, "Почта успешно обновлено", Snackbar.LENGTH_SHORT).show()
     }
 
     override fun onPasswordUpdate() {
-
+        Snackbar.make(view!!, "Пароль успешно обновлен", Snackbar.LENGTH_SHORT).show()
     }
 
     override fun onSchoolUpdate() {
-
+        Snackbar.make(view!!, "Школа успешно обновлен", Snackbar.LENGTH_SHORT).show()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -125,11 +124,11 @@ class UserSettingsFragment : Fragment(), IUserSettings, UserSettingsNavigator {
 
             }
             PASSWORD_DIALOG->{
-                val password = data?.getStringExtra(ChangePasswordDialog.PASSWORD_RESULT)
-                presenter.updatePassword(user!!.uid!!, "password","fefew", "fefew")
+                val arrayPassword = data?.getStringArrayExtra(ChangePasswordDialog.PASSWORD_RESULT)!!
+                presenter.updatePassword(user!!.uid!!, arrayPassword[0],arrayPassword[1], arrayPassword[2])
             }
             SCHOOL_DIALOG->{
-                val school = data?.getStringExtra(ChangeSchoolDialog.SCHOOL_RESULT)
+                val school = data?.getIntExtra(ChangeSchoolDialog.SCHOOL_RESULT,0)
                 presenter.updateSchool(user!!.uid!!, school!!)
             }
         }
