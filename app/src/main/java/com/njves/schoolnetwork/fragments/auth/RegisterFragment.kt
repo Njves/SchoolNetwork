@@ -95,7 +95,7 @@ class RegisterFragment : Fragment(), IAuth, ISchool {
                 edEmail.text.toString(),
                 edPass.text.toString(),
                 edPassRetry.text.toString(),
-                schoolAdapter.getItem(spinnerSchool.selectedItemPosition)!!.index))
+                schoolAdapter.getItem(spinnerSchool.selectedItemPosition)!!))
         }
         return v
     }

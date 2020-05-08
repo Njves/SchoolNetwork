@@ -127,7 +127,6 @@ class ProfileFragment : Fragment(), IProfile, IPosition,
                     val classNumber = data?.getIntExtra("number", 0)
                     val classChar = data?.getStringExtra("char")
                     schoolClass = "$classNumber$classChar"
-
                 }
                 REQUEST_PHOTO_CODE->{
                     uri = data!!.data!!

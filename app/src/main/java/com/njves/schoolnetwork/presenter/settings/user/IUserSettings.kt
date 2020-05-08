@@ -1,5 +1,6 @@
 package com.njves.schoolnetwork.presenter.settings.user
 
+import com.njves.schoolnetwork.Models.network.models.auth.School
 import com.njves.schoolnetwork.Models.network.models.auth.User
 import com.njves.schoolnetwork.presenter.IError
 
@@ -8,6 +9,7 @@ interface IUserSettings : IError {
     fun onEmailUpdate()
     fun onPasswordUpdate()
     fun onSchoolUpdate()
+    fun onViewFill(name: String, email: String, school: School)
 
 
 }

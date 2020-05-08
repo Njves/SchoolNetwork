@@ -64,5 +64,10 @@
     <string name="dialog_change_password_old_password_hint">Старый пароль</string>
     <string name="dialog_change_password_new_password_hint">Новый пароль</string>
     <string name="dialog_change_password_new_password_retry_hint">Повторите пароль</string>
+    <string name="settings_info_user">Информация о аккаунте</string>
+    <string name="settings_info_user_name">Имя аккаунта: %1$s</string>
+    <string name="settings_info_user_email">Электронная почта: %1$s</string>
+    <string name="settings_info_user_school">Прикрепленная школа: %1$s</string>
+
 
 </resources>

@@ -12,6 +12,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
+import com.njves.schoolnetwork.Models.network.models.auth.School
 import com.njves.schoolnetwork.Models.network.models.auth.User
 import com.njves.schoolnetwork.R
 import com.njves.schoolnetwork.dialog.user_settings.ChangeEmailDialog
@@ -26,6 +27,9 @@ class UserSettingsFragment : Fragment(), IUserSettings, UserSettingsNavigator {
     private lateinit var tvChangeEmail: TextView
     private lateinit var tvChangePassword: TextView
     private lateinit var tvChangeSchool: TextView
+    private lateinit var tvUserName: TextView
+    private lateinit var tvUserEmail: TextView
+    private lateinit var tvUserSchool: TextView
     private lateinit var presenter: UserSettingsPresenter
     private var dialog: DialogFragment? = null
     private var fragment: Fragment? = null
@@ -45,6 +49,9 @@ class UserSettingsFragment : Fragment(), IUserSettings, UserSettingsNavigator {
         tvChangeEmail = view.findViewById(R.id.tvChangeEmail)
         tvChangePassword = view.findViewById(R.id.tvChangePassword)
         tvChangeSchool = view.findViewById(R.id.tvChangeSchool)
+        tvUserName = view.findViewById(R.id.tvUserName)
+        tvUserEmail = view.findViewById(R.id.tvUserEmail)
+        tvUserSchool = view.findViewById(R.id.tvUserSchool)
         presenter.getUser()
         tvChangeEmail.setOnClickListener{
             presenter.showEmailDialog(user?.email!!)
@@ -53,7 +60,7 @@ class UserSettingsFragment : Fragment(), IUserSettings, UserSettingsNavigator {
             presenter.showPasswordDialog(user?.password!!)
         }
         tvChangeSchool.setOnClickListener{
-            presenter.showSchoolDialog(user?.schoolNumber!!)
+            presenter.showSchoolDialog(user?.schoolNumber!!.index)
         }
 
 
@@ -105,14 +112,17 @@ class UserSettingsFragment : Fragment(), IUserSettings, UserSettingsNavigator {
 
     override fun onEmailUpdate() {
         Snackbar.make(view!!, "Почта успешно обновлено", Snackbar.LENGTH_SHORT).show()
+        presenter.getUser()
     }
 
     override fun onPasswordUpdate() {
         Snackbar.make(view!!, "Пароль успешно обновлен", Snackbar.LENGTH_SHORT).show()
+        presenter.getUser()
     }
 
     override fun onSchoolUpdate() {
         Snackbar.make(view!!, "Школа успешно обновлен", Snackbar.LENGTH_SHORT).show()
+        presenter.getUser()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -132,5 +142,10 @@ class UserSettingsFragment : Fragment(), IUserSettings, UserSettingsNavigator {
                 presenter.updateSchool(user!!.uid!!, school!!)
             }
         }
+    }
+    override fun onViewFill(name: String, email: String, school: School) {
+        tvUserName.text = resources.getString(R.string.settings_info_user_name, name)
+        tvUserEmail.text = resources.getString(R.string.settings_info_user_email, email)
+        tvUserSchool.text = resources.getString(R.string.settings_info_user_school, school.title)
     }
 }

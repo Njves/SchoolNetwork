@@ -17,7 +17,7 @@ import com.njves.schoolnetwork.presenter.school.ISchool
 import com.njves.schoolnetwork.presenter.school.SchoolPresenter
 
 class ChangeSchoolDialog : DialogFragment(), ISchool {
-    private var school: Int? = null
+    private var school: Int = 0
     private lateinit var spinnerSchool: Spinner
     companion object{
         private const val SCHOOL_ARG = "school"
@@ -35,7 +35,8 @@ class ChangeSchoolDialog : DialogFragment(), ISchool {
         SchoolPresenter(this).getSchool()
         val dialog = AlertDialog.Builder(context)
         dialog.setView(view)
-        spinnerSchool = view.findViewById<Spinner>(R.id.spinnerSchool)
+        spinnerSchool = view.findViewById(R.id.spinnerSchool)
+        spinnerSchool.setSelection(school, true)
         dialog.setPositiveButton(R.string.action_submit) { dialog, which ->
             val intent = Intent()
             intent.putExtra(SCHOOL_RESULT, (spinnerSchool.selectedItem as School).index)

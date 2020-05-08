@@ -14,7 +14,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/dividerInfo"
             android:text="Информация"
-            android:layout_marginTop="16dp"/>
+            android:layout_marginTop="16dp"
+            android:textSize="16sp"/>
     <View
             android:id="@+id/dividerInfo"
             android:layout_width="match_parent"
@@ -72,7 +73,56 @@
             android:focusable="true"
             android:background="?attr/selectableItemBackground"/>
 
+    <View
+            android:id="@+id/dividerInfoUser"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorBlack"
+            app:layout_constraintTop_toBottomOf="@id/tvChangeSchool"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="16dp"/>
 
+    <TextView
+            android:id="@+id/sectionInfoUser"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/dividerInfoUser"
+            app:layout_constraintStart_toStartOf="parent"
+            android:text="@string/settings_info_user"
+            android:textSize="16sp"
+            android:layout_marginTop="8dp"/>
 
+    <TextView
+            android:id="@+id/tvUserName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/sectionInfoUser"
+            app:layout_constraintStart_toStartOf="parent"
+            android:text="@string/settings_info_user_name"
+            android:textSize="15sp"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/colorBlack"/>
+
+    <TextView
+            android:id="@+id/tvUserEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/tvUserName"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="8dp"
+            android:textSize="15sp"
+            android:text="@string/settings_info_user_email"
+            android:textColor="@color/colorBlack"/>
+
+    <TextView
+            android:id="@+id/tvUserSchool"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/tvUserEmail"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="8dp"
+            android:textSize="15sp"
+            android:text="@string/settings_info_user_school"
+            android:textColor="@color/colorBlack"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

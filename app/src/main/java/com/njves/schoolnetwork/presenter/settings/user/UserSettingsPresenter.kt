@@ -20,7 +20,9 @@ class UserSettingsPresenter(private val iUserSettings: IUserSettings,private val
         userService.getUser("GET",preferences.getUserDetails()?:"").enqueue(object: Callback<NetworkResponse<User>>{
             override fun onResponse(call: Call<NetworkResponse<User>>, response: Response<NetworkResponse<User>>) {
                 if(response.body()!!.code == NetworkResponse.SUCCESS_RESPONSE){
-                    iUserSettings.onUserReceive(response.body()!!.data)
+                    val user = response.body()!!.data
+                    iUserSettings.onUserReceive(user)
+                    iUserSettings.onViewFill(user.name, user.email, user.schoolNumber)
                 }else{
                     iUserSettings.onError(response.body()!!.message)
                 }
