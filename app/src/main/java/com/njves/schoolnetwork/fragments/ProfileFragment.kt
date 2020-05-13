@@ -21,6 +21,7 @@ import com.njves.schoolnetwork.Models.network.models.profile.Profile
 import com.njves.schoolnetwork.R
 import com.njves.schoolnetwork.dialog.SelectClassDialog
 import com.njves.schoolnetwork.preferences.AuthStorage
+import com.njves.schoolnetwork.preferences.ProfilePreferences
 import com.njves.schoolnetwork.presenter.profile.ProfileNavigator
 import com.njves.schoolnetwork.presenter.position.IPosition
 import com.njves.schoolnetwork.presenter.profile.IProfile
@@ -183,7 +184,7 @@ class ProfileFragment : Fragment(), IProfile, IPosition,
         onProfileUpdateListener.onUpdateProfile()
         if (profile != null) {
             initView(profile)
-            AuthStorage(context).setIsProfile(true)
+            ProfilePreferences.getInstance(context!!).setIsProfile(true)
         }
     }
 
