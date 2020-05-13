@@ -19,7 +19,6 @@ import com.njves.schoolnetwork.Models.KeyboardUtils
 import com.njves.schoolnetwork.Models.network.models.auth.Position
 import com.njves.schoolnetwork.Models.network.models.profile.Profile
 import com.njves.schoolnetwork.R
-import com.njves.schoolnetwork.callback.OnAuthPassedListener
 import com.njves.schoolnetwork.dialog.SelectClassDialog
 import com.njves.schoolnetwork.preferences.AuthStorage
 import com.njves.schoolnetwork.presenter.profile.ProfileNavigator
@@ -103,7 +102,7 @@ class ProfileFragment : Fragment(), IProfile, IPosition,
         btnSubmit.setOnClickListener {
             val selectedItem = spinnerPosition.selectedItem
             val pos = (selectedItem as Position)
-            profilePresenter.postProfile(
+            profilePresenter.makeProfile(
                 AuthStorage.getInstance(context).getUserDetails()!!,
                 edFN.text.toString(),
                 edLN.text.toString(),
@@ -155,7 +154,7 @@ class ProfileFragment : Fragment(), IProfile, IPosition,
             R.id.action_done -> {
                 val selectedItem = spinnerPosition.selectedItem
                 val pos = (selectedItem as Position)
-                profilePresenter.postProfile(
+                profilePresenter.makeProfile(
                     AuthStorage.getInstance(context).getUserDetails()!!,
                     edFN.text.toString(),
                     edLN.text.toString(),
@@ -177,18 +176,27 @@ class ProfileFragment : Fragment(), IProfile, IPosition,
         spinnerPosition.setSelection(profile.position-1)
     }
 
-    override fun onProfileFilled(profile: Profile?) {
+    override fun onResponseProfile(profile: Profile?) {
         Snackbar.make(view!!, "Профиль успешно обновлен", Snackbar.LENGTH_SHORT).show()
         KeyboardUtils.hideKeyboard(activity!!)
         profile?.let { initView(it) }
         onProfileUpdateListener.onUpdateProfile()
         if (profile != null) {
             initView(profile)
+            AuthStorage(context).setIsProfile(true)
         }
     }
 
-    override fun onProfileEmpty() {
+    override fun onEmptyProfile() {
         Snackbar.make(view!!, "Профиль пустой", Snackbar.LENGTH_SHORT).show()
+    }
+
+    override fun onUpdateProfile(profile: Profile?) {
+
+    }
+
+    override fun onImageUpload() {
+
     }
 
     override fun onError(message: String?) {

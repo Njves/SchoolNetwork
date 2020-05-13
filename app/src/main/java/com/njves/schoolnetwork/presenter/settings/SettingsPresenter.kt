@@ -7,6 +7,7 @@ class SettingsPresenter(private val iSettings: ISettings,private val preferences
     fun logoutFromAccount(){
         preferences.clearUserDetails()
         preferences.setLogged(false)
+        preferences.setIsProfile(false)
         iSettings.onLogout()
     }
 

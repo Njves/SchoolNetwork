@@ -97,7 +97,7 @@ class AuthStorage(val context : Context?) {
         setIsProfile(true)
     }
     fun getIsProfile() : Boolean{
-        return preferences?.getBoolean(IS_PROFILE, false) ?: false
+        return preferences!!.getBoolean(IS_PROFILE, false)
     }
     fun setIsProfile(flag: Boolean){
         editor?.putBoolean(IS_PROFILE, flag)?.apply()

@@ -2,9 +2,7 @@ package com.njves.schoolnetwork.presenter.profile
 
 import android.content.Context
 import android.content.Intent
-import android.database.Cursor
 import android.net.Uri
-import android.provider.MediaStore
 import androidx.fragment.app.DialogFragment
 import com.njves.schoolnetwork.Models.ImageFileClass
 import com.njves.schoolnetwork.Models.NetworkService
@@ -31,7 +29,7 @@ class ProfilePresenter(private val iProfile: IProfile, private  val navigator: P
     private var profileService = retrofit.create(ProfileService::class.java)
     private var positionService = retrofit.create(PositionListService::class.java)
 
-    fun postProfile(uid: String, fn: String, ln: String, mn: String, pos: Int,posTitle: String, classValue: String?, avatarLink: String?){
+    fun makeProfile(uid: String, fn: String, ln: String, mn: String, pos: Int, posTitle: String, classValue: String?, avatarLink: String?){
         val profile = Profile(
             uid,
             fn,
@@ -54,8 +52,7 @@ class ProfilePresenter(private val iProfile: IProfile, private  val navigator: P
                 if (code == NetworkResponse.SUCCESS_RESPONSE) {
                     if(responseProfile!=null) {
                         storage.setLocalUserProfile(profile)
-
-                        iProfile.onProfileFilled(responseProfile)
+                        iProfile.onResponseProfile(responseProfile)
                     }else{
                         iProfile.onError("Профиль не был создан!!")
                     }
@@ -63,7 +60,6 @@ class ProfilePresenter(private val iProfile: IProfile, private  val navigator: P
                     iProfile.onError(message)
                 }
             }
-
             override fun onFailure(call: Call<NetworkResponse<Profile?>>, t: Throwable) {
                 iProfile.onFail(t)
             }
@@ -79,9 +75,9 @@ class ProfilePresenter(private val iProfile: IProfile, private  val navigator: P
                 val profile = response.body()!!.data
                 if (code == NetworkResponse.SUCCESS_RESPONSE) {
                     if(profile!=null){
-                        iProfile.onProfileFilled(profile)
+                        iProfile.onResponseProfile(profile)
                     }else{
-                        iProfile.onProfileEmpty()
+                        iProfile.onEmptyProfile()
                     }
                 } else {
                     iProfile.onError(message)
@@ -134,17 +130,5 @@ class ProfilePresenter(private val iProfile: IProfile, private  val navigator: P
                 iProfile.onError(response.body()?.string()!!)
             }
         })
-    }
-    private fun getRealPath(context: Context, contentUri: Uri): String{
-        var cursor: Cursor? = null
-        return try {
-            val proj = arrayOf(MediaStore.Images.Media.DATA)
-            cursor = context.contentResolver.query(contentUri!!, proj, null, null, null)
-            val column_index = cursor!!.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-            cursor.moveToFirst()
-            cursor.getString(column_index)
-        } finally {
-            cursor?.close()
-        }
     }
 }
