@@ -67,5 +67,12 @@
             android:layout_margin="8dp"
             android:text="@string/task_action_delete"
             />
+    <Button android:id="@+id/btnStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintRight_toLeftOf="@id/btnDelete"
+            app:layout_constraintTop_toBottomOf="@id/tvAttachedFiles"
+            android:layout_margin="8dp"
+            android:text="@string/task_action_set_status"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

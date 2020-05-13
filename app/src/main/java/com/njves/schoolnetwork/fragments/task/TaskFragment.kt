@@ -21,6 +21,7 @@ import com.njves.schoolnetwork.Models.network.models.task.Task
 import com.njves.schoolnetwork.R
 import com.njves.schoolnetwork.preferences.AuthStorage
 import com.njves.schoolnetwork.adapter.TaskAdapter
+import com.njves.schoolnetwork.preferences.StatusPreferences
 import com.njves.schoolnetwork.presenter.task.task_list.ITask
 import com.njves.schoolnetwork.presenter.task.task_list.TaskPresenter
 import java.util.ArrayList
@@ -94,6 +95,10 @@ class TaskFragment : Fragment(), ITask {
     }
 
     override fun onResponseList(taskList: List<Task>) {
+        val pref = StatusPreferences(context)
+        taskList.forEach {
+            it.status = pref.getStatus(it.uid!!)
+        }
         adapter = TaskAdapter(context, taskList as ArrayList<Task>, taskPresenter)
         rvTask.adapter = adapter
         Log.d(TAG, taskList.hashCode().toString())

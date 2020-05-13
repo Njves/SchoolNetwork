@@ -108,9 +108,19 @@ class MenuActivity : AppCompatActivity(), ProfileFragment.OnProfileUpdateListene
         val storage = AuthStorage(this)
         presenter.getProfile(storage.getUserDetails()!!)
     }
-    override fun onSuccess(profile: Profile) {
+    override fun onSuccess(profile: Profile?) {
+        if(profile==null){
+            tvFullName.text = "Создайте профиль"
+            ivAvatar.visibility = View.GONE
+            tvPosition.text = "Нажмите чтобы создать профиль"
+            val header = navView.getHeaderView(0)
+            header.setOnClickListener{
+                findNavController(R.id.nav_host_fragment).navigate(R.id.nav_profile)
+            }
+            return
+        }
         inflateHeaderView(profile)
-        AuthStorage.getInstance(this).setLocalUserProfile(profile)
+        AuthStorage.getInstance(this).setLocalUserProfile(profile!!)
     }
 
     override fun onError(message: String?) {

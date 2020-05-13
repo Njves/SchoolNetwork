@@ -32,7 +32,6 @@ class SelectClassDialog : DialogFragment() {
         npChar.displayedValues = alphabet
         npNumber.setOnValueChangedListener(object : NumberPicker.OnValueChangeListener {
             override fun onValueChange(picker: NumberPicker?, oldVal: Int, newVal: Int) {
-                Toast.makeText(context, "$newVal", Toast.LENGTH_LONG).show()
             }
 
         })

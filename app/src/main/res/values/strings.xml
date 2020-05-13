@@ -60,7 +60,7 @@
     <string name="warning_action_delete">Вы действительно хотите удалить %1$s? После подтверждение, действие будет невозможно отменить.</string>
     <string name="task_action_delete">Удалить</string>
     <string name="user_settings">Аккаунт</string>
-    <string name="dialog_change_email_current_email">Ваша текущая адрес:</string>
+    <string name="dialog_change_email_current_email">Ваш текущая адрес:</string>
     <string name="dialog_change_password_old_password_hint">Старый пароль</string>
     <string name="dialog_change_password_new_password_hint">Новый пароль</string>
     <string name="dialog_change_password_new_password_retry_hint">Повторите пароль</string>
@@ -68,6 +68,8 @@
     <string name="settings_info_user_name">Имя аккаунта: %1$s</string>
     <string name="settings_info_user_email">Электронная почта: %1$s</string>
     <string name="settings_info_user_school">Прикрепленная школа: %1$s</string>
+    <string name="task_action_set_status">Выполненно</string>
+    <string name="item_status">Выполненно</string>
 
 
 </resources>

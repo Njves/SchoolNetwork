@@ -19,7 +19,7 @@ class MenuPresenter(private val iMenu: IMenu) {
                 val message  = response.body()?.message
                 val profile = response.body()?.data
                 if(profile==null){
-                    iMenu.onError("Накладочка")
+                    iMenu.onSuccess(profile)
                     return;
                 }
                 if(response.code()!=200) iMenu.onError(response.errorBody()?.string()!!)

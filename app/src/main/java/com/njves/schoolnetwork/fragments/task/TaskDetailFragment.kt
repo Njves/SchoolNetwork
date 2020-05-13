@@ -18,6 +18,7 @@ import com.njves.schoolnetwork.Models.network.models.task.Task
 
 import com.njves.schoolnetwork.R
 import com.njves.schoolnetwork.preferences.AuthStorage
+import com.njves.schoolnetwork.preferences.StatusPreferences
 import com.njves.schoolnetwork.presenter.task.task_detail.ITaskDetail
 import com.njves.schoolnetwork.presenter.task.task_detail.TaskDetailPresenter
 
@@ -28,8 +29,9 @@ class TaskDetailFragment : Fragment(), ITaskDetail {
     private lateinit var tvSender : TextView
     private lateinit var tvAttachFiles : TextView
     private lateinit var btnDelete : Button
+    private lateinit var btnStatus : Button
     private var argJsonTask : String? = null
-    private lateinit var taskm : Task
+    private lateinit var task : Task
     private var gson = Gson()
     private var taskDetailPresenter = TaskDetailPresenter(this)
 
@@ -41,9 +43,8 @@ class TaskDetailFragment : Fragment(), ITaskDetail {
         super.onCreate(savedInstanceState)
         arguments?.let {
             argJsonTask = it.getString(ARG_TASK)
-            taskm = gson.fromJson(argJsonTask, Task::class.java)
-
-            Log.d("TaskDetailFragment", taskm.toString())
+            task = gson.fromJson(argJsonTask, Task::class.java)
+            Log.d("TaskDetailFragment", task.toString())
         }
     }
 
@@ -58,10 +59,22 @@ class TaskDetailFragment : Fragment(), ITaskDetail {
         ivSenderAvatar = v.findViewById(R.id.ivSenderAvatar)
         tvAttachFiles = v.findViewById(R.id.tvAttachedFiles)
         btnDelete = v.findViewById(R.id.btnDelete)
-        taskDetailPresenter.initTask(taskm)
+        btnStatus = v.findViewById(R.id.btnStatus)
+        taskDetailPresenter.initTask(task)
         btnDelete.setOnClickListener{
             val storage = AuthStorage(context)
-            taskDetailPresenter.deleteTask(storage.getUserDetails()!!, taskm)
+            taskDetailPresenter.deleteTask(storage.getUserDetails()!!, task)
+        }
+
+        btnStatus.setOnClickListener{
+            val storage = StatusPreferences(context)
+            val uid = task.uid?:""
+            val status = storage.getStatus(uid)
+            when(status){
+                0->{storage.setStatus(uid, 1)}
+                1->{storage.setStatus(uid, 0)}
+            }
+            
         }
         return v
     }
