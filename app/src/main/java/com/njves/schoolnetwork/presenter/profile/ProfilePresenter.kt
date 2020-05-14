@@ -13,6 +13,7 @@ import com.njves.schoolnetwork.Models.network.models.profile.ProfileWrapper
 import com.njves.schoolnetwork.Models.network.request.PositionListService
 import com.njves.schoolnetwork.Models.network.request.ProfileService
 import com.njves.schoolnetwork.preferences.AuthStorage
+import com.njves.schoolnetwork.preferences.ProfilePreferences
 import com.njves.schoolnetwork.presenter.position.IPosition
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -24,7 +25,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import java.io.File
 
-class ProfilePresenter(private val iProfile: IProfile, private  val navigator: ProfileNavigator, private val storage : AuthStorage, private val iPosition: IPosition) {
+class ProfilePresenter(private val iProfile: IProfile, private  val navigator: ProfileNavigator, private val storage : ProfilePreferences, private val iPosition: IPosition) {
     private var retrofit: Retrofit = NetworkService.instance.getRetrofit()
     private var profileService = retrofit.create(ProfileService::class.java)
     private var positionService = retrofit.create(PositionListService::class.java)
@@ -51,10 +52,9 @@ class ProfilePresenter(private val iProfile: IProfile, private  val navigator: P
                 val responseProfile = response.body()!!.data
                 if (code == NetworkResponse.SUCCESS_RESPONSE) {
                     if(responseProfile!=null) {
-                        storage.setLocalUserProfile(profile)
                         iProfile.onResponseProfile(responseProfile)
                     }else{
-                        iProfile.onError("Профиль не был создан!!")
+                        iProfile.onError("Неудалось получить профиль пользователя")
                     }
                 } else {
                     iProfile.onError(message)
@@ -76,8 +76,11 @@ class ProfilePresenter(private val iProfile: IProfile, private  val navigator: P
                 if (code == NetworkResponse.SUCCESS_RESPONSE) {
                     if(profile!=null){
                         iProfile.onResponseProfile(profile)
+                        storage.setIsProfile(true)
+                        storage.setLocalUserProfile(profile)
                     }else{
                         iProfile.onEmptyProfile()
+                        storage.setIsProfile(false)
                     }
                 } else {
                     iProfile.onError(message)

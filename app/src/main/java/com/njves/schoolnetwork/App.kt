@@ -2,6 +2,7 @@ package com.njves.schoolnetwork
 
 import android.app.Application
 import android.content.Context
+import android.widget.Toast
 import com.jakewharton.threetenabp.AndroidThreeTen
 import org.threeten.bp.ZonedDateTime
 
@@ -16,6 +17,7 @@ class App : Application() {
         super.onCreate()
         AndroidThreeTen.init(this)
         context = applicationContext
+
     }
 
 

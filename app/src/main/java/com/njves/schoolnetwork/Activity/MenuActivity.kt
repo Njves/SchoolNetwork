@@ -18,11 +18,13 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
+import com.njves.schoolnetwork.Models.ConnectionChecker
 import com.njves.schoolnetwork.Models.KeyboardUtils
 import com.njves.schoolnetwork.Models.network.models.profile.Profile
 import com.njves.schoolnetwork.R
 import com.njves.schoolnetwork.fragments.ProfileFragment
 import com.njves.schoolnetwork.preferences.AuthStorage
+import com.njves.schoolnetwork.preferences.ProfilePreferences
 import com.njves.schoolnetwork.presenter.menu.IMenu
 import com.njves.schoolnetwork.presenter.menu.MenuPresenter
 import com.squareup.picasso.Picasso
@@ -120,7 +122,8 @@ class MenuActivity : AppCompatActivity(), ProfileFragment.OnProfileUpdateListene
             return
         }
         inflateHeaderView(profile)
-        AuthStorage.getInstance(this).setLocalUserProfile(profile!!)
+        ProfilePreferences.getInstance(this).setLocalUserProfile(profile)
+        ProfilePreferences.getInstance(this).setIsProfile(true)
     }
 
     override fun onError(message: String?) {

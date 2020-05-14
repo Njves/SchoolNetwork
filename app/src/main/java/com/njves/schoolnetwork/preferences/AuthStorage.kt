@@ -12,7 +12,10 @@ class AuthStorage(val context : Context?) {
             return instance ?: AuthStorage(context)
         }
         const val TAG = "AuthStorage"
-
+        const val AUTH_STORAGE_NAME = "authStorage"
+        const val USER_UID = "uid"
+        const val IS_LOGGED = "logged"
+        const val USER_NAME = "name"
     }
 
 

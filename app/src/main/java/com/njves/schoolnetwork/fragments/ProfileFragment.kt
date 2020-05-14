@@ -34,27 +34,29 @@ class ProfileFragment : Fragment(), IProfile, IPosition,
 
 
     // TODO: При нажатие на подтвердить приложение вылетает с ошибкой о null user
-    lateinit var edFN: TextInputEditText
-    lateinit var edLN: TextInputEditText
-    lateinit var edMN: TextInputEditText
-    lateinit var ivAvatar: CircleImageView
-    lateinit var btnSubmit: Button
-    lateinit var spinnerPosition: Spinner
-    lateinit var btnSelectClass: Button
-    lateinit var tvProfileStatus: TextView
+    private lateinit var edFN: TextInputEditText
+    private lateinit var edLN: TextInputEditText
+    private lateinit var edMN: TextInputEditText
+    private lateinit var ivAvatar: CircleImageView
+    private lateinit var btnSubmit: Button
+    private lateinit var spinnerPosition: Spinner
+    private lateinit var btnSelectClass: Button
+    private lateinit var tvProfileStatus: TextView
     
     lateinit var onProfileUpdateListener: OnProfileUpdateListener
-    private var profilePresenter = ProfilePresenter(this, this, AuthStorage.getInstance(context), this)
+    private lateinit var profilePresenter: ProfilePresenter
     var schoolClass: String? = null
     var uri: Uri? = null
 
     companion object {
-        const val TAG = "ProfileFragment"
-        const val REQUEST_CODE_DIALOG_CLASS_SELECT = 1
-        const val SELECT_CLASS_DIALOG = "select_class"
-        const val REQUEST_PHOTO_CODE = 2
+        public const val TAG = "ProfileFragment"
+        public const val REQUEST_CODE_DIALOG_CLASS_SELECT = 1
+        public const val SELECT_CLASS_DIALOG = "select_class"
+        public const val REQUEST_PHOTO_CODE = 2
     }
+    init{
 
+    }
     override fun onAttach(context: Context?) {
         super.onAttach(context)
         if (context is OnProfileUpdateListener)
@@ -68,7 +70,8 @@ class ProfileFragment : Fragment(), IProfile, IPosition,
         val v = layoutInflater.inflate(R.layout.fragment_profile, container, false)
         // init menu
         setHasOptionsMenu(true)
-
+        profilePresenter = ProfilePresenter(this,
+            this, ProfilePreferences.getInstance(context!!), this)
         // init view
         tvProfileStatus = v.findViewById(R.id.tvProfileStatus)
         edFN = v.findViewById(R.id.edFN)
@@ -113,7 +116,8 @@ class ProfileFragment : Fragment(), IProfile, IPosition,
                 schoolClass ?: "0",
                 null)
             if(uri!=null) profilePresenter.uploadImage(context!!, uri!!)
-            else Toast.makeText(context, "Ошибка", Toast.LENGTH_SHORT).show()
+            // TODO: Исправить
+            //else Toast.makeText(context, "Ошибка", Toast.LENGTH_SHORT).show()
         }
         return v
     }
@@ -169,7 +173,6 @@ class ProfileFragment : Fragment(), IProfile, IPosition,
         return super.onOptionsItemSelected(item)
     }
 
-
     private fun initView(profile: Profile){
         edFN.setText(profile.firstName)
         edLN.setText(profile.lastName)
@@ -184,7 +187,6 @@ class ProfileFragment : Fragment(), IProfile, IPosition,
         onProfileUpdateListener.onUpdateProfile()
         if (profile != null) {
             initView(profile)
-            ProfilePreferences.getInstance(context!!).setIsProfile(true)
         }
     }
 
@@ -206,7 +208,7 @@ class ProfileFragment : Fragment(), IProfile, IPosition,
     }
 
     override fun onFail(t: Throwable) {
-        Log.e(TAG, "206 $t")
+        Log.e(TAG, "$t")
         Snackbar.make(view!!, "Произошла ошибка сети", Snackbar.LENGTH_SHORT).show()
     }
 

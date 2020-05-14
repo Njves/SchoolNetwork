@@ -1,24 +1,19 @@
 package com.njves.schoolnetwork.preferences
 
 import android.content.Context
+import android.content.SharedPreferences
 import com.njves.schoolnetwork.Models.network.models.profile.Profile
 
 class ProfilePreferences private constructor(context: Context?) {
 
-    private var preferences = context?.getSharedPreferences(PREF_PROFILE, Context.MODE_PRIVATE)
+    private var preferences: SharedPreferences?
     companion object{
         public const val PREF_PROFILE = "pref_profile"
         private var instance: ProfilePreferences? = null
-        public fun getInstance(context: Context): ProfilePreferences{
-            if(instance==null){
-                return ProfilePreferences(context)
-            }
-            return instance!!
+        fun getInstance(context: Context?) : ProfilePreferences{
+            return instance ?: ProfilePreferences(context)
         }
-        const val AUTH_STORAGE_NAME = "authStorage"
-        const val USER_UID = "uid"
-        const val IS_LOGGED = "logged"
-        const val USER_NAME = "name"
+
         const val PROFILE_UID = "uid"
         const val PROFILE_FIRST_NAME = "first_name"
         const val PROFILE_LAST_NAME = "last_name"
@@ -27,6 +22,9 @@ class ProfilePreferences private constructor(context: Context?) {
         const val PROFILE_CLASS = "class"
         const val PROFILE_AVATAR_LINK = "avatar_link"
         const val IS_PROFILE = "is_profile"
+    }
+    init{
+        preferences = context!!.getSharedPreferences(PREF_PROFILE, Context.MODE_PRIVATE)
     }
     fun getLocalUserProfile() : Profile? {
         val editor = preferences!!.edit()
@@ -65,6 +63,7 @@ class ProfilePreferences private constructor(context: Context?) {
     }
     fun setIsProfile(flag: Boolean){
         val editor = preferences!!.edit()
-        editor!!.putBoolean(IS_PROFILE, flag)!!.apply()
+        editor!!.putBoolean(IS_PROFILE, flag)
+        editor.apply()
     }
 }

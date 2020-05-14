@@ -17,9 +17,9 @@ import com.google.android.material.snackbar.Snackbar
 import com.njves.schoolnetwork.Models.network.models.profile.Profile
 import com.njves.schoolnetwork.Models.network.models.task.Task
 import com.njves.schoolnetwork.R
-import com.njves.schoolnetwork.preferences.AuthStorage
 import com.njves.schoolnetwork.adapter.ReceiversAdapter
 import com.njves.schoolnetwork.dialog.AuthErrorDialog
+import com.njves.schoolnetwork.preferences.ProfilePreferences
 import com.njves.schoolnetwork.presenter.task.task_edit.ITaskEdit
 import com.njves.schoolnetwork.presenter.task.task_edit.TaskEditPresenter
 import java.util.*
@@ -54,7 +54,7 @@ class TaskEditFragment : Fragment(), ITaskEdit {
         rvReceivers.layoutManager = LinearLayoutManager(context)
         
         // Получаем список учителей
-        presenter.getListProfile(AuthStorage.getInstance(context).getLocalUserProfile()?.position!!,1)
+        presenter.getListProfile(ProfilePreferences.getInstance(context).getLocalUserProfile()?.position!!,1)
         etTitle = v.findViewById(R.id.edTitle)
         etDescription = v.findViewById(R.id.edDescription)
         btnDatePicker = v.findViewById(R.id.btnDatePicker)
@@ -73,12 +73,12 @@ class TaskEditFragment : Fragment(), ITaskEdit {
         return v
     }
     private fun submitData(){
-        val storage = AuthStorage(context)
+
         val title = etTitle.text.toString()
         val desc = etDescription.text.toString()
-        val sender = storage.getLocalUserProfile()
+        val sender = ProfilePreferences.getInstance(context).getLocalUserProfile()
         val receiver = adapter.getUser()
-        val task = Task(0, title, desc, datePick.time.time/1000, storage.getLocalUserProfile()!!, receiver!!, null)
+        val task = Task(0, title, desc, datePick.time.time/1000, ProfilePreferences.getInstance(context).getLocalUserProfile()!!, receiver!!, null)
         presenter.sendTask(task)
     }
 

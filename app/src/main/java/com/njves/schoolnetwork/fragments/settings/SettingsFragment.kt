@@ -11,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import com.njves.schoolnetwork.Activity.MainActivity
 import com.njves.schoolnetwork.R
 import com.njves.schoolnetwork.preferences.AuthStorage
+import com.njves.schoolnetwork.preferences.ProfilePreferences
 import com.njves.schoolnetwork.presenter.settings.ISettings
 import com.njves.schoolnetwork.presenter.settings.SettingsNavigator
 import com.njves.schoolnetwork.presenter.settings.SettingsPresenter
@@ -28,7 +29,7 @@ class SettingsFragment : Fragment(), ISettings, SettingsNavigator {
         btnLogout = v.findViewById(R.id.btnLogout)
         btnUserSettings = v.findViewById(R.id.btnAccount)
         preferences = AuthStorage(context!!)
-        presenter = SettingsPresenter(this, preferences, this)
+        presenter = SettingsPresenter(this, preferences,ProfilePreferences.getInstance(context), this)
         btnLogout.setOnClickListener{
             presenter.logoutFromAccount()
         }
