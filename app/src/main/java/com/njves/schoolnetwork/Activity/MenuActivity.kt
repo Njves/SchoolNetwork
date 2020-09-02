@@ -59,10 +59,12 @@ class MenuActivity : AppCompatActivity(), ProfileFragment.OnProfileUpdateListene
         pbMenu = headerView.findViewById(R.id.pbMenu)
         appBarLayout = findViewById(R.id.appBarLayout)
         fabEditTask = findViewById(R.id.fabAdd)
+
         val navController = findNavController(R.id.nav_host_fragment)
         appBarConfiguration = AppBarConfiguration(
             navController.graph, drawerLayout
         )
+
         fabEditTask.setOnClickListener{
             navController.navigate(R.id.nav_task_edit)
         }
@@ -111,29 +113,20 @@ class MenuActivity : AppCompatActivity(), ProfileFragment.OnProfileUpdateListene
         presenter.getProfile(storage.getUserDetails()!!)
     }
     override fun onSuccess(profile: Profile?) {
-        if(profile==null){
-            tvFullName.text = "Создайте профиль"
-            ivAvatar.visibility = View.GONE
-            tvPosition.text = "Нажмите чтобы создать профиль"
-            val header = navView.getHeaderView(0)
-            header.setOnClickListener{
-                findNavController(R.id.nav_host_fragment).navigate(R.id.nav_profile)
-            }
-            return
-        }
         inflateHeaderView(profile)
-        ProfilePreferences.getInstance(this).setLocalUserProfile(profile)
-        ProfilePreferences.getInstance(this).setIsProfile(true)
+        profile?.let {
+            ProfilePreferences.getInstance(this).setLocalUserProfile(profile)
+            ProfilePreferences.getInstance(this).setIsProfile(true)
+        }
     }
 
     override fun onError(message: String?) {
-
         Toast.makeText(this@MenuActivity, "Произашла ошибка $message", Toast.LENGTH_SHORT).show()
     }
 
     override fun onFail(t: Throwable) {
         Toast.makeText(this@MenuActivity, "Не удалось получить профиль", Toast.LENGTH_SHORT).show()
-        Log.wtf(TAG,t.toString())
+        Log.e(TAG,t.toString())
     }
 
     override fun showProgressBar() {

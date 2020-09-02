@@ -18,7 +18,7 @@ import com.njves.schoolnetwork.Models.network.models.profile.Profile
 import com.njves.schoolnetwork.Models.network.models.task.Task
 import com.njves.schoolnetwork.R
 import com.njves.schoolnetwork.adapter.ReceiversAdapter
-import com.njves.schoolnetwork.dialog.AuthErrorDialog
+import com.njves.schoolnetwork.dialog.ErrorDialog
 import com.njves.schoolnetwork.preferences.ProfilePreferences
 import com.njves.schoolnetwork.presenter.task.task_edit.ITaskEdit
 import com.njves.schoolnetwork.presenter.task.task_edit.TaskEditPresenter
@@ -119,7 +119,7 @@ class TaskEditFragment : Fragment(), ITaskEdit {
     }
 
     override fun onError(message: String?) {
-        AuthErrorDialog.newInstance(message).show(activity?.supportFragmentManager, "dialogError")
+        ErrorDialog.newInstance(message).show(activity?.supportFragmentManager, "dialogError")
     }
 
     override fun onFail(t: Throwable) {

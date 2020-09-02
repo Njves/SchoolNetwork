@@ -6,4 +6,5 @@ import com.njves.schoolnetwork.presenter.IView
 
 interface IAuth : IError {
     fun onSuccess(user : User?)
+    fun onCheckChange(isCheck: Boolean)
 }

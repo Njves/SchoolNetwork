@@ -11,7 +11,51 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+        <TabHost
+                android:id="@+id/tabHost"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
 
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                <TabWidget
+                        android:id="@android:id/tabs"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                </TabWidget>
+
+                <FrameLayout
+                        android:id="@android:id/tabcontent"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                    <LinearLayout
+                            android:id="@+id/tabTask"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical">
+                    </LinearLayout>
+
+                    <LinearLayout
+                            android:id="@+id/tabTaskMy"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical">
+                    </LinearLayout>
+
+                </FrameLayout>
+            </LinearLayout>
+        </TabHost>
 
         <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvTask"
@@ -36,8 +80,9 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 android:layout_gravity="center"
                 android:visibility="gone"/>
-
+    </LinearLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
 
 
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

@@ -14,7 +14,7 @@ import com.njves.schoolnetwork.R
 import com.njves.schoolnetwork.preferences.AuthStorage
 import com.njves.schoolnetwork.callback.UpdateToolbarTitleListener
 import com.njves.schoolnetwork.callback.OnAuthPassedListener
-import com.njves.schoolnetwork.dialog.AuthErrorDialog
+import com.njves.schoolnetwork.dialog.ErrorDialog
 import com.njves.schoolnetwork.presenter.auth.IAuth
 import com.njves.schoolnetwork.presenter.auth.LoginPresenter
 
@@ -65,6 +65,7 @@ class LoginFragment : Fragment(), IAuth {
         btnSubmit.setOnClickListener {
             loginPresenter.login(edName.text.toString(), edPass.text.toString())
         }
+
         return v
     }
 
@@ -75,8 +76,12 @@ class LoginFragment : Fragment(), IAuth {
         onAuthPassedListener.onSuccess(user?.uid)
     }
 
+    override fun onCheckChange(isCheck: Boolean) {
+        TODO("Not yet implemented")
+    }
+
     override fun onError(message: String?) {
-        AuthErrorDialog.newInstance(message).show(childFragmentManager, null)
+        ErrorDialog.newInstance(message).show(childFragmentManager, null)
     }
 
     override fun onFail(t: Throwable) {

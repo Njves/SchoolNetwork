@@ -10,54 +10,54 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class TaskPresenter(private val iTask: ITask) : SwipeRefreshLayout.OnRefreshListener, TaskAdapter.TaskAdapterActionListener{
+class TaskPresenter(private val taskListContract: TaskListContract) : SwipeRefreshLayout.OnRefreshListener, TaskAdapter.TaskAdapterActionListener{
     private var retrofit = NetworkService.instance.getRetrofit()
     private var taskService = retrofit.create(TaskService::class.java)
     init{
 
     }
     override fun onRefresh() {
-        iTask.onRefresh()
+        taskListContract.onRefresh()
     }
 
     override fun onItemClick(item: Task) {
-        iTask.onNavigateToDetail(item)
+        taskListContract.onNavigateToDetail(item)
     }
 
     fun getTaskList(type: String, uid: String){
-        iTask.showProgressBar()
+        taskListContract.showProgressBar()
         val call = taskService.getTaskList(type, uid)
         call.enqueue(object : Callback<NetworkResponse<List<Task>>> {
             override fun onResponse(call: Call<NetworkResponse<List<Task>>>,
                                     response: Response<NetworkResponse<List<Task>>>) {
-                iTask.hideProgressBar()
+                taskListContract.hideProgressBar()
                 val code = response.body()?.code
                 val message = response.body()?.message
                 val taskList = response.body()?.data
 
-                if(response.code()!=200) {iTask.onError(response.errorBody()?.string()!!); return}
+                if(response.code()!=200) {taskListContract.onError(response.errorBody()?.string()!!); return}
 
 
                 if(code==NetworkResponse.SUCCESS_RESPONSE) {
                     if(taskList != null){
                         if(taskList.isNotEmpty()){
-                            iTask.onResponseList(taskList)
+                            taskListContract.onResponseList(taskList)
                         }else{
-                            iTask.onResponseEmptyList()
+                            taskListContract.onResponseEmptyList()
                         }
                     }else{
-                        iTask.onError("Ошибка получения списка задач")
+                        taskListContract.onError("Ошибка получения списка задач")
                     }
 
                 }
                 else{
-                    iTask.onError(message!!)
+                    taskListContract.onError(message!!)
                 }
             }
 
             override fun onFailure(call: Call<NetworkResponse<List<Task>>>, t: Throwable) {
-                iTask.hideProgressBar()
-                iTask.onFail(t)
+                taskListContract.hideProgressBar()
+                taskListContract.onFail(t)
             }
         })
     }

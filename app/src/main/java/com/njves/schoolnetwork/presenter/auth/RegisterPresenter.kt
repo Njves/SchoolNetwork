@@ -8,7 +8,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class RegisterPresenter(val iAuth : IAuth) {
+class RegisterPresenter(private val iAuth : IAuth) {
     fun register(user : User){
         iAuth.showProgressBar()
         val authService =  NetworkService.instance.getRetrofit().create(AuthService::class.java)
@@ -35,5 +35,9 @@ class RegisterPresenter(val iAuth : IAuth) {
                 iAuth.onFail(t)
             }
         })
+    }
+
+    fun onCheckLicense(isCheck: Boolean){
+        iAuth.onCheckChange(isCheck)
     }
 }

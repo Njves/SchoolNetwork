@@ -70,6 +70,7 @@
     <string name="settings_info_user_school">Прикрепленная школа: %1$s</string>
     <string name="task_action_set_status">Выполненно</string>
     <string name="item_status">Выполненно</string>
+    <string name="check_license">Я принимаю лицензионное соглашение</string>
 
 
 </resources>

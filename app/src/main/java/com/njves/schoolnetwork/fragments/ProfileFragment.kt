@@ -26,6 +26,7 @@ import com.njves.schoolnetwork.presenter.profile.ProfileNavigator
 import com.njves.schoolnetwork.presenter.position.IPosition
 import com.njves.schoolnetwork.presenter.profile.IProfile
 import com.njves.schoolnetwork.presenter.profile.ProfilePresenter
+import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 import java.lang.RuntimeException
 
@@ -178,6 +179,7 @@ class ProfileFragment : Fragment(), IProfile, IPosition,
         edLN.setText(profile.lastName)
         edMN.setText(profile.middleName)
         spinnerPosition.setSelection(profile.position-1)
+        Picasso.get().load(profile.avatarLink).noFade().into(ivAvatar)
     }
 
     override fun onResponseProfile(profile: Profile?) {

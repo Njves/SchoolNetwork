@@ -1,6 +1,5 @@
 package com.njves.schoolnetwork.fragments.task
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -22,16 +21,15 @@ import com.njves.schoolnetwork.R
 import com.njves.schoolnetwork.preferences.AuthStorage
 import com.njves.schoolnetwork.adapter.TaskAdapter
 import com.njves.schoolnetwork.preferences.StatusPreferences
-import com.njves.schoolnetwork.presenter.task.task_list.ITask
+import com.njves.schoolnetwork.presenter.task.task_list.TaskListContract
 import com.njves.schoolnetwork.presenter.task.task_list.TaskPresenter
 import java.util.ArrayList
 
-class TaskFragment : Fragment(), ITask {
+class TaskListFragment : Fragment(), TaskListContract {
 
     private lateinit var rvTask : RecyclerView
     private lateinit var adapter : TaskAdapter
     private lateinit var pbLoading : ProgressBar
-    private lateinit var gson : Gson
     private lateinit var swipeLayout : SwipeRefreshLayout
     private lateinit var tvErrorMsg : TextView
     private lateinit var fabTaskEdit: FloatingActionButton
@@ -40,60 +38,67 @@ class TaskFragment : Fragment(), ITask {
     private var flag : Int = 0
 
     companion object{
-        const val TAG  = "TaskFragment"
+        const val TAG  = "TaskListFragment"
         const val FLAG_GETTER = "flag"
         const val FLAG_GET = 0
         const val FLAG_GET_MY = 1
         const val SUBMIT_DIALOG_CODE = 1
-        fun newInstance(flag : Int) : TaskFragment {
+        fun newInstance(flag : Int) : TaskListFragment {
             val bundle = Bundle()
             bundle.putInt(FLAG_GETTER, flag)
-            val instance = TaskFragment()
+            val instance = TaskListFragment()
             instance.arguments = bundle
             return instance
         }
     }
 
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val v = layoutInflater.inflate(R.layout.fragment_task, container, false)
-        pbLoading = v.findViewById(R.id.pbLoading)
+        return layoutInflater.inflate(R.layout.fragment_task, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        // Прогрес бар
+        pbLoading = view.findViewById(R.id.pbLoading)
         pbLoading.visibility = View.VISIBLE
-        tvErrorMsg = v.findViewById(R.id.tvErrorMsg)
+        // TextView для ошибок
+        tvErrorMsg = view.findViewById(R.id.tvErrorMsg)
+        // Презентер данных
         taskPresenter = TaskPresenter(this)
-        gson = Gson()
-        swipeLayout = v.findViewById(R.id.swipeLayout)
+
+        // Свайп лэйаут
+        swipeLayout = view.findViewById(R.id.swipeLayout)
         swipeLayout.setOnRefreshListener(taskPresenter)
 
         storage = AuthStorage(context)
         // Флаг запроса на фрагменты
-        when(arguments?.get(FLAG_GETTER)){
-            FLAG_GET -> {
-                taskPresenter.getTaskList("GET", storage.getUserDetails()!!)
-            }
-            FLAG_GET_MY -> {
-                taskPresenter.getTaskList("GET_MY", storage.getUserDetails()!!)
-            }
-        }
-        rvTask = v.findViewById(R.id.rvTask)
+
+        rvTask = view.findViewById(R.id.rvTask)
         rvTask.layoutManager = LinearLayoutManager(context)
 
-
-        return v
     }
-
     override fun onNavigateToDetail(task: Task) {
+        val gson = Gson()
         val bundle = Bundle()
         bundle.putString(TaskDetailFragment.ARG_TASK, gson.toJson(task))
         val options = NavOptions.Builder()
         options.setEnterAnim(R.anim.nav_default_enter_anim)
         findNavController().navigate(R.id.nav_task_detail, bundle, options.build())
     }
-
+    fun onReceiveTaskMode(flag: Int){
+        when(flag){
+            FLAG_GET -> {
+                updateTaskMode(flag)
+            }
+            FLAG_GET_MY -> {
+                updateTaskMode(flag)
+            }
+        }
+    }
+    private fun updateTaskMode(type: Int){
+        taskPresenter.getTaskList("GET",AuthStorage.getInstance(requireContext()).getUserDetails() ?: return)
+    }
     override fun onResponseList(taskList: List<Task>) {
         val pref = StatusPreferences(context)
         taskList.forEach {
@@ -103,6 +108,7 @@ class TaskFragment : Fragment(), ITask {
         rvTask.adapter = adapter
         Log.d(TAG, taskList.hashCode().toString())
     }
+
 
     override fun onResponseEmptyList() {
         showErrorMsg("У вас пока что нет задач")
@@ -117,7 +123,7 @@ class TaskFragment : Fragment(), ITask {
     }
 
     override fun onFail(t: Throwable) {
-        Log.d(TAG, "TaskFragment throwable: $t")
+        Log.d(TAG, "TaskListFragment throwable: $t")
         Snackbar.make(view!!, "Произошла ошибка получения данных", Snackbar.LENGTH_INDEFINITE).show()
     }
 

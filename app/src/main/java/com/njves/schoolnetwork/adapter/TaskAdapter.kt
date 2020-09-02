@@ -10,6 +10,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.njves.schoolnetwork.Models.network.models.task.Task
 import com.njves.schoolnetwork.R
+import org.threeten.bp.ZonedDateTime
+import org.threeten.bp.format.DateTimeFormatter
 import java.text.SimpleDateFormat
 import java.util.*
 /*
@@ -23,7 +25,6 @@ class TaskAdapter(val context: Context?, var listTask: ArrayList<Task>, val onIt
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.item_task, parent, false)
-
         return TaskHolder(view)
     }
 
@@ -51,7 +52,8 @@ class TaskAdapter(val context: Context?, var listTask: ArrayList<Task>, val onIt
                 tvFrom.text = item.sender.firstName
             }
             val dateFormat = SimpleDateFormat("dd.MMM.yyyy", Locale.getDefault())
-            tvDate.text = dateFormat.format(Date(item.date*1000.toLong()))
+            tvDate.text = formatDate(item.date)
+
             itemView.setOnClickListener{
                 onItemClickListener.onItemClick(listTask[adapterPosition])
             }
@@ -63,6 +65,13 @@ class TaskAdapter(val context: Context?, var listTask: ArrayList<Task>, val onIt
 
 
         }
+        private fun formatDate(date: Long): String{
+            val dateFormat = SimpleDateFormat("dd.mm.yyyy")
+            // Умножение на 1000
+            return dateFormat.format(Date(date*1000))
+        }
+
+
     }
     public interface TaskAdapterActionListener{
         fun onItemClick(item: Task)

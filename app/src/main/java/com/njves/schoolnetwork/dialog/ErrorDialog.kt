@@ -2,20 +2,16 @@ package com.njves.schoolnetwork.dialog
 
 import android.app.AlertDialog
 import android.app.Dialog
-import android.content.DialogInterface
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import com.njves.schoolnetwork.R
 
-class AuthErrorDialog : DialogFragment() {
+class ErrorDialog : DialogFragment() {
 
     var errorText : String? = null
     companion object{
-        fun newInstance(errorText : String?) : AuthErrorDialog {
-            val instance = AuthErrorDialog()
+        fun newInstance(errorText : String?) : ErrorDialog {
+            val instance = ErrorDialog()
             val bundle = Bundle()
             // Если текст пустой следственно ошибка неизвестная
             bundle.putString("error_text", errorText)
